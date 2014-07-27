@@ -1,0 +1,209 @@
+/****************************************************************************
+**
+** Author & Contact: Quentin BRAMAS ( contact@bramas.fr )
+**
+** This file is part of Ultratools.
+**
+** GNU General Public License Usage
+** ExUlt is free software: you can redistribute it and/or modify it under the
+** terms of General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.txt included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
+**
+** ExUlt is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** If you have questions regarding the use of this file, please contact
+** Quentin BRAMAS (contact@bramas.fr).
+**
+****************************************************************************/
+
+
+#include "uWord.h"
+#include "uSentence.h"
+
+Word::Word(Sentence * parent, int time,int length, int pitch, bool gold)
+    : UAbstractLine(TYPE_NOTE)
+{
+    _parent = parent;
+
+    _oTime = this->time=time;
+
+    this->length=_oLength=length;
+
+    _oPitch = this->pitch=pitch;
+
+    this->gold=gold;
+
+    free=false;
+    _selected = false;
+     _over = 0;
+
+     if(_parent)
+     {
+         _parent->modified("in the constructor");
+     }
+
+}
+
+QString Word::getWord(void) const
+{
+    return word;
+}
+
+void Word::setWord(QString word)
+{
+    if(_parent)
+    {
+        _parent->modified("in the setWord");
+    }
+    this->word=word;
+
+
+  //  qDebug()<<(gold?"*":":")<<" " <<time<<" "<<length<<" "<<pitch<<" "<<word;
+}
+
+bool Word::setGold(bool newGold)
+{
+    if(_parent)
+    {
+        _parent->modified("in the setGold");
+    }
+    return gold=newGold;
+}
+
+bool Word::isGold(void) const
+{
+    return gold;
+}
+
+int Word::setTime(int newTime, bool definitly)
+{
+    if(_parent)
+    {
+        _parent->modified("in the setTime");
+    }
+
+    if(definitly)
+    {
+        _oTime = newTime;
+    }
+    return time = newTime;
+}
+int Word::setLength(int newLength, bool definitly)
+{
+    if(_parent)
+    {
+        _parent->modified("in the setLength");
+    }
+    if(definitly)
+    {
+        _oLength = newLength;
+    }
+     return length = newLength;
+}
+int Word::setPitch(int newPitch, bool definitly)
+{
+    if(_parent)
+    {
+        _parent->modified("in the setPitch");
+    }
+    if(definitly)
+    {
+        _oPitch = newPitch;
+    }
+     return pitch = newPitch;
+}
+
+int Word::getTime(void) const
+{
+    return time;
+}
+int Word::getLength(void) const
+{
+    return length;
+}
+int Word::getPitch(void) const
+{
+    return pitch;
+}
+
+void Word::setFree(bool in)
+{
+   free = in;
+   if(_parent)
+   {
+       _parent->modified("in the setFree");
+   }
+}
+void Word::setParent(Sentence *par)
+{
+    _parent = par;
+
+    if(_parent)
+    {
+        _parent->modified("in the setParent");
+    }
+}
+
+int ** Word::rangeTime(QList<Word *> *wlist)
+{
+    if(wlist->empty()) return NULL;
+
+    int * range[2];
+
+        range[0] = new int;
+        range[1] = new int;
+
+        *range[0] = wlist->first()->getTime();
+        *range[1] = wlist->first()->getTime()+wlist->first()->getLength();
+
+    foreach(Word *w , *wlist)
+    {
+        if(w->getTime()<*range[0])
+        {
+            *range[0] = w->getTime();
+        }
+        if(w->getTime() + w->getLength()>*range[1])
+        {
+            *range[1] = w->getTime() + w->getLength();
+        }
+    }
+    return range;
+}
+
+bool Word::wordLessThanPtr(const Word *a, const Word *b)
+{
+    return a->getTime()<b->getTime();
+}
+
+int Word::minIndexOfWords(QList<Word *> theWords,QList<Word *> inThisWords)
+{
+    if(inThisWords.empty() || theWords.empty()) return -1;
+    int min = inThisWords.indexOf(theWords.first());
+    foreach(Word * w,theWords)
+    {        
+        if(min > inThisWords.indexOf(w))
+        {
+            min = inThisWords.indexOf(w);
+        }
+    }
+    return min;
+}
+int Word::maxIndexOfWords(QList<Word *> theWords,QList<Word *> inThisWords)
+{
+    if(inThisWords.empty() || theWords.empty()) return -1;
+    int max = inThisWords.indexOf(theWords.first());
+    foreach(Word * w,theWords)
+    {
+        if(max < inThisWords.indexOf(w))
+        {
+            max = inThisWords.indexOf(w);
+        }
+    }
+    return max;
+}

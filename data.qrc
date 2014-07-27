@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/Images">
+        <file>images/doubleP.png</file>
+        <file>images/lockTime.png</file>
+        <file>images/logo2.png</file>
+        <file>images/supp.png</file>
+        <file>images/exit.png</file>
+        <file>images/new.png</file>
+        <file>images/open.png</file>
+        <file>images/save.png</file>
+        <file>images/addNote.png</file>
+        <file>images/addSep.png</file>
+        <file>images/fusion.png</file>
+        <file>images/scinder.png</file>
+        <file>images/nodeFree.png</file>
+        <file>images/nodeGold.png</file>
+        <file>images/nodeNormal.png</file>
+        <file>images/morphe.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/lang">
+        <file>UltraTools_Editor_en.qm</file>
+        <file>UltraTools_Editor_fr.qm</file>
+        <file>UltraTools_Editor_es.qm</file>
+    </qresource>
+</RCC>

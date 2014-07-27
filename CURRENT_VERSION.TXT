@@ -1,0 +1,97 @@
+Author : BRAMAS Quentin [ quentin@bramas.fr ]
+
+Read LICENCE.txt
+
+
+
+*******************************************/
+**
+**  Ultratools - Editor 1.0.beta
+**
+**
+**  Date : 30th Jun 2010
+**
+*******************************************/
+
+-feedback can be send
+-a click stop the edit mode of the lyrics
+
+
+*******************************************/
+**
+**  Ultratools - Editor 1.0.alpha
+**
+**
+**  Date : 30th Jun 2010
+**
+*******************************************/
+
+Big change : Audio System : migration from Qt/Phono to FMOD to correct
+the previous problem of the lag with some songs and 
+involve a better adjustement with the violin songs.
+
+The freeware is finally fit for create and edit songs
+with a good precision.
+
+Maybe there is some little bugs I hope you help me to find its. It's for that
+the freeware is still an alpha version.
+
+
+
+
+
+**************************************************************************************************
+***********************************   VERSION 0.*   **********************************************
+**************************************************************************************************
+
+Known bug for version 0.* :
+
+The audio library read the songs with a little 
+lag (depending to the audio file) so the gap looks 
+wrong (between 0 and 1 second mistakes). The next version
+will use FMOD and I hope this bug will be correct.
+
+
+
+*******************************************/
+**
+**  Ultratools - Editor 0.3 
+**
+**
+**  Date : 27th Jun 2010
+**
+*******************************************/
+
+-Langage selection at the first launch with full english/french traductions.
+-can read a song with pagebreak format : "-45" instead of "- 45"
+-MessageBox to thanks donation.
+-Check for update each launch
+
+
+
+*******************************************/
+**
+**  Ultratools - Editor 0.2 
+**
+**
+**  Date : 22th april 2010
+**
+*******************************************/
+
+-Select multiple Note by click and move
+-autoSave and backup when fatal error occured
+-See the previous Sentences to help you to choose the right pitch
+-the programme have Settings (ultrastar Location, Time between 2 autosave
+
+*******************************************/
+**
+**  Ultratools - Editor 0.1 
+**
+**
+**  First stable branch
+**  Date : 14th april 2010
+**
+*******************************************/
+
+-open/edit/save Ultrastar Songs
+-a manager that help you to create new song
