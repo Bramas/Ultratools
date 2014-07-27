@@ -136,6 +136,14 @@ protected:
 
     private:
 
+    QRectF scaleRect(qreal x, qreal y, qreal w, qreal h);
+    qreal scaleWidth(qreal w);
+    qreal scaleHeight(qreal h);
+    QPointF scaledCoordinates(qreal x, qreal y);
+    QPointF scaledCoordinates(const QPointF &);
+    QPointF scaledCoordinates(const QPoint &);
+
+
     enum{
       OVER_LEFT=1<<1,OVER_RIGHT=1<<2
     };
