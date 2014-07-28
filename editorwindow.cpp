@@ -45,7 +45,7 @@ UEditorWindow::UEditorWindow(QWidget *parent)
 
 //    QMessageBox::information(NULL,"",QDesktopServices::storageLocation(QDesktopServices::DataLocation));
 
-
+    this->setFocusPolicy(Qt::StrongFocus);
 _startTime=0;
     _playViolon = false;
     _currentFile = NULL;
@@ -429,8 +429,9 @@ ui->tabEditeurLayMain->setRowMinimumHeight(0,30);// the minimal height to displa
 ui->tabEditeurLayMain->addWidget(_wydget_timeline,0,1);
    ui->tabEditeurLayMain->addWidget(showLines,1,0);
         ui->tabEditeurLayMain->addWidget(showSentenceWidget,1,1);
-        ui->tabEditeurLayMain->addWidget(_wydget_lyrics,2,1);
-        ui->tabEditeurLayMain->setRowMinimumHeight(2,40);
+        ui->tabEditeurLayMain->addWidget(_wydget_lyrics,1,4);
+        //ui->tabEditeurLayMain->setRowMinimumHeight(2,40);
+        //ui->tabEditeurLayMain->setColumnMinimumWidth(4,100);
 
      //ui->tabEditeurLayMain->addWidget(ui->hScroll,1,1);
     // ui->tabEditeurLayMain->addWidget(ui->vScroll,0,2);

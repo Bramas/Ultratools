@@ -42,7 +42,8 @@ _selectedTextFirstIndex=-1; _selectedTextLastIndex=-1;
 _brutText="ouéé";
 _listWords = NULL;
  _lay = new QHBoxLayout();
-
+ this->setMaximumWidth(200);
+ this->setMinimumWidth(200);
 
  this->setLayout(_lay);
 /*QSpacerItem * space = new QSpacerItem(200,50);

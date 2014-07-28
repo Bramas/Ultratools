@@ -48,8 +48,8 @@ class UEditorWindow : public QMainWindow
 {
     Q_OBJECT
 protected:
-   void keyPressEvent(QKeyEvent * event) { UInputManager::Instance.keyPressed(event);   };
-   void keyReleaseEvent(QKeyEvent * event) { UInputManager::Instance.keyReleased(event);   };
+   void keyPressEvent(QKeyEvent * event) { QMainWindow::keyPressEvent(event); UInputManager::Instance.keyPressed(event);   }
+   void keyReleaseEvent(QKeyEvent * event) {QMainWindow::keyReleaseEvent(event); UInputManager::Instance.keyReleased(event);   }
    void readSettings();
    void closeEvent(QCloseEvent *event);
    void dropEvent(QDropEvent *);

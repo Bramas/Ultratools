@@ -79,7 +79,7 @@ void UWydget_Timeline::mouseReleaseEvent(QMouseEvent *event)
     {
         //_gap = ((((event->x())*fTempsR)+fMin)*1000.0);// + _lastGap;
         _gapSelected = false;
-
+        _gap = _gap<0?0:_gap;
         emit gapModified(_gap);
      }
 

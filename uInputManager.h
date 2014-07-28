@@ -45,18 +45,18 @@ signals:
 
 public:
 
-    void keyPressed(QKeyEvent *event);
-
-    void keyReleased(QKeyEvent *event);
-
     bool isKeyPressed(int key) { return _keyPressed.contains(key); };
 
 
 
-
-
+    void keyPressed(QKeyEvent *event);
+    void keyReleased(QKeyEvent *event);
 
     static UInputManager Instance;
+
+protected:
+
+
 
    private:
    UInputManager() { };
