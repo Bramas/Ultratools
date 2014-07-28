@@ -24,6 +24,9 @@
 
 #include <QApplication>
 #include <QFileInfo>
+#include <math.h>
+#include "uWord.h"
+#include "uLyrics.h"
 #include "uNoteManager.h"
 
 UNoteManager UNoteManager::Instance;

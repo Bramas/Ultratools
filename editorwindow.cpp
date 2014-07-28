@@ -25,8 +25,12 @@
 
 #include "editorwindow.h"
 #include "ui_editorwindow.h"
+#include <math.h>
 #include <QUrl>
 #include <QMimeData>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QCloseEvent>
 
 #define USEMEMLOAD
 #define USEFMOD TRUE
@@ -295,12 +299,16 @@ void UEditorWindow::adaptNewFile()
 {
     ui->textFichierSource->setPlainText(_currentFile->sourceCode);
 
-    showSentenceWidget->setVScroll((255-_currentFile->lyrics->getSentences()->at(0)->getWords()->at(0)->getPitch())*2);
+    if(_currentFile->lyrics->words().isEmpty())
+    {
+        return;
+    }
+    showSentenceWidget->setVScroll((255-_currentFile->lyrics->words().at(0)->getPitch())*2);
 
     //qDebug()<<*range;
     ui->hScroll->setMaximum(_currentFile->getMax()+_currentFile->timeToBeat(_currentFile->lyrics->getGap()));
 
-    ui->vScroll->setValue((255-_currentFile->lyrics->getSentences()->at(0)->getWords()->at(0)->getPitch()));
+    ui->vScroll->setValue((255-_currentFile->lyrics->words().at(0)->getPitch()));
 
 
     UNoteManager::Instance.setMaxPitch(_currentFile->lyrics->getPitchMax());
@@ -311,15 +319,15 @@ void UEditorWindow::adaptNewFile()
 
 
 
-    if((_currentFile->lyrics->getSentences()->at(0)->getPitchMin()+_currentFile->lyrics->getSentences()->at(0)->getPitchMax())/2+20>_currentFile->lyrics->getPitchMax())
+    if((_currentFile->lyrics->getPitchMin()+_currentFile->lyrics->getPitchMax())/2+20>_currentFile->lyrics->getPitchMax())
     {
          this->changeVScroll(255-_currentFile->lyrics->getPitchMax());
          ui->vScroll->setValue(255-_currentFile->lyrics->getPitchMax());
     }
     else
     {
-         this->changeVScroll((235-(_currentFile->lyrics->getSentences()->at(0)->getPitchMin()+_currentFile->lyrics->getSentences()->at(0)->getPitchMax())/2));
-         ui->vScroll->setValue((235-(_currentFile->lyrics->getSentences()->at(0)->getPitchMin()+_currentFile->lyrics->getSentences()->at(0)->getPitchMax())/2));
+         this->changeVScroll((235-(_currentFile->lyrics->getPitchMin()+_currentFile->lyrics->getPitchMax())/2));
+         ui->vScroll->setValue((235-(_currentFile->lyrics->getPitchMin()+_currentFile->lyrics->getPitchMax())/2));
      }
 
 
@@ -327,8 +335,6 @@ void UEditorWindow::adaptNewFile()
       ui->hScroll->setValue((_currentFile->lyrics->getGap()>2000?_currentFile->lyrics->getGap()-2000:0)*_currentFile->lyrics->getBpm()/15000.0);
 
       onFileModified(false);
-
-
 }
 
 void UEditorWindow::changeVSlider(int s)
@@ -512,24 +518,15 @@ void UEditorWindow::tick(qint64 time)
 
 
 
-if(_currentFile->lyrics->getSentences()->empty()) return;
+if(_currentFile->lyrics->words().empty()) return;
 
-
-  Sentence * s;
-  foreach(s,*_currentFile->lyrics->getSentences())
-  {
-        if(s->getSepAfter() && _currentFile->beatToMsc(s->getSepAfter()->getTime2())-20>time)
-        {
-            break;
-        }
-  }
 
   Word * w = NULL;
 
   //qDebug()<<time<<" : s :"<<_currentFile->beatToMsc(_currentFile->lyrics->getSentences()->first()->getSepAfter()->getTime2())<< "Sentence commençant par "<<s->getWords()->first()->getWord();
 
   if(UNoteManager::Instance.isPlaying())
-  foreach(w,*s->getWords())
+  foreach(w,_currentFile->lyrics->words())
   {
         if(_currentFile->beatToMsc(w->getTime())-20<=time
            && _currentFile->beatToMsc(w->getTime()+w->getLength())>time

@@ -27,6 +27,9 @@
 #define UWYDGET_LYRICS_H
 
 #include <QWidget>
+#include <QHBoxLayout>
+#include <QLineEdit>
+class Word;
 
 #include "uWydget_timeline.h"
 

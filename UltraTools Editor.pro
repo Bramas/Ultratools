@@ -6,7 +6,6 @@ TARGET = UltraTools_Editor
 TEMPLATE = app
 SOURCES += main.cpp \
     editorwindow.cpp \
-    uSentence.cpp \
     uWord.cpp \
     uLyrics.cpp \
     uShowSentenceWydget.cpp \
@@ -16,7 +15,6 @@ SOURCES += main.cpp \
     uWydget_timeline.cpp \
     uInputManager.cpp \
     uWydget_lyrics.cpp \
-    uSeparateur.cpp \
     uNoteManager.cpp \
     uNewSongForm_Browse.cpp \
     uSpaceNoteGenerator.cpp \
@@ -28,7 +26,6 @@ SOURCES += main.cpp \
     uDialogHelp.cpp \
     uDialogFeedback.cpp
 HEADERS += editorwindow.h \
-    uSentence.h \
     uWord.h \
     uLyrics.h \
     uShowSentenceWydget.h \
@@ -38,7 +35,6 @@ HEADERS += editorwindow.h \
     uWydget_timeline.h \
     uInputManager.h \
     uWydget_lyrics.h \
-    uSeparateur.h \
     uNoteManager.h \
     uNewSongForm_Browse.h \
     uSpaceNoteGenerator.h \

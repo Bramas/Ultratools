@@ -24,6 +24,11 @@
 
 
 #include "uWydget_lyrics.h"
+#include <QTimer>
+#include <QKeyEvent>
+#include <QDebug>
+#include <QPainter>
+#include "uInputManager.h"
 
 #define MAX_HEIGHT 40
 #define UTF8_WORDS_SEPARATOR 0x02D2
@@ -34,7 +39,7 @@ UWydget_Lyrics::UWydget_Lyrics()
 _selectedTextFirstIndex=-1; _selectedTextLastIndex=-1;
     QTimer *timer = new QTimer(this);
       connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-_brutText="ouéé";
+_brutText="ouÃ©Ã©";
 _listWords = NULL;
  _lay = new QHBoxLayout();
 
@@ -108,7 +113,7 @@ void UWydget_Lyrics::updateChange()
 
     while(strList.count() < _listWords->count())
     {
-        _listWords->first()->getParent()->getParent()->moveLeft(_listWords->first());
+        _listWords->first()->getParent()->moveLeft(_listWords->first());
         _listWords->pop_back();
 
     }
@@ -117,7 +122,7 @@ void UWydget_Lyrics::updateChange()
     {
         _listWords->push_back(
 
-                _listWords->first()->getParent()->getParent()->moveRight(
+                _listWords->first()->getParent()->moveRight(
                         _listWords->first(),_listWords->count()
                         )
 
@@ -131,7 +136,7 @@ void UWydget_Lyrics::updateChange()
         int k=0;
         foreach(str,strList)
         {
-            _listWords->at(k++)->setWord(str);
+            _listWords->at(k++)->setText(str);
         }
 
     }
@@ -162,12 +167,13 @@ void UWydget_Lyrics::mousePressEvent(QMouseEvent *event)
     foreach(w,*_listWords)
     {
 
-        if(lastW && w->getParent()->compare(lastW->getParent()))
+        if(w->isSeparator())
         {
             text.remove(-1,1);
             text.append(QChar(UTF8_SENTENCE_SEPARATOR));
+            continue;
         }
-        text.append(w->getWord()+QChar(UTF8_WORDS_SEPARATOR));//02FD));
+        text.append(w->getText()+QChar(UTF8_WORDS_SEPARATOR));//02FD));
         lastW = w;
     }
     text.remove(-1,1);
@@ -257,17 +263,17 @@ void UWydget_Lyrics::paintEvent(QPaintEvent * event)
     int k=0;
     foreach(w,*_listWords)
     {
-        _brutText.append(w->getWord());
+        _brutText.append(w->getText());
         sepAjout.append(QChar(UTF8_WORDS_SEPARATOR));
 
         if(k<_selectedTextFirstIndex)
         {
-            _textBeforeSelectedText.append(w->getWord());
+            _textBeforeSelectedText.append(w->getText());
         }
         else
         if(k<=_selectedTextLastIndex)
         {
-            _selectedText.append(w->getWord());
+            _selectedText.append(w->getText());
         }
         k++;
     }

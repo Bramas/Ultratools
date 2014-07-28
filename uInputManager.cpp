@@ -24,6 +24,7 @@
 
 
 #include "uInputManager.h"
+#include <QKeyEvent>
 
 
 UInputManager UInputManager::Instance;

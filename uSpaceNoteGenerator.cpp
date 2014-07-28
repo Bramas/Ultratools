@@ -22,10 +22,12 @@
 **
 ****************************************************************************/
 
-
+#include <math.h>
 
 
 #include "uSpaceNoteGenerator.h"
+#include "uInputManager.h"
+#include "uFile.h"
 
 USpaceNoteGenerator::USpaceNoteGenerator(UFile * file)
 {
@@ -52,8 +54,8 @@ void USpaceNoteGenerator::spacePressEvent()
         return;
     }
 
-    _currentWord = new Word(NULL,_beat,1,0,false);
-    _currentWord->setWord("~");
+    _currentWord = new Word(NULL,_beat,1,0);
+    _currentWord->setText("~");
 
 
 
@@ -104,50 +106,25 @@ void USpaceNoteGenerator::generateLyrics(QString text, Lyrics * lyrics)
     lyrics->setGap(gap);
 
     QStringList lines = text.split('\n');
-
-    int wordPerSentence = ceil(_words.count()/lines.count());
-
-    int k =0;
     int j=0;
-    foreach(Word * w,_words)
+    int lastTime = 0, lastPitch = 60;
+
+    foreach(const QString &line, lines)
     {
-        lyrics->addWord(w);
-        if(k>=wordPerSentence && j<lines.count())
+        foreach(const QString &lineW, line.split(' '))
         {
-            w->getParent()->getParent()->addSeparator(w->getTime()-1,0);
-            k=0;
-            ++j;
-        }
-        ++k;
-    }
-
-    QStringList temp;
-    k=0;
-    j=0;
-    foreach(Sentence * s,*lyrics->getSentences())
-    {
-        if(!s->getWords()->empty())
-        {
-            j=0;
-            if(lines.empty()) break;
-
-            foreach(Word * w,*s->getWords())
+            if(j >= _words.count())
             {
-                w->setWord((lines.first().section(' ',j,j).compare("")?lines.first().section(' ',j,j,QString::SectionIncludeLeadingSep):"~"));
-                ++j;
+                lyrics->addWord(new Word(lyrics, lastTime, 4, lastPitch));
+                lastTime += 5;
             }
-            if(j<(temp = lines.first().split(' ')).count())
+            else
             {
-                for(int i=0;i<j;++i)
-                {
-                    temp.pop_front();
-                }
-                s->getWords()->last()->setWord(temp.join(" "));
+                lastPitch = _words.at(j)->getPitch();
+                lastTime = _words.at(j)->getTime2() + 1;
+                lyrics->addWord(_words.at(j++));
             }
-            ++k;
-            lines.pop_front();
         }
-
+        lyrics->addSeparator(lastTime++);
     }
-
 }

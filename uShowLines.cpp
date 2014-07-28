@@ -24,6 +24,7 @@
 
 
 #include "uShowLines.h"
+#include <QPainter>
 
 ShowLines::ShowLines()
 {

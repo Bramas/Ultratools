@@ -26,7 +26,10 @@
 #ifndef UFILE_H
 #define UFILE_H
 
+#include <QFile>
+class QMainWindow;
 #include "uShowSentenceWydget.h"
+
 class UFile : public QObject
 {
 
@@ -50,7 +53,7 @@ public:
     QString plainText();
 
     bool isModified() { return _modified || lyrics->isModified();  }
-    QString getBAK() { return _fileName + "_BAK";  };
+    QString getBAK() { return _fileName + "_BAK";  }
 
     void cleanBAK(void) { if(QFile::exists(getBAK()))
         {

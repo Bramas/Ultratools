@@ -108,7 +108,7 @@ protected:
 
     quint8 _previousDisplayed;
 
-    QRectF * separatorLines(USeparateur * s,QRectF * points);
+    void renderSeparator(QPainter * painter, Word * w);
     bool _mousePressed, _isPlaying;
     float _gap;
     qreal _seekPosition;
@@ -127,7 +127,7 @@ protected:
     QList<Word*> _selected;
 
     Word * _overed;
-    USeparateur * _overSep;
+    Word * _overSep;
 
     QPointF _fPointPress;
     QPointF _fMousePosition;

@@ -25,6 +25,9 @@
 
 #include "uWydget_timeline.h"
 #include <QDebug>
+#include <QMouseEvent>
+#include <QPainter>
+#include <math.h>
 
 UWydget_Timeline::UWydget_Timeline()
 {

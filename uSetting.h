@@ -28,7 +28,7 @@
 #ifndef USETTING_H
 #define USETTING_H
 
-#include "uSeparateur.h"
+#include <QSettings>
 #include "USettingDialog.h"
 
 class USetting : public QObject
@@ -44,9 +44,9 @@ public:
 
     QString getSoftId(void);
     QString getUltrastarLocation(void);
-    QString getSongsLocation(void){ return getUltrastarLocation() + "/Songs"; };
+    QString getSongsLocation(void){ return getUltrastarLocation() + "/Songs"; }
     int getAutoSaveInterval(void);
-    bool isRestartAfterStop(void) { return true;  };
+    bool isRestartAfterStop(void) { return true;  }
 
     QString getWindowTitle(QString win,QString add) {
         if(!_windowEditorTitleSet)
@@ -54,8 +54,8 @@ public:
             _windowEditorTitle = win;
             _windowEditorTitleSet=true;
         }
-        return _windowEditorTitle+add; };
-    void setWindowTitle(QString w) { _windowEditorTitle = w; };
+        return _windowEditorTitle+add; }
+    void setWindowTitle(QString w) { _windowEditorTitle = w; }
 
     void init(void);
 

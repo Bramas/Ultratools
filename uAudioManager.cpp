@@ -26,6 +26,8 @@
 
 
 #include "uAudioManager.h"
+#include <QTimer>
+#include <QMessageBox>
 
 
 UAudioManager UAudioManager::Instance;
