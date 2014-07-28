@@ -87,6 +87,7 @@ public:
     void renderPreviousSentence(QPainter * painter);
     bool renderWord(QPainter * painter,Word * w);
     void setLyrics(Lyrics * lyrics);
+    Lyrics * getLyrics() { return lyrics; }
     void updateGap(void);
 
     int getMaximumHScroll();

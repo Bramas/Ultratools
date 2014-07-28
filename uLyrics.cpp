@@ -81,6 +81,7 @@ void Lyrics::parseLine(QString &line)
         in >> time;
         in >> length;
         in >> pitch;
+        in.read(1); // ignore the first space
         Word::Type type = (typeChar == '*' ?
                                Word::Gold :
                                (typeChar == 'F' ?
@@ -126,19 +127,17 @@ void Lyrics::moveLeft(Word *from)
 
     foreach(w,_words)
     {
+        if(w->isSeparator()) continue;
         if(trouve)
         {
             wBefore->setText(w->getText());
             w->setText("");
-
         }
 
         if(!trouve && wBefore && wBefore->equal(*from))
         {
             wBefore->setText(wBefore->getText()+w->getText());
-
             trouve=true;
-
         }
 
         wBefore=w;
@@ -153,8 +152,6 @@ Word * Lyrics::moveRight(Word *from, int indexIWant)
 
 
     Word * ret = from;
-
-
     bool trouve = false;
     Word * w;
     Word * wBefore=NULL;
@@ -166,6 +163,7 @@ Word * Lyrics::moveRight(Word *from, int indexIWant)
     qDebug()<<"Move Left : "<<_words.count();
     foreach(w,_words)
     {
+        if(w->isSeparator()) continue;
         if(trouve)
         {
             temp2=w->getText();

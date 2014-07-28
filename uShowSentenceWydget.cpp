@@ -164,7 +164,7 @@ void ShowSentenceWidget::mousePressEvent(QMouseEvent *event)
         _overed->setSelected(false);
         if(!_selected.empty())
         {
-            emit selection(Word::minIndexOfWords(_selected,*_wordsDisplayed),Word::maxIndexOfWords(_selected,*_wordsDisplayed));
+            emit selection(Word::minIndexOfWords(_selected,lyrics->words()),Word::maxIndexOfWords(_selected,lyrics->words()));
         }
     }
     else
@@ -172,7 +172,7 @@ void ShowSentenceWidget::mousePressEvent(QMouseEvent *event)
     {
         _overed->setSelected(true);
         _selected.push_back(_overed);
-        emit selection(Word::minIndexOfWords(_selected,*_wordsDisplayed),Word::maxIndexOfWords(_selected,*_wordsDisplayed));
+        emit selection(Word::minIndexOfWords(_selected,lyrics->words()),Word::maxIndexOfWords(_selected,lyrics->words()));
     }
     else
     if(!_overed)
@@ -334,7 +334,7 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
                      w->setSelected();
               }
         }
-        emit selection(Word::minIndexOfWords(_selected,*_wordsDisplayed),Word::maxIndexOfWords(_selected,*_wordsDisplayed));
+        emit selection(Word::minIndexOfWords(_selected,lyrics->words()),Word::maxIndexOfWords(_selected,lyrics->words()));
 
     }
     else

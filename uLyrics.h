@@ -53,6 +53,7 @@ public:
 
 
     const QList<Word*>& words(void) const { return _words; }
+    QList<Word*>& words(void) { return _words; }
 
     int getPitchMax(void);
     int getPitchMin(void);

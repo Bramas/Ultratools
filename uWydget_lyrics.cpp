@@ -28,7 +28,10 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include <QPainter>
+#include <QTextBlock>
 #include "uInputManager.h"
+#include <uShowSentenceWydget.h>
+#include <QScrollBar>
 
 #define MAX_HEIGHT 40
 #define UTF8_WORDS_SEPARATOR 0x02D2
@@ -37,43 +40,27 @@
 UWydget_Lyrics::UWydget_Lyrics()
 {
 _selectedTextFirstIndex=-1; _selectedTextLastIndex=-1;
-    QTimer *timer = new QTimer(this);
-      connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-_brutText="ouéé";
-_listWords = NULL;
- _lay = new QHBoxLayout();
+_wydgetWords = NULL;
+ _lay = new QHBoxLayout(this);
+ this->setLayout(_lay);
  this->setMaximumWidth(200);
  this->setMinimumWidth(200);
 
- this->setLayout(_lay);
-/*QSpacerItem * space = new QSpacerItem(200,50);
-_lay->addSpacerItem(space);
-
-space = new QSpacerItem(200,50);
-_lay->addSpacerItem(space);
-
-_lay->addStretch(2);
-_lay->addStretch(2);
-*/
-
- _maxHeight = MAX_HEIGHT;
-_cursorPosition= 0;
+_lay->addWidget(&_editor);
+_maxHeight      = MAX_HEIGHT;
+_cursorPosition = 0;
 
 _fontSize = 6;
-_lineEdit = NULL;
 _isEditing = false;
 
 connect(&UInputManager::Instance, SIGNAL(keyPressEvent(QKeyEvent*)),this, SLOT(onKeyPress(QKeyEvent*)));
-
-update();
-
+connect(&_editor, SIGNAL(textChanged()), this, SLOT(onTextChanged()));
 }
 
-void UWydget_Lyrics::setWords(QList<Word*>* listWords)
+void UWydget_Lyrics::setWidgetWords(ShowSentenceWidget* wydgetWords)
 {
-    _listWords = listWords;
-
-    update();
+    _wydgetWords = wydgetWords;
+    updateChange();
 }
 
 void UWydget_Lyrics::onKeyPress(QKeyEvent *e)
@@ -81,174 +68,116 @@ void UWydget_Lyrics::onKeyPress(QKeyEvent *e)
 
     if(e->key() == Qt::Key_Enter || e->key()+1 == Qt::Key_Enter)
         saveChange();
-};
+}
+
+void UWydget_Lyrics::onTextChanged()
+{
+    if(!_wydgetWords)
+    {
+        return;
+    }
+    QTextBlock block = _editor.document()->firstBlock();
+    QList<Word*>::iterator it = _wydgetWords->getLyrics()->words().begin();
+    while(block.isValid())
+    {
+        if(it == _wydgetWords->getLyrics()->words().end())
+        {
+            break;
+        }
+        if(!(*it)->isSeparator())
+        {
+            (*it)->setText(block.text());
+            block = block.next();
+        }
+        ++it;
+    }
+    if(block.isValid())
+    {
+        while(block.isValid())
+        {
+            if(block.blockNumber() == _editor.document()->blockCount() - 1)
+            {
+                break;
+            }
+            Word * w = new Word(_wydgetWords->getLyrics(), _wydgetWords->getLyrics()->words().last()->getTime2()+1, 2,_wydgetWords->getLyrics()->words().last()->getPitch());
+            w->setText(block.text());
+            _wydgetWords->getLyrics()->words().append(w);
+            block = block.next();
+        }
+    }
+    else
+    {
+        Word * last = (*it);
+        while(it != _wydgetWords->getLyrics()->words().end())
+        {
+            if(!(*it)->isSeparator())
+            {
+                (*it)->setText("");
+            }
+            ++it;
+        }
+    }
+    _wydgetWords->update();
+}
 
 void UWydget_Lyrics::saveChange()
 {
 
-    if(_lineEdit)
-    {
-        updateChange();
-        _lay->removeWidget(_lineEdit);
-        delete _lineEdit;
-        _lineEdit = NULL;
-    }
+    qDebug()<<"saveChange";
 
 }
 
 void UWydget_Lyrics::updateChange()
 {
-    if(!_lineEdit)
+    if(!_wydgetWords)
     {
         return;
     }
-    QString regex = "[";
-    regex.append(QChar(UTF8_WORDS_SEPARATOR));
-    regex.append(QChar(UTF8_SENTENCE_SEPARATOR));
-    regex.append("]");
-
-    QStringList strList = _lineEdit->text().split(
-            QRegExp(regex));
-
-    QString str;
-
-    while(strList.count() < _listWords->count())
+    QString t;
+    foreach(const Word * w, _wydgetWords->getLyrics()->words())
     {
-        _listWords->first()->getParent()->moveLeft(_listWords->first());
-        _listWords->pop_back();
-
-    }
-    if(!_listWords->empty())
-    while(strList.count() > _listWords->count())
-    {
-        _listWords->push_back(
-
-                _listWords->first()->getParent()->moveRight(
-                        _listWords->first(),_listWords->count()
-                        )
-
-                );
-
-    }
-
-    if(strList.count() == _listWords->count())
-    {
-        qDebug()<<"MEME NOMBRE";
-        int k=0;
-        foreach(str,strList)
+        if(!w->isSeparator())
         {
-            _listWords->at(k++)->setText(str);
+            t += w->getText()+"\n";
         }
-
     }
-
-
-
+    _editor.setPlainText(t);
 }
 
 void UWydget_Lyrics::mousePressEvent(QMouseEvent *event)
 {
-
-    if(_lineEdit)
-    {
-        _lay->removeWidget(_lineEdit);
-        delete _lineEdit;
-        _lineEdit = NULL;
-    }
+    QWidget::mousePressEvent(event);
+}
 
 
-    if(!_listWords)
+void UWydget_Lyrics::onScroll()
+{
+    if(!_wydgetWords || !_wydgetWords->getWordsDisplayedPtr()->count())
     {
         return;
     }
-    QString text = "";
+    int firstBlock = Word::indexOfWord( _wydgetWords->getLyrics()->words(), _wydgetWords->getWordsDisplayedPtr()->first());
+    _editor.verticalScrollBar()->setValue(firstBlock);
 
-    Word * w;
-    Word * lastW = NULL;
-    foreach(w,*_listWords)
-    {
+}
 
-        if(w->isSeparator())
-        {
-            text.remove(-1,1);
-            text.append(QChar(UTF8_SENTENCE_SEPARATOR));
-            continue;
-        }
-        text.append(w->getText()+QChar(UTF8_WORDS_SEPARATOR));//02FD));
-        lastW = w;
-    }
-    text.remove(-1,1);
-    _lineEdit = new QLineEdit(text,this);
+void UWydget_Lyrics::ondoubleClick(int s)
+{
 
-    connect(_lineEdit,SIGNAL(cursorPositionChanged(int,int)),this,SLOT(cursorPositionChanged(int,int)));
-    //connect(_lineEdit,SIGNAL(),this,SLOT(cursorPositionChanged(int,int)));
+}
 
-
-    _lay->insertWidget(0,_lineEdit);
+void UWydget_Lyrics::paintEvent(QPaintEvent * event)
+{
+    QWidget::paintEvent(event);
+/*
 
     QFont font;
 
     font.setFamily("Verdana");
     font.setPixelSize(_fontSizeEdit);
 
-    _lineEdit->setFont(font);
 
-
-    _isEditing=true;
-
-}
-
-
-void UWydget_Lyrics::onScroll()
-{
-
-    saveChange();
-    update();
-}
-
-
-void UWydget_Lyrics::ondoubleClick(int s)
-{
-     mousePressEvent(new QMouseEvent(QEvent::FocusIn,QPoint(0,0),Qt::LeftButton,Qt::LeftButton,Qt::NoModifier));
-
-     if(s==-1 || !_lineEdit || !_lineEdit->text().length())
-     {
-         return;
-     }
-
-     QString str = "[";
-     str.append(QChar(UTF8_WORDS_SEPARATOR));
-     str.append(QChar(UTF8_SENTENCE_SEPARATOR));
-     str.append("]");
-
-
-     QRegExp reg(str);
-
-
-     if(_lineEdit->text().count(reg)<s-1)
-     {
-         return;
-     }
-
-     int last = 0;
-     for(int i=0;i<s;++i)
-     {
-         last = _lineEdit->text().indexOf(reg,last)+1;
-     }
-     int end = _lineEdit->text().indexOf(reg,last);
-     if(end == -1) end = _lineEdit->text().count();
-
-    _lineEdit->setSelection(last,end-last);
-    _lineEdit->setFocus();
-
-}
-
-void UWydget_Lyrics::paintEvent(QPaintEvent * event)
-{
-
-
-
-    if(!_listWords)
+    if(!_wydgetWords)
     {
         return;
     }
@@ -262,7 +191,7 @@ void UWydget_Lyrics::paintEvent(QPaintEvent * event)
 
 
     int k=0;
-    foreach(w,*_listWords)
+    foreach(w,*_wydgetWords->getWordsDisplayedPtr())
     {
         _brutText.append(w->getText());
         sepAjout.append(QChar(UTF8_WORDS_SEPARATOR));
@@ -356,29 +285,33 @@ _fontSize = _fontSizeEdit = 6;
 
 
 
-
+*/
 }
 
 void UWydget_Lyrics::separeOnSelect()
 {
-    //QMessageBox::warning(NULL,"","lol");
-    if(!_lineEdit) return;
 
-    QString temp = _lineEdit->text();
-
-    temp.insert(_cursorPosition,QChar(UTF8_WORDS_SEPARATOR));
-    _lineEdit->setText(temp);
 }
 
 void UWydget_Lyrics::cursorPositionChanged(int old,int pos){
 
-    if(pos<_lineEdit->text().length())
-        _cursorPosition = pos;
-
 }
 void UWydget_Lyrics::onSelectionChange(int s, int f)
 {
-    _selectedTextFirstIndex=s;
-    _selectedTextLastIndex=f;
-    update();
+    if(s==-1 || f < s)
+    {
+        _editor.setExtraSelections(QList<QTextEdit::ExtraSelection>());
+        return;
+    }
+    QList<QTextEdit::ExtraSelection> l;
+    for(int i = s; i <= f; ++i)
+    {
+        QTextEdit::ExtraSelection extra;
+        extra.cursor = _editor.textCursor();
+        extra.cursor.setPosition(_editor.document()->findBlockByNumber(i).position());
+        extra.format.setBackground(QBrush(QColor(180,255,255)));
+        extra.format.setProperty(QTextFormat::FullWidthSelection, true);
+        l << extra;
+    }
+    _editor.setExtraSelections(l);
 }

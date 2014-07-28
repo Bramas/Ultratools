@@ -51,9 +51,9 @@ public:
 
     void setGold(bool newGold=true) { _type = newGold ? Word::Gold : Word::Normal; }
     bool isGold(void) const { return _type & Word::Gold; }
-    bool isFree(void) { return _type & Word::Free; }
+    bool isFree(void) const { return _type & Word::Free; }
     void setFree(bool in) { _type = in ? Word::Free : Word::Normal; }
-    bool isSeparator() { return _type & Word::Separator; }
+    bool isSeparator() const { return _type & Word::Separator; }
     Lyrics * getParent() { return _parent; }
     void setParent(Lyrics * par);
 
@@ -118,6 +118,7 @@ public:
     static int  ** rangeTime(QList<Word*> * wlist);
     static int minIndexOfWords(QList<Word*>,QList<Word*>);
     static int maxIndexOfWords(QList<Word*>,QList<Word*>);
+    static int indexOfWord(const QList<Word*> & list, Word * word);
 
 
 };

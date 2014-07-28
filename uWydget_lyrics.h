@@ -28,7 +28,9 @@
 
 #include <QWidget>
 #include <QHBoxLayout>
-#include <QLineEdit>
+#include <QPlainTextEdit>
+
+class ShowSentenceWidget;
 class Word;
 
 #include "uWydget_timeline.h"
@@ -46,12 +48,15 @@ public slots:
     void separeOnSelect(void);
     void cursorPositionChanged(int,int);
     void onSelectionChange(int,int);
+    void onTextChanged();
 
 public:
     UWydget_Lyrics();
 
-    void setWords(QList<Word*>* listWords);
+    void setWidgetWords(ShowSentenceWidget* wydgetWords);
 protected:
+
+    void paintEvent(QPaintEvent * event);
 
 int _cursorPosition;
 void saveChange();
@@ -59,13 +64,12 @@ void saveChange();
 
     int _maxHeight;
     QHBoxLayout * _lay;
-    QList<Word*> * _listWords;
+    ShowSentenceWidget * _wydgetWords;
     QString _brutText;
     int _fontSize;
     int _fontSizeEdit;
     bool _isEditing;
-    QLineEdit * _lineEdit;
-    void paintEvent(QPaintEvent * event);
+    QPlainTextEdit _editor;
     int _selectedTextFirstIndex, _selectedTextLastIndex;
 
 };

@@ -81,7 +81,6 @@ public slots:
    void newFile(void);
    void tooglePlay(void);
    void newSong(void);
-   void updatePlainText(void);
    void centerView(void);
    void onFileModified(bool k) {
        if(k)

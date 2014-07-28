@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>816</width>
+    <width>982</width>
     <height>687</height>
    </rect>
   </property>
@@ -14,234 +14,94 @@
    <string>MainWindow</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="debug/data.qrc">
+   <iconset resource="data.qrc">
     <normaloff>:/Images/images/logo2.png</normaloff>:/Images/images/logo2.png</iconset>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <widget class="QTabWidget" name="tab">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>821</width>
-      <height>621</height>
-     </rect>
-    </property>
-    <property name="currentIndex">
-     <number>0</number>
-    </property>
-    <widget class="QWidget" name="tabEditeur">
-     <attribute name="title">
-      <string>Editeur</string>
-     </attribute>
-     <widget class="QWidget" name="verticalLayoutWidget_2">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>10</y>
-        <width>811</width>
-        <height>521</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="tabEditVLayContener">
-       <item>
-        <spacer name="verticalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>10</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="HLayAudioDevice">
-         <item>
-          <widget class="QLCDNumber" name="lcd_music"/>
-         </item>
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Musique :</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSlider" name="Slider_MusiqueVolume">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Note :</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSlider" name="Slider_NoteVolume">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>affichage de la phrase avec un retard de :</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="spinBox_previous">
-           <property name="minimum">
-            <number>0</number>
-           </property>
-           <property name="maximum">
-            <number>30</number>
-           </property>
-           <property name="value">
-            <number>2</number>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QGridLayout" name="tabEditeurLayMain">
-         <item row="1" column="3">
-          <widget class="QSlider" name="vSlider">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
-          <widget class="QScrollBar" name="vScroll">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QSlider" name="hSlider">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QScrollBar" name="hScroll">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QPushButton" name="pushButton_separe">
-           <property name="text">
-            <string>Séparer (˒)</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="tabFichier">
-     <attribute name="title">
-      <string>Fichier brute</string>
-     </attribute>
-     <widget class="QWidget" name="horizontalLayoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>19</x>
-        <y>19</y>
-        <width>291</width>
-        <height>251</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="tabFichierLayMain">
-       <item>
-        <layout class="QVBoxLayout" name="tabFichierLayV">
-         <item>
-          <spacer name="verticalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QTextEdit" name="textFichierSource"/>
-         </item>
-         <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton">
-         <property name="text">
-          <string>Actualiser</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-   </widget>
+  <widget class="QWidget" name="mainHorizontalLayoutWidget">
+   <layout class="QHBoxLayout" name="mainHorizontalLayout">
+    <item>
+     <layout class="QVBoxLayout" name="tabEditVLayContener">
+      <item>
+       <layout class="QHBoxLayout" name="HLayAudioDevice">
+        <item>
+         <widget class="QLCDNumber" name="lcd_music"/>
+        </item>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Musique :</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="Slider_MusiqueVolume">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Note :</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="Slider_NoteVolume">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="tabEditeurLayMain">
+        <item row="1" column="3">
+         <widget class="QSlider" name="vSlider">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QScrollBar" name="hScroll">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QSlider" name="hSlider">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QScrollBar" name="vScroll">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QWidget" name="widget" native="true"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>816</width>
-     <height>21</height>
+     <width>982</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFichier">
@@ -338,12 +198,11 @@
    <addaction name="actionVerrouiller_les_timings"/>
    <addaction name="actionDoublePrecision"/>
    <addaction name="actionCentrer"/>
-   <addaction name="actionDebug"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionNouveau">
    <property name="icon">
-    <iconset resource="debug/data.qrc">
+    <iconset resource="data.qrc">
      <normaloff>:/Images/images/new.png</normaloff>:/Images/images/new.png</iconset>
    </property>
    <property name="text">
@@ -358,7 +217,7 @@
   </action>
   <action name="actionOuvrir">
    <property name="icon">
-    <iconset resource="debug/data.qrc">
+    <iconset resource="data.qrc">
      <normaloff>:/Images/images/open.png</normaloff>:/Images/images/open.png</iconset>
    </property>
    <property name="text">
@@ -373,7 +232,7 @@
   </action>
   <action name="actionSauvegarder">
    <property name="icon">
-    <iconset resource="debug/data.qrc">
+    <iconset resource="data.qrc">
      <normaloff>:/Images/images/save.png</normaloff>:/Images/images/save.png</iconset>
    </property>
    <property name="text">
@@ -388,7 +247,7 @@
   </action>
   <action name="actionQuitter">
    <property name="icon">
-    <iconset resource="debug/data.qrc">
+    <iconset resource="data.qrc">
      <normaloff>:/Images/images/exit.png</normaloff>:/Images/images/exit.png</iconset>
    </property>
    <property name="text">
@@ -421,7 +280,7 @@
   </action>
   <action name="actionScinder_une_note">
    <property name="icon">
-    <iconset resource="debug/data.qrc">
+    <iconset resource="data.qrc">
      <normaloff>:/Images/images/scinder.png</normaloff>:/Images/images/scinder.png</iconset>
    </property>
    <property name="text">
@@ -433,7 +292,7 @@
   </action>
   <action name="actionFusionner_deux_notes">
    <property name="icon">
-    <iconset resource="debug/data.qrc">
+    <iconset resource="data.qrc">
      <normaloff>:/Images/images/fusion.png</normaloff>:/Images/images/fusion.png</iconset>
    </property>
    <property name="text">
@@ -445,7 +304,7 @@
   </action>
   <action name="actionNode_normale">
    <property name="icon">
-    <iconset resource="debug/data.qrc">
+    <iconset resource="data.qrc">
      <normaloff>:/Images/images/nodeNormal.png</normaloff>:/Images/images/nodeNormal.png</iconset>
    </property>
    <property name="text">
@@ -460,7 +319,7 @@
   </action>
   <action name="actionNote_freestyle">
    <property name="icon">
-    <iconset resource="debug/data.qrc">
+    <iconset resource="data.qrc">
      <normaloff>:/Images/images/nodeFree.png</normaloff>:/Images/images/nodeFree.png</iconset>
    </property>
    <property name="text">
@@ -475,7 +334,7 @@
   </action>
   <action name="actionNote_Gold">
    <property name="icon">
-    <iconset resource="debug/data.qrc">
+    <iconset resource="data.qrc">
      <normaloff>:/Images/images/nodeGold.png</normaloff>:/Images/images/nodeGold.png</iconset>
    </property>
    <property name="text">
@@ -490,7 +349,7 @@
   </action>
   <action name="actionAjouter_une_note">
    <property name="icon">
-    <iconset resource="debug/data.qrc">
+    <iconset resource="data.qrc">
      <normaloff>:/Images/images/addNote.png</normaloff>:/Images/images/addNote.png</iconset>
    </property>
    <property name="text">
@@ -502,7 +361,7 @@
   </action>
   <action name="actionAjouter_un_s_parateur">
    <property name="icon">
-    <iconset resource="debug/data.qrc">
+    <iconset resource="data.qrc">
      <normaloff>:/Images/images/addSep.png</normaloff>:/Images/images/addSep.png</iconset>
    </property>
    <property name="text">
@@ -514,7 +373,7 @@
   </action>
   <action name="actionEnregistrer_sous">
    <property name="icon">
-    <iconset resource="debug/data.qrc">
+    <iconset resource="data.qrc">
      <normaloff>:/Images/images/save.png</normaloff>:/Images/images/save.png</iconset>
    </property>
    <property name="text">
@@ -526,7 +385,7 @@
   </action>
   <action name="actionSupprimer_une_note">
    <property name="icon">
-    <iconset resource="debug/data.qrc">
+    <iconset resource="data.qrc">
      <normaloff>:/Images/images/supp.png</normaloff>:/Images/images/supp.png</iconset>
    </property>
    <property name="text">
@@ -549,7 +408,7 @@
   </action>
   <action name="actionMorphe">
    <property name="icon">
-    <iconset resource="debug/data.qrc">
+    <iconset resource="data.qrc">
      <normaloff>:/Images/images/morphe.png</normaloff>:/Images/images/morphe.png</iconset>
    </property>
    <property name="text">
@@ -562,20 +421,12 @@
     <string>Calquer les notes sélectionnées sur les notes des phrases d'avant (qui sont affiché en gris)</string>
    </property>
   </action>
-  <action name="actionDebug">
-   <property name="text">
-    <string>debug</string>
-   </property>
-   <property name="statusTip">
-    <string>trie toutes les notes et les phrase ( a utiliser si les notes réagisse bizarement ou si certaine note ne joue pas de son)</string>
-   </property>
-  </action>
   <action name="actionVerrouiller_les_timings">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="debug/data.qrc">
+    <iconset resource="data.qrc">
      <normaloff>:/Images/images/lockTime.png</normaloff>:/Images/images/lockTime.png</iconset>
    </property>
    <property name="text">
@@ -587,7 +438,7 @@
   </action>
   <action name="actionDoublePrecision">
    <property name="icon">
-    <iconset resource="debug/data.qrc">
+    <iconset resource="data.qrc">
      <normaloff>:/Images/images/doubleP.png</normaloff>:/Images/images/doubleP.png</iconset>
    </property>
    <property name="text">
@@ -618,7 +469,7 @@
   </action>
  </widget>
  <resources>
-  <include location="debug/data.qrc"/>
+  <include location="data.qrc"/>
  </resources>
  <connections/>
 </ui>

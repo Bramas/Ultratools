@@ -45,7 +45,6 @@ void UInputManager::keyReleased(QKeyEvent *event)
 
 void UInputManager::keyPressed(QKeyEvent *event)
 {
-    qDebug()<<"keyPress "<<event;
     if(event->isAutoRepeat()) return;
 
        _keyPressed.push_front(event->key());

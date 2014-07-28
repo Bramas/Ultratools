@@ -138,15 +138,34 @@ bool Word::wordLessThanPtr(const Word *a, const Word *b)
     return a->getTime()<b->getTime();
 }
 
+int Word::indexOfWord(const QList<Word*> & list, Word * word)
+{
+    int idx = 0;
+    foreach(const Word * w, list)
+    {
+        if(w == word)
+        {
+            return idx;
+        }
+        if(w->isSeparator())
+        {
+            continue;
+        }
+        ++idx;
+    }
+}
+
+
 int Word::minIndexOfWords(QList<Word *> theWords,QList<Word *> inThisWords)
 {
     if(inThisWords.empty() || theWords.empty()) return -1;
-    int min = inThisWords.indexOf(theWords.first());
+    int min = indexOfWord(inThisWords,theWords.first());
     foreach(Word * w,theWords)
     {        
-        if(min > inThisWords.indexOf(w))
+        int m = indexOfWord(inThisWords, w);
+        if(min > m)
         {
-            min = inThisWords.indexOf(w);
+            min = m;
         }
     }
     return min;
@@ -154,12 +173,13 @@ int Word::minIndexOfWords(QList<Word *> theWords,QList<Word *> inThisWords)
 int Word::maxIndexOfWords(QList<Word *> theWords,QList<Word *> inThisWords)
 {
     if(inThisWords.empty() || theWords.empty()) return -1;
-    int max = inThisWords.indexOf(theWords.first());
+    int max = indexOfWord(inThisWords,theWords.first());
     foreach(Word * w,theWords)
     {
-        if(max < inThisWords.indexOf(w))
+        int m = indexOfWord(inThisWords, w);
+        if(max < m)
         {
-            max = inThisWords.indexOf(w);
+            max = m;
         }
     }
     return max;

@@ -46,18 +46,14 @@ void USpaceNoteGenerator::tick(qint64 time)
     _beat = _file->timeToBeat(time-_file->lyrics->getGap());
 }
 
-void USpaceNoteGenerator::spacePressEvent()
+void USpaceNoteGenerator::keyPressEvent()
 {
-
-    if(!_words.empty() && _words.last()->getTime()+_words.last()->getLength()>=_beat && _words.last()->getLength()<5)
+    if(!isRecording)
     {
         return;
     }
-
     _currentWord = new Word(NULL,_beat,1,0);
-    _currentWord->setText("~");
-
-
+    _currentWord->setText("");
 
 }
 void USpaceNoteGenerator::spaceReleaseEvent()
