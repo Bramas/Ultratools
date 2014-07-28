@@ -56,7 +56,7 @@ public:
 
     int getPitchMax(void);
     int getPitchMin(void);
-    void setGap(qreal in) { _gap = in < 0 ? 0 : _gap; }
+    void setGap(qreal in) { _gap = (in < 0 ? 0 : in); }
     qreal getGap(void) { return _gap; }
     void setBpm(float in) { _bpm = in; }
     qreal getBpm(void) { return _bpm; }

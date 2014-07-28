@@ -55,40 +55,45 @@ Lyrics::Lyrics(QWidget * parent)
 
 void Lyrics::parseLine(QString &line)
 {
-    if(line.at(0) == '#')
+    QTextStream in(&line);
+    QChar typeChar = in.read(1).at(0);
+    if(typeChar == '#' || typeChar == 'E')
     {
         return;
     }
-    QTextStream in(&line);
 
-    QChar typeChar = in.read(1).at(0);
     Word * word = 0;
     if(typeChar == '-') // it's a separator
     {
-        int time1, time2;
+        int time1, time2 = 0;
         in >> time1;
-        in >> time2;
-        word = new Word(this,time1, time2 - time1, Word::Separator);
+        if(!in.atEnd())
+        {
+            in >> time2;
+            time2 -= time1;
+        }
+        //qDebug()<<line<<" sep : "<<time1<<" "<<time2;
+        word = new Word(this,time1, time2, 0, Word::Separator);
 
+    }else
+    {
+        int time, length, pitch;
+        in >> time;
+        in >> length;
+        in >> pitch;
+        Word::Type type = (typeChar == '*' ?
+                               Word::Gold :
+                               (typeChar == 'F' ?
+                                    Word::Free :
+                                    Word::Normal));
+        word = new Word(this,time, length, pitch, type);
+        //qDebug()<<line<<" word : "<<time<<length<<pitch<<type;
+        QString text = in.readLine();
+        word->setText(text);
     }
-    int time, length, pitch;
-    in >> time;
-    in >> length;
-    in >> pitch;
-    word = new Word(this,time, length, pitch, (typeChar == '*' ?
-                                                Word::Gold :
-                                                (typeChar == 'F' ?
-                                                     Word::Free :
-                                                     Word::Normal)
-                                            ));
-    qDebug()<<"addWord : "<<time<<" "<<length<<" "<<pitch;
     _words.push_back(word);
-    QString text = in.readLine();
-    _words.back()->setText(text);
     if(_words.back()->getPitch() < pitchMin) pitchMin=_words.back()->getPitch();
     if(_words.back()->getPitch() > pitchMax) pitchMax=_words.back()->getPitch();
-
-
 
 }
 
@@ -98,6 +103,7 @@ void Lyrics::parseCode(QString &code)
     QString line;
     while(!(line = in.readLine()).isNull())
     {
+        line = line.trimmed();
         parseLine(line);
     }
 }

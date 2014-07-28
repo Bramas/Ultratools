@@ -124,10 +124,9 @@ if(QFile::exists(getBAK()))
 
         lyrics->parseCode(sourceCode);
 
-        _hMax = lyrics->getPitchMax();
-
+        _hMax = lyrics->words().back()->getTime2() + 10;
+        qDebug()<<"Hmax"<<_hMax;
         extractHead();
-
         lyrics->setGap(_headGap);
         lyrics->setBpm(_headBpm);
 

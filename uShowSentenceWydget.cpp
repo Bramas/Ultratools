@@ -28,6 +28,7 @@
 #include <QMessageBox>
 #include <QPainter>
 #include <math.h>
+#include <QDebug>
 
 #define TAILLE_FENETRE 1000
 #define HAUTEUR_NOTE 20
@@ -799,9 +800,6 @@ void ShowSentenceWidget::setVScale(int s)
 
 int ShowSentenceWidget::expRangeOpacity(int a, int b,int opaque)
 {
-
-
-
     if(hScale<b && hScale>a)
     {
 
@@ -837,7 +835,6 @@ void ShowSentenceWidget::setLyrics(Lyrics * lyrics)
 
      _gap = (floor(lyrics->getGap())/1000.0)*lyrics->getBpm()/15.0f;
 
-
 #ifndef UPDATE_BY_TIMER
     update();
 #endif
@@ -845,7 +842,7 @@ void ShowSentenceWidget::setLyrics(Lyrics * lyrics)
 void ShowSentenceWidget::updateGap(void)
 {
 
-     _gap = (floor(lyrics->getGap())/1000.0)*lyrics->getBpm()/15.0f;
+     _gap = (floor(lyrics->getGap())/1000.0)*lyrics->getBpm()/15.0;
 
 
 #ifndef UPDATE_BY_TIMER

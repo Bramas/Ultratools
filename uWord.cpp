@@ -38,7 +38,7 @@ Word::Word(Lyrics * parent, int time, int length, int pitch, Word::Type type)
     {
         _parent->modified("in the constructor");
     }
-
+    _type = type;
 }
 
 void Word::setText(QString text)

@@ -310,7 +310,6 @@ void UEditorWindow::adaptNewFile()
 
     ui->vScroll->setValue((255-_currentFile->lyrics->words().at(0)->getPitch()));
 
-
     UNoteManager::Instance.setMaxPitch(_currentFile->lyrics->getPitchMax());
 
        ui->vScroll->setRange((245-_currentFile->lyrics->getPitchMax()),(255-_currentFile->lyrics->getPitchMin()));
@@ -528,7 +527,7 @@ if(_currentFile->lyrics->words().empty()) return;
   if(UNoteManager::Instance.isPlaying())
   foreach(w,_currentFile->lyrics->words())
   {
-        if(_currentFile->beatToMsc(w->getTime())-20<=time
+        if(!w->isSeparator() && _currentFile->beatToMsc(w->getTime())-20<=time
            && _currentFile->beatToMsc(w->getTime()+w->getLength())>time
            )
         {
