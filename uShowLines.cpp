@@ -37,7 +37,6 @@ void ShowLines::paintEvent(QPaintEvent * event)
  QPainter painter(this);
 
      painter.setPen(QPen(QColor(0,173,232,170)));
-
      painter.setBrush(QBrush(QColor(255,255,255,255)));
 //painter.drawText(QRect(0,0,50,50),QString::number(255));
 
@@ -48,6 +47,7 @@ deca=((float)height())/((float)(max-min));
 for(int i=min+1;i<=max;i+=2)
      {
          painter.drawText(QRect(0,((float)(i-min))*tempsR+deca,50,50),QString::number(255-i));
+
   //  //qDebug()<<(max-i);
       painter.drawLine(0,((float)(i-min))*tempsR+deca,25,((float)(i-min))*tempsR+deca);
 
@@ -59,6 +59,7 @@ for(int i=min;i<=max;i+=2)
       painter.drawLine(25,((float)(i-min))*tempsR+deca,50,((float)(i-min))*tempsR+deca);
 
   }
+
 }
 
 void ShowLines::setMin(int v)
