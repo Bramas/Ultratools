@@ -89,6 +89,7 @@ public:
     void setLyrics(Lyrics * lyrics);
     Lyrics * getLyrics() { return lyrics; }
     void updateGap(void);
+    int currentBeat() { return _seekPosition; }
 
     int getMaximumHScroll();
     int getMaximumVScroll();

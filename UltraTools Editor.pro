@@ -17,14 +17,14 @@ SOURCES += main.cpp \
     uWydget_lyrics.cpp \
     uNoteManager.cpp \
     uNewSongForm_Browse.cpp \
-    uSpaceNoteGenerator.cpp \
     uSetting.cpp \
     uNewSongForm_Lyrics.cpp \
     uSettingDialog.cpp \
     uCheckUpdate.cpp \
     uAudioManager.cpp \
     uDialogHelp.cpp \
-    uDialogFeedback.cpp
+    uDialogFeedback.cpp \
+    uRecorder.cpp
 HEADERS += editorwindow.h \
     uWord.h \
     uLyrics.h \
@@ -37,14 +37,14 @@ HEADERS += editorwindow.h \
     uWydget_lyrics.h \
     uNoteManager.h \
     uNewSongForm_Browse.h \
-    uSpaceNoteGenerator.h \
     uSetting.h \
     uNewSongForm_Lyrics.h \
     uSettingDialog.h \
     uCheckUpdate.h \
     uAudioManager.h \
     uDialogHelp.h \
-    uDialogFeedback.h
+    uDialogFeedback.h \
+    uRecorder.h
 FORMS += editorwindow.ui \
     udialog_fileheader.ui \
     uNewSongForm_Browse.ui \

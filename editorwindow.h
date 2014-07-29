@@ -38,6 +38,9 @@
 
 class ShowSentenceWidget;
 class ShowLines;
+class UWydget_Timeline;
+class UWydget_Lyrics;
+class Recorder;
 
 namespace Ui
 {
@@ -80,6 +83,9 @@ public slots:
    void save(void);
    void newFile(void);
    void tooglePlay(void);
+   void play();
+   void pause();
+   void toggleRecord();
    void newSong(void);
    void centerView(void);
    void onFileModified(bool k) {
@@ -113,6 +119,7 @@ private:
     qint64 _startTime;
     QAction *playAction;
     QAction *pauseAction;
+    QAction *recordAction;
 
     QString _recentFiles;
 
@@ -126,7 +133,7 @@ private:
     UWydget_Lyrics * _wydget_lyrics;
 
     UNewSongForm_Browse * _newSongBrowse;
-    USpaceNoteGenerator * _spaceNote;
+    Recorder * _spaceNote;
 
 
     QTimer * _autoSaveTimer;

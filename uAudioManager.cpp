@@ -28,6 +28,7 @@
 #include "uAudioManager.h"
 #include <QTimer>
 #include <QMessageBox>
+#include <QDebug>
 
 
 UAudioManager UAudioManager::Instance;
@@ -41,6 +42,16 @@ UAudioManager::UAudioManager() : _sound(NULL), _channel(NULL)
       connect(_tickTimer, SIGNAL(timeout()), this, SLOT(timerOut()));
 }
 
+FMOD_RESULT F_CALLBACK endCallback(FMOD_CHANNEL *channel, FMOD_CHANNEL_CALLBACKTYPE type, void * /*commanddata1*/, void * /*commanddata2*/)
+{
+    qDebug()<<(int)type;
+    if(type != FMOD_CHANNEL_CALLBACKTYPE_END)
+    {
+        return FMOD_OK;
+    }
+    QTimer::singleShot(0,&UAudioManager::Instance, SLOT(emitEndOfSong()));
+}
+
 bool UAudioManager::setSource(QString source)
 {
     _source=source;
@@ -50,18 +61,17 @@ bool UAudioManager::setSource(QString source)
         FMOD_Sound_Release(_sound);
     }
 
-    _result = FMOD_System_CreateStream(_system,_source.toStdString().c_str(), FMOD_DEFAULT, 0, &_sound);		// FMOD_DEFAULT uses the defaults.  These are the same as FMOD_LOOP_OFF | FMOD_2D | FMOD_HARDWARE.
+    _result = FMOD_System_CreateSound(_system,_source.toStdString().c_str(), FMOD_LOOP_NORMAL | FMOD_2D | FMOD_HARDWARE , 0, &_sound);		// FMOD_DEFAULT uses the defaults.  These are the same as FMOD_LOOP_OFF | FMOD_2D | FMOD_HARDWARE.
     //ERRCHECK(result);
 
     _result = FMOD_System_PlaySound(_system,FMOD_CHANNEL_FREE, _sound, true, &_channel);
-    //ERRCHECK(result);
-
+    FMOD_Channel_SetCallback(_channel, endCallback);
     return true;
 
 }
 void UAudioManager::timerOut()
 {
-
+    FMOD_System_Update(_system);
     emit tick(currentTime());
 
 }
@@ -87,8 +97,7 @@ void UAudioManager::changeVolume(int i)
 void UAudioManager::play()
 {
     FMOD_Channel_SetPaused(_channel,false);
-
-      _tickTimer->start();
+    _tickTimer->start();
 }
 void UAudioManager::pause()
 {
