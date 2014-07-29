@@ -119,14 +119,14 @@ float duration = 15.0f/_bpm;
 
 
 
- painter->setPen(QPen::QPen(QColor::QColor(240,240,240,255)));
- painter->setBrush(QBrush::QBrush(QColor::QColor(240,240,240,255)));
+ painter->setPen(QPen(QColor(240,240,240,255)));
+ painter->setBrush(QBrush(QColor(240,240,240,255)));
  painter->drawRect(0,0,width(),40);
 
 
- painter->setPen(QPen::QPen(QColor::QColor(255,60,60,255)));
+ painter->setPen(QPen(QColor(255,60,60,255)));
 
-  painter->setBrush(QBrush::QBrush(QColor::QColor(255,60,60,255)));
+  painter->setBrush(QBrush(QColor(255,60,60,255)));
 
 
 // gap Cursor
@@ -137,9 +137,9 @@ painter->drawRect(QRectF(((_gap/1000.0 - fMin)*fTempsR),20,0,20));
 
 
 
-painter->setPen(QPen::QPen(QColor::QColor(0,173,232,255)));
+painter->setPen(QPen(QColor(0,173,232,255)));
 
- painter->setBrush(QBrush::QBrush(QColor::QColor(255,255,255,255)));
+ painter->setBrush(QBrush(QColor(255,255,255,255)));
 
 
  int pas;
@@ -171,13 +171,13 @@ for(int i=((int)ceil(fMin))-((int)ceil(fMin))%pas;i<fMax;i+=pas)
  {
     if(i%30)
     {
-        painter->setFont(QFont::QFont("Arial",10,QFont::Light,false));
+        painter->setFont(QFont("Arial",10,QFont::Light,false));
     }
     else
     {
-        painter->setFont(QFont::QFont("Arial",11,QFont::Bold,false));
+        painter->setFont(QFont("Arial",11,QFont::Bold,false));
     }
-    painter->drawText(QRect::QRect(((float)(i/duration-min))*tempsR+2,0,50,50),QString::number((i-i%60)/60)+":"+QString::number(i%60));
+    painter->drawText(QRect(((float)(i/duration-min))*tempsR+2,0,50,50),QString::number((i-i%60)/60)+":"+QString::number(i%60));
 
           painter->drawLine(((float)(i/duration-min))*tempsR,0,((float)(i/duration-min))*tempsR,40);
 

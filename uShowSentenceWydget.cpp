@@ -86,7 +86,7 @@ _previousDisplayed=2;
 
      _mousePressed = _isPlaying = _clickAndMoveSelection = false;
 
-     _fPointPress=QPointF::QPointF(0.0,0.0);
+     _fPointPress=QPointF(0.0,0.0);
      _timePress=QTime::currentTime();
     _hSizeCursor=_hSplitHCursor=_sizeAllCursor=_timeLocked=false;
      _overed=NULL;
@@ -119,7 +119,7 @@ void ShowSentenceWidget::mousePressEvent(QMouseEvent *event)
 {
     emit singleClik();
     _clickAndMoveSelection = false;
-    _fPointPress = QPointF::QPointF(event->x(),event->y());
+    _fPointPress =QPointF(event->x(),event->y());
     _timePress = QTime::currentTime();
     _mousePressed = true;
 
@@ -471,9 +471,9 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
 {
 
 
-    painter->setPen(QPen::QPen(QColor::QColor(0,173,232,170)));
+    painter->setPen(QPen(QColor(0,173,232,170)));
 
-    painter->setBrush(QBrush::QBrush(QColor::QColor(255,255,255,255)));
+    painter->setBrush(QBrush(QColor(255,255,255,255)));
 
 
     painter->drawRect(_firstBeatDisplayed,sc,30,30);
@@ -485,15 +485,15 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
 
 
 
-     painter->setPen(QPen::QPen(QColor::QColor(0,0,0,170)));
-     painter->setBrush(QBrush::QBrush(QColor::QColor(0,255,255,255)));
+     painter->setPen(QPen(QColor(0,0,0,170)));
+     painter->setBrush(QBrush(QColor(0,255,255,255)));
 
 
 
 
-     painter->setPen(QPen::QPen(QColor::QColor(0,173,232,170)));
+     painter->setPen(QPen(QColor(0,173,232,170)));
 
-     painter->setBrush(QBrush::QBrush(QColor::QColor(255,255,255,255)));
+     painter->setBrush(QBrush(QColor(255,255,255,255)));
 
 
 
@@ -510,7 +510,7 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
      }
 
 
-      painter->setPen(QPen::QPen(QColor::QColor(0,0,0,linearRangeOpacity(1500, 7000,250,80))));
+      painter->setPen(QPen(QColor(0,0,0,linearRangeOpacity(1500, 7000,250,80))));
       //1500, 7000
 
 
@@ -526,7 +526,7 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
             if(( opacity=expRangeOpacity(100,2000,200))>20)
             {
                 //opacity=expRangeOpacity(100,1000,200);
-                painter->setPen(QPen::QPen(QColor::QColor(0,0,0,opacity)));
+                painter->setPen(QPen(QColor(0,0,0,opacity)));
                pas=10;
                 iA=ceil((realHStartView)/pas);
                 iB=ceil(realHEndView/pas);
@@ -538,7 +538,7 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
                  if((opacity=expRangeOpacity(20,340,200))>20)
                 {
                      ////qDebug()<<opacity;
-                    painter->setPen(QPen::QPen(QColor::QColor(0,0,0,opacity)));
+                    painter->setPen(QPen(QColor(0,0,0,opacity)));
 
                    pas=1;
 
@@ -564,9 +564,9 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
         }
 
 
-        painter->setPen(QPen::QPen(QColor::QColor(255,0,0,255)));
+        painter->setPen(QPen(QColor(255,0,0,255)));
 
-        painter->drawLine(QPointF::QPointF(_seekPosition,sc),QPointF::QPointF(_seekPosition,sc2));
+        painter->drawLine(QPointF(_seekPosition,sc),QPointF(_seekPosition,sc2));
 
 if(!_mousePressed)
     _overSep=NULL;
@@ -576,8 +576,8 @@ if(!_mousePressed)
         if(sep)
         {
             USeparateur *s;
-            painter->setPen(QPen::QPen(QColor::QColor(100,255,100,210)));
-            painter->setBrush(QBrush::QBrush(QColor::QColor(100,255,100,210)));
+            painter->setPen(QPen(QColor(100,255,100,210)));
+            painter->setBrush(QBrush(QColor(100,255,100,210)));
             QRectF rect[3];
 
             //qDebug()<<_fMousePosition.y()<<"  "<<_fMousePosition.y()*vScale/height()<<"  "<<vScroll*10;
@@ -601,14 +601,14 @@ if(!_mousePressed)
                          (!_overSep || (_overSep == s && _overSep->getOver() == 0)) // if it's currently selected
                          )
                         {
-                            painter->setBrush(QBrush::QBrush(QColor::QColor(255,100,100,210)));
+                            painter->setBrush(QBrush(QColor(255,100,100,210)));
                             _hSplitHCursor=true;
                             _overSep = s;
                             s->setOver(0);
                         }
                         else
                         {
-                            painter->setBrush(QBrush::QBrush(QColor::QColor(100,255,100,210)));
+                            painter->setBrush(QBrush(QColor(100,255,100,210)));
                         }
 
                         painter->drawRect(rect[0]);
@@ -619,14 +619,14 @@ if(!_mousePressed)
                          _fMousePosition.y()*vScale/height()<45 &&
                          (!_overSep || (_overSep == s && _overSep->getOver() & ShowSentenceWidget::OVER_LEFT)) )
                         {
-                            painter->setBrush(QBrush::QBrush(QColor::QColor(255,100,100,210)));
+                            painter->setBrush(QBrush(QColor(255,100,100,210)));
                             _hSizeCursor=true;
                             _overSep = s;
                             s->setOver(ShowSentenceWidget::OVER_LEFT);
                         }
                         else
                         {
-                            painter->setBrush(QBrush::QBrush(QColor::QColor(100,255,100,210)));
+                            painter->setBrush(QBrush(QColor(100,255,100,210)));
                         }
 
                         painter->drawRect(rect[1]);
@@ -636,14 +636,14 @@ if(!_mousePressed)
                          _fMousePosition.y()*vScale/height()<45 &&
                          (!_overSep || (_overSep == s && _overSep->getOver() & ShowSentenceWidget::OVER_RIGHT)))
                         {
-                            painter->setBrush(QBrush::QBrush(QColor::QColor(255,100,100,210)));
+                            painter->setBrush(QBrush(QColor(255,100,100,210)));
                             _hSizeCursor=true;
                             _overSep = s;
                             s->setOver(ShowSentenceWidget::OVER_RIGHT);
                         }
                         else
                         {
-                            painter->setBrush(QBrush::QBrush(QColor::QColor(100,255,100,210)));
+                            painter->setBrush(QBrush(QColor(100,255,100,210)));
                         }
 
 
@@ -653,7 +653,7 @@ if(!_mousePressed)
                 }
             }
 
-            painter->setBrush(QBrush::QBrush(QColor::QColor(40,40,40,120)));
+            painter->setBrush(QBrush(QColor(40,40,40,120)));
             foreach(s,*sep)
             {
                 if(s) // s may be NULL if it's the first separator or the last
@@ -671,12 +671,12 @@ if(!_mousePressed)
         if(_clickAndMoveSelection || !_selected.empty())
         {
             //QMessageBox::warning(NULL,"","lol");
-            painter->setBrush(QBrush::QBrush(QColor::QColor(0,0,255,60)));
+            painter->setBrush(QBrush(QColor(0,0,255,60)));
             painter->drawRect(QRectF(_floatSelection[0],sc,_floatSelection[1]-_floatSelection[0],sc2-sc));
         }
         /*else if()
         {
-            painter->setBrush(QBrush::QBrush(QColor::QColor(0,0,255,60)));
+            painter->setBrush(QBrush(QColor(0,0,255,60)));
             painter->drawRect(QRectF(_floatSelection[0],sc,_floatSelection[1]-_floatSelection[0],sc2-sc));
 
         }*/
@@ -719,8 +719,8 @@ void ShowSentenceWidget::renderLyrics(QPainter * painter)
 {
     _wordsDisplayed->clear();
     _overed=NULL;
-    painter->setPen(QPen::QPen(QColor::QColor(0,0,0,170)));
-     painter->setBrush(QBrush::QBrush(QColor::QColor(0,173,232,170)));
+    painter->setPen(QPen(QColor(0,0,0,170)));
+     painter->setBrush(QBrush(QColor(0,173,232,170)));
        QFont font;
 
 
@@ -771,35 +771,35 @@ bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w)
 {
 
 
-    painter->setBrush(QBrush::QBrush(QColor::QColor(0,173,232,170)));
+    painter->setBrush(QBrush(QColor(0,173,232,170)));
 
 
     if(!_nextClick && mouseTime>w->getTime() && mouseTime<w->getTime()+w->getLength() &&
       mousePitch>w->getPitch() && mousePitch<w->getPitch()+2)
     {
-        painter->setBrush(QBrush::QBrush(QColor::QColor(232,173,0,170)));
+        painter->setBrush(QBrush(QColor(232,173,0,170)));
         _overed=w;
 
        _sizeAllCursor=true;
     }
     else if(w->isGold())
     {
-        painter->setBrush(QBrush::QBrush(QColor::QColor(255,255,0,210)));
+        painter->setBrush(QBrush(QColor(255,255,0,210)));
     }
     else if(w->isFree())
     {
-        painter->setBrush(QBrush::QBrush(QColor::QColor(232,173,0,170)));
+        painter->setBrush(QBrush(QColor(232,173,0,170)));
 
-        painter->setBrush(QBrush::QBrush(QColor::QColor(0,0,0,40)));
+        painter->setBrush(QBrush(QColor(0,0,0,40)));
     }
    else
    {
-        painter->setBrush(QBrush::QBrush(QColor::QColor(0,173,232,170)));
+        painter->setBrush(QBrush(QColor(0,173,232,170)));
     }
 
    if(w->_selected)
    {
-       painter->setBrush(QBrush::QBrush(QColor::QColor(255,173,0,255)));
+       painter->setBrush(QBrush(QColor(255,173,0,255)));
    }
 
 
@@ -830,7 +830,7 @@ bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w)
           mousePitch>w->getPitch() && mousePitch<w->getPitch()+1  )
         {
 
-            painter->setBrush(QBrush::QBrush(QColor::QColor(0,0,0,100)));
+            painter->setBrush(QBrush(QColor(0,0,0,100)));
             w->setOver(ShowSentenceWidget::OVER_LEFT);
             painter->drawRect(QRectF(w->getTime(),(255-w->getPitch())*10,min(w->getLength()/2.0,1.5),HAUTEUR_NOTE/2));
 
@@ -840,7 +840,7 @@ bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w)
           mousePitch>w->getPitch() && mousePitch<w->getPitch()+1 )
         {
 
-            painter->setBrush(QBrush::QBrush(QColor::QColor(0,0,0,100)));
+            painter->setBrush(QBrush(QColor(0,0,0,100)));
             w->setOver(ShowSentenceWidget::OVER_RIGHT);
             painter->drawRect(QRectF(w->getTime()+w->getLength()-min(w->getLength()/2.0,1.5),(255-w->getPitch())*10,min(w->getLength()/2.0,1.5),HAUTEUR_NOTE/2));
 
@@ -859,8 +859,8 @@ void ShowSentenceWidget::renderPreviousSentence(QPainter * painter)
     if(_wordsDisplayed->empty() || !_previousDisplayed) return;
 
 
-      painter->setBrush(QBrush::QBrush(QColor::QColor(0,0,0,40)));
-      painter->setPen(QPen::QPen(QColor::QColor(0,0,0,0)));
+      painter->setBrush(QBrush(QColor(0,0,0,40)));
+      painter->setPen(QPen(QColor(0,0,0,0)));
 
 int add;
 Sentence * prevSent;
