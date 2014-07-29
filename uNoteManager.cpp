@@ -43,7 +43,13 @@ _isPlaying= false;
 
 QString UNoteManager::violonFile(int i)
 {
+#ifdef __APPLE__
     QFileInfo f(QApplication::applicationDirPath()+"/../../../violon/"+QString::number(i)+".mp3");
+#else
+#ifdef _WIN32
+    QFileInfo f(QApplication::applicationDirPath()+"/violon/"+QString::number(i)+".mp3");
+#endif
+#endif
     return f.absoluteFilePath();
 }
 
