@@ -64,7 +64,8 @@ void UNoteManager::setupAudio(QObject *parent)
     QString tmp;
    for(int i = -36 ; i<5 ; ++i)//5
     {
-        _result = FMOD_System_CreateSound(_system,violonFile(i).toLatin1().data(), FMOD_DEFAULT, 0, &sound);		// FMOD_DEFAULT uses the defaults.  These are the same as FMOD_LOOP_OFF | FMOD_2D | FMOD_HARDWARE.
+        _result = FMOD_System_CreateSound(_system,violonFile(i).toLatin1().data(),
+                                          FMOD_LOOP_NORMAL | FMOD_2D | FMOD_SOFTWARE, 0, &sound);		// FMOD_DEFAULT uses the defaults.  These are the same as FMOD_LOOP_OFF | FMOD_2D | FMOD_HARDWARE.
         //ERRCHECK(result);
 
         _result = FMOD_System_PlaySound(_system,FMOD_CHANNEL_FREE, sound, true, &channel);

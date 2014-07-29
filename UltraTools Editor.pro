@@ -4,6 +4,10 @@
 QT += core widgets network
 TARGET = UltraTools_Editor
 TEMPLATE = app
+
+VERSION = \\\"'1.0.beta'\\\"
+DEFINES += "VERSION=$${VERSION}"
+
 SOURCES += main.cpp \
     editorwindow.cpp \
     uWord.cpp \
@@ -57,6 +61,9 @@ FORMS += editorwindow.ui \
 RESOURCES = data.qrc \
     Lang.qrc
 
+OS_STRING = \\\"'Linux'\\\"
+
+
 # CODECFORSRC     = UTF-8
 TRANSLATIONS = UltraTools_Editor_fr.ts \
     UltraTools_Editor_en.ts \
@@ -65,6 +72,7 @@ mac {
     CONFIG += ppc \
         x86
     ICON = icone/icone.icns
+    OS_STRING = \\\"'Mac'\\\"
 }
 CONFIG( debug, debug|release ):
 
@@ -75,7 +83,9 @@ else:
 win32:{
     RC_FILE = icone/icone.rc
     LIBS += -LC:\FMODEx\api\lib -lfmodex
+    OS_STRING = \\\"'Windows'\\\"
 }
 else{
     LIBS += -L/usr/local/lib -lfmodex
 }
+DEFINES += "OS_STRING=$${OS_STRING}"

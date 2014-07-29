@@ -33,8 +33,6 @@
 #include <QFile>
 
 
-#define VERSION "1.0.beta"
-
 class UCheckUpdate : public QObject
 {
     Q_OBJECT
