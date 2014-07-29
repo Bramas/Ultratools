@@ -17,4 +17,11 @@
         <file>images/nodeNormal.png</file>
         <file>images/morphe.png</file>
     </qresource>
+    <qresource prefix="/">
+        <file>images/recordpressed.png</file>
+        <file>images/player_play.png</file>
+        <file>images/player_pause.png</file>
+        <file>images/recordnormal.png</file>
+        <file>images/recorddisabled.png</file>
+    </qresource>
 </RCC>

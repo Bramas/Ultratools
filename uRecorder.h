@@ -28,33 +28,31 @@
 #ifndef USPACENOTEGENERATOR_H
 #define USPACENOTEGENERATOR_H
 
-#include "uNoteManager.h"
+#include <QtCore>
+class ShowSentenceWidget;
+class Word;
+class QKeyEvent;
 
-class USpaceNoteGenerator : public QObject
+class Recorder : public QObject
 {
     Q_OBJECT
 
-public slots:
-    void tick(qint64);
-    void spacePressEvent(void);
-    void spaceReleaseEvent(void);
-
 public:
-    USpaceNoteGenerator(UFile * file);
-
-    QList<Word*> result(void);
-
-    void generateLyrics(QString text,Lyrics * lyrics);
+    Recorder(ShowSentenceWidget * showSentenceWidget);
+    bool isRecording() { return _isRecording; }
+public slots:
+    void onKeyPressEvent(QKeyEvent * event);
+    void onKeyReleaseEvent(QKeyEvent * event);
+    void start();
+    void stop();
 
 private:
 
-    int adaptGap();
     Word * _currentWord;
     int _beat;
-    UFile * _file;
+    ShowSentenceWidget * _showSentenceWidget;
     quint64 _currentTime;
-    QList<Word*> _words;
-
+    bool _isRecording;
 };
 
 #endif // USPACENOTEGENERATOR_H

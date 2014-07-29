@@ -37,6 +37,7 @@ class UAudioManager : public QObject
 signals:
 
     void tick(qint64);
+    void endOfSong();
 
 public slots:
 
@@ -45,9 +46,9 @@ public slots:
     void seek(qint64 startTime);
     void timerOut();
     void changeVolume(int);
+    void emitEndOfSong() { emit endOfSong(); }
 
 public:
-
     void init();
     bool setSource(QString);
     qint64 currentTime();
@@ -55,7 +56,6 @@ public:
     FMOD_SYSTEM * getSystem() { return _system; }
 
 protected:
-
     QTimer * _tickTimer;
     bool _initialised;
     FMOD_RESULT _result;

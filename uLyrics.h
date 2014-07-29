@@ -70,6 +70,15 @@ public:
      QList<Word*> *  separatorsOfWords(QList<Word*> * list);
      QList<Word*> *  sentencesOfWords(QList<Word*> * list);
 
+     qreal timeToBeat(quint64 time)
+     {
+         return (time/1000.0) * _bpm/15.0f;
+     }
+     quint64 beatToMsc(int n)
+     {
+          return _gap + (n)*1000.0 * 15.0f/_bpm;
+     }
+
 
     void moveLeft(Word * from);
     Word * moveRight(Word *from, int indexIWant=0);

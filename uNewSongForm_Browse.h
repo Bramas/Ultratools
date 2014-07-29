@@ -29,8 +29,8 @@
 #ifndef UNEWSONGFORM_BROWSE_H
 #define UNEWSONGFORM_BROWSE_H
 
-
-#include "uSpaceNoteGenerator.h"
+#include <QDialog>
+class UFile;
 
 namespace Ui {
     class UNewSongForm_Browse;
@@ -45,7 +45,7 @@ public:
 public slots:
 
     void updateFolder(QString s="");
-    void edited(QString s=""){ _edited = true; };
+    void edited(QString s=""){ _edited = true; }
     void browse(void);
     void browseMp3(void);
     void goNext(void);
