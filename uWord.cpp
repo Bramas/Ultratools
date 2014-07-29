@@ -24,61 +24,30 @@
 
 
 #include "uWord.h"
-#include "uSentence.h"
+#include "uLyrics.h"
 
-Word::Word(Sentence * parent, int time,int length, int pitch, bool gold)
-    : UAbstractLine(TYPE_NOTE)
+Word::Word(Lyrics * parent, int time, int length, int pitch, Word::Type type)
 {
     _parent = parent;
-
-    _oTime = this->time=time;
-
-    this->length=_oLength=length;
-
-    _oPitch = this->pitch=pitch;
-
-    this->gold=gold;
-
-    free=false;
+    _oTime = _time=time;
+    _length=_oLength=length;
+    _oPitch = _pitch=pitch;
     _selected = false;
-     _over = 0;
-
-     if(_parent)
-     {
-         _parent->modified("in the constructor");
-     }
-
+    _over = 0;
+    if(_parent)
+    {
+        _parent->modified("in the constructor");
+    }
+    _type = type;
 }
 
-QString Word::getWord(void) const
-{
-    return word;
-}
-
-void Word::setWord(QString word)
+void Word::setText(QString text)
 {
     if(_parent)
     {
         _parent->modified("in the setWord");
     }
-    this->word=word;
-
-
-  //  qDebug()<<(gold?"*":":")<<" " <<time<<" "<<length<<" "<<pitch<<" "<<word;
-}
-
-bool Word::setGold(bool newGold)
-{
-    if(_parent)
-    {
-        _parent->modified("in the setGold");
-    }
-    return gold=newGold;
-}
-
-bool Word::isGold(void) const
-{
-    return gold;
+    _text=text;
 }
 
 int Word::setTime(int newTime, bool definitly)
@@ -92,7 +61,7 @@ int Word::setTime(int newTime, bool definitly)
     {
         _oTime = newTime;
     }
-    return time = newTime;
+    return _time = newTime;
 }
 int Word::setLength(int newLength, bool definitly)
 {
@@ -104,7 +73,7 @@ int Word::setLength(int newLength, bool definitly)
     {
         _oLength = newLength;
     }
-     return length = newLength;
+     return _length = newLength;
 }
 int Word::setPitch(int newPitch, bool definitly)
 {
@@ -116,31 +85,19 @@ int Word::setPitch(int newPitch, bool definitly)
     {
         _oPitch = newPitch;
     }
-     return pitch = newPitch;
+     return _pitch = newPitch;
 }
 
-int Word::getTime(void) const
-{
-    return time;
-}
 int Word::getLength(void) const
 {
-    return length;
+    return _length;
 }
 int Word::getPitch(void) const
 {
-    return pitch;
+    return _pitch;
 }
 
-void Word::setFree(bool in)
-{
-   free = in;
-   if(_parent)
-   {
-       _parent->modified("in the setFree");
-   }
-}
-void Word::setParent(Sentence *par)
+void Word::setParent(Lyrics *par)
 {
     _parent = par;
 
@@ -181,15 +138,34 @@ bool Word::wordLessThanPtr(const Word *a, const Word *b)
     return a->getTime()<b->getTime();
 }
 
+int Word::indexOfWord(const QList<Word*> & list, Word * word)
+{
+    int idx = 0;
+    foreach(const Word * w, list)
+    {
+        if(w == word)
+        {
+            return idx;
+        }
+        if(w->isSeparator())
+        {
+            continue;
+        }
+        ++idx;
+    }
+}
+
+
 int Word::minIndexOfWords(QList<Word *> theWords,QList<Word *> inThisWords)
 {
     if(inThisWords.empty() || theWords.empty()) return -1;
-    int min = inThisWords.indexOf(theWords.first());
+    int min = indexOfWord(inThisWords,theWords.first());
     foreach(Word * w,theWords)
     {        
-        if(min > inThisWords.indexOf(w))
+        int m = indexOfWord(inThisWords, w);
+        if(min > m)
         {
-            min = inThisWords.indexOf(w);
+            min = m;
         }
     }
     return min;
@@ -197,12 +173,13 @@ int Word::minIndexOfWords(QList<Word *> theWords,QList<Word *> inThisWords)
 int Word::maxIndexOfWords(QList<Word *> theWords,QList<Word *> inThisWords)
 {
     if(inThisWords.empty() || theWords.empty()) return -1;
-    int max = inThisWords.indexOf(theWords.first());
+    int max = indexOfWord(inThisWords,theWords.first());
     foreach(Word * w,theWords)
     {
-        if(max < inThisWords.indexOf(w))
+        int m = indexOfWord(inThisWords, w);
+        if(max < m)
         {
-            max = inThisWords.indexOf(w);
+            max = m;
         }
     }
     return max;

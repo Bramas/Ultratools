@@ -26,8 +26,9 @@
 #ifndef UDIALOG_FILEHEADER_H
 #define UDIALOG_FILEHEADER_H
 
+#include <QDialog>
+class UFile;
 
-#include "uFile.h"
 namespace Ui {
     class UDialog_fileHeader;
 }

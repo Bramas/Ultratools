@@ -25,6 +25,8 @@
 
 
 #include "uCheckUpdate.h"
+#include <QFileInfo>
+#include <QMessageBox>
 
 
 

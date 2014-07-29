@@ -28,6 +28,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>
+#include <QDebug>
 
 Lyrics::Lyrics(QWidget * parent)
 {
@@ -52,107 +53,60 @@ Lyrics::Lyrics(QWidget * parent)
 
 }
 
- QList<Sentence*> * Lyrics::getSentences(void)
+void Lyrics::parseLine(QString &line)
 {
-    return &sentences;
-}
-int * Lyrics::parseCode(QString code)
-{
-
-    int * maxH = new int;
-
-    QChar c='\n';
-
-
-    while(code[0]=='#')
+    QTextStream in(&line);
+    QChar typeChar = in.read(1).at(0);
+    if(typeChar == '#' || typeChar == 'E')
     {
-
-        code.remove(0,code.indexOf('\n')+1);
-
+        return;
     }
 
-
-int le=0;
-int before=0, after=0;
-
-
-int sepTime1=0, sepTime2=0;
-USeparateur * lastSep = NULL;
-bool ok;
-Sentence * tempS;
-   while((le=code.indexOf("\n-"))!=-1)
-{
-//qDebug() << "before "<< before;
-
-tempS = Sentence::parseSentence(this,code.left(le+1));
-
-     //  ui->textFichierSource->append(code.left(le+1)+"--------------------- itération "+QString::number(i++)+"\n");
-
-
-       code.remove(0,le+1);
-      tempS->setExtremity(before,after=code.section(' ',1,1).section('\n',0,0).toInt(&ok));
-
-      if(code.section('\n',0,0).section(' ',0,0).compare("-"))
-      {
-          sepTime1 = -(code.section('\n',0,0).section(' ',0,0).toInt(&ok));
-          sepTime2 = (code.section('\n',0,0).section(' ',-1,-1).toInt(&ok));
-          if(sepTime2<0) sepTime2=-sepTime2;
-
-      }
-      else
-      {
-          sepTime1 = (code.section('\n',0,0).section(' ',1,1).toInt(&ok));
-          sepTime2 = (code.section('\n',0,0).section(' ',-1,-1).toInt(&ok));
-      }
-
-
-      tempS->setSepBefore(lastSep);
-      lastSep = new USeparateur(sepTime1,sepTime2-sepTime1);
-      tempS->setSepAfter(lastSep);
-
-
-
-      before=after;
-      if(!ok) //probleme pour parse le int
-       {
-
-          QMessageBox::warning(parent,QObject::tr("Erreur"),QObject::tr("Problème pour parser le fichier .txt\n Lors de la lecture des ligne commençant par - : \n")+code.section('-',0,1));
-            delete tempS;
+    Word * word = 0;
+    if(typeChar == '-') // it's a separator
+    {
+        int time1, time2 = 0;
+        in >> time1;
+        if(!in.atEnd())
+        {
+            in >> time2;
+            time2 -= time1;
         }
+        //qDebug()<<line<<" sep : "<<time1<<" "<<time2;
+        word = new Word(this,time1, time2, 0, Word::Separator);
 
-       sentences.push_back(tempS);
-       words.append(*tempS->getWords());
-
-       if(tempS->getPitchMax()>pitchMax) pitchMax=tempS->getPitchMax();
-       if(tempS->getPitchMin()<pitchMin) pitchMin=tempS->getPitchMin();
-
-
-       // qDebug()<< "after "<< before << "  " << ok <<"\n";
-
-   }
-
-    tempS = Sentence::parseSentence(this,code.left(code.length()-2));
-
-
-    tempS->setSepBefore(lastSep);
-    tempS->setSepAfter(NULL);
-
-
-
-    tempS->setExtremity(before,code.section(":",-1).section(" ",1,1).toInt());
-    if(!ok) //probleme pour parse le int
+    }else
     {
-            QMessageBox::warning(parent,QObject::tr("Erreur"),QObject::tr("Problème pour parser le fichier .txt\n Lors de la lecture de la derniere phrase - : \n")+code.section('-',0,1));
-            delete tempS;
+        int time, length, pitch;
+        in >> time;
+        in >> length;
+        in >> pitch;
+        in.read(1); // ignore the first space
+        Word::Type type = (typeChar == '*' ?
+                               Word::Gold :
+                               (typeChar == 'F' ?
+                                    Word::Free :
+                                    Word::Normal));
+        word = new Word(this,time, length, pitch, type);
+        //qDebug()<<line<<" word : "<<time<<length<<pitch<<type;
+        QString text = in.readLine();
+        word->setText(text);
     }
+    _words.push_back(word);
+    if(_words.back()->getPitch() < pitchMin) pitchMin=_words.back()->getPitch();
+    if(_words.back()->getPitch() > pitchMax) pitchMax=_words.back()->getPitch();
 
-       sentences.push_back(tempS);
-       words.append(*tempS->getWords());
+}
 
-       *maxH=tempS->getEnd();
-
-       return maxH;
-
+void Lyrics::parseCode(QString &code)
+{
+    QTextStream in(&code);
+    QString line;
+    while(!(line = in.readLine()).isNull())
+    {
+        line = line.trimmed();
+        parseLine(line);
+    }
 }
 
 int Lyrics::getPitchMax()
@@ -171,21 +125,19 @@ void Lyrics::moveLeft(Word *from)
     Word * w;
     Word * wBefore=NULL;
 
-    foreach(w,words)
+    foreach(w,_words)
     {
+        if(w->isSeparator()) continue;
         if(trouve)
         {
-            wBefore->setWord(w->getWord());
-            w->setWord("");
-
+            wBefore->setText(w->getText());
+            w->setText("");
         }
 
         if(!trouve && wBefore && wBefore->equal(*from))
         {
-            wBefore->setWord(wBefore->getWord()+w->getWord());
-
+            wBefore->setText(wBefore->getText()+w->getText());
             trouve=true;
-
         }
 
         wBefore=w;
@@ -200,8 +152,6 @@ Word * Lyrics::moveRight(Word *from, int indexIWant)
 
 
     Word * ret = from;
-
-
     bool trouve = false;
     Word * w;
     Word * wBefore=NULL;
@@ -210,13 +160,14 @@ Word * Lyrics::moveRight(Word *from, int indexIWant)
 
     int i=0;
 
-    qDebug()<<"Move Left : "<<words.count();
-    foreach(w,words)
+    qDebug()<<"Move Left : "<<_words.count();
+    foreach(w,_words)
     {
+        if(w->isSeparator()) continue;
         if(trouve)
         {
-            temp2=w->getWord();
-            w->setWord(temp);
+            temp2=w->getText();
+            w->setText(temp);
 
             temp = temp2;
 
@@ -224,16 +175,16 @@ Word * Lyrics::moveRight(Word *from, int indexIWant)
             {
                 ret = w;
             }
-            //qDebug()<<"- "<<wBefore->getWord();
+            //qDebug()<<"- "<<wBefore->getText();
         }
 
         if(!trouve && wBefore && wBefore->equal(*from))
         {
-            temp = w->getWord();
-            w->setWord(wBefore->getWord());
+            temp = w->getText();
+            w->setText(wBefore->getText());
 
             trouve=true;
-            //qDebug()<<"FIRST : "<<wBefore->getWord();
+            //qDebug()<<"FIRST : "<<wBefore->getText();
 
             if(indexIWant == 1)
             {
@@ -247,7 +198,7 @@ Word * Lyrics::moveRight(Word *from, int indexIWant)
 
     if(temp.compare("")) // !=""
     {
-        w->setWord(w->getWord()+temp);
+        w->setText(w->getText()+temp);
     }
 
     return ret;
@@ -255,11 +206,12 @@ Word * Lyrics::moveRight(Word *from, int indexIWant)
 
 }
 
-QList<USeparateur*> * Lyrics::separatorsOfWords(QList<Word *> * list)
+QList<Word*> * Lyrics::separatorsOfWords(QList<Word *> * list)
 {
-    QList<USeparateur*> * sep= new QList<USeparateur*>();
-
-    Word* w;
+    QList<Word*> * sep= new QList<Word*>();
+    return sep;
+    /** FIXME */
+    /*Word* w;
     foreach(w,*list)
     {
         if(!sep->contains(w->getParent()->getSepAfter()))
@@ -270,17 +222,20 @@ QList<USeparateur*> * Lyrics::separatorsOfWords(QList<Word *> * list)
         {
             sep->push_back(w->getParent()->getSepBefore());
         }
-    }
+    }*/
 
 
 
     return sep;
 
 }
-QList<Sentence*> * Lyrics::sentencesOfWords(QList<Word *> * list)
+QList<Word*> * Lyrics::sentencesOfWords(QList<Word *> * list)
 {
-    QList<Sentence*> * sen= new QList<Sentence*>();
+    QList<Word*> * sen= new QList<Word*>();
 
+    return sen;
+    /** FIXME */
+    /*
     Word* w;
     foreach(w,*list)
     {
@@ -292,419 +247,64 @@ QList<Sentence*> * Lyrics::sentencesOfWords(QList<Word *> * list)
     }
 
 
-
     return sen;
+*/
 
 }
-void Lyrics::sortThisWord(Word *wdr)
+void Lyrics::resortWord(Word *wdr)
 {
-    if(words.count()<2) { return; }
+    if(_words.count()<2) { return; }
 
-    words.removeOne(wdr);
-    Word * w;
-
-    Word * last = NULL;
-
-    int k=0;
-
-    foreach(w,words)
-    {
-        if(w->getTime()>wdr->getTime())
-        {
-            words.insert(k,wdr);
-            break;
-        }
-        last = w;
-        ++k;
-    }
-    if(k==words.count())
-    {
-        words.push_back(wdr);
-    }
-
-
-    Sentence * s = wdr->getParent();
-
-    if(w->getParent()->getSepAfter() && w->getParent()->getSepAfter()->getTime()<wdr->getTime())
-    {
-        //do nothing
-    }
-    else
-    if(!last || !w->getParent()->getSepBefore() ||  w->getParent()->getSepBefore()->getTime1()<wdr->getTime())
-    {
-        wdr->getParent()->getWords()->removeOne(wdr);
-        w->getParent()->addWord(wdr);
-    }
-    else
-    {
-        wdr->getParent()->getWords()->removeOne(wdr);
-        last->getParent()->addWord(wdr);
-    }
-
-    if(s->getWords()->empty())
-    {
-        removeSentence(s);
-    }
+    _words.removeOne(wdr);
+    addWord(wdr);
 }
 
 
-void Lyrics::sortThisSeparator(USeparateur *s)
+Word *  Lyrics::addSeparator(int time)
 {
-    if(words.empty()) { return; }
-
-
-    Word * w;
-
-    Word * last = NULL;
-
-
-    foreach(w,words)
-    {
-        if(w->getTime()>s->getTime1())
-        {
-            if(w->getParent()->getSepBefore() == s && last && last->getParent()->getSepAfter() == s)// it's already ok
-            {
-                return;
-            }
-
-            if(!last) // we put the sep before the first word = we just delete it
-            {
-                deleteSeparator(s);
-                return;
-            }
-            // else we delete it and we will create a new
-
-            qDebug()<<"AVANT SEP : "<<separatorsOfWords(&words)->count();
-
-            deleteSeparator(s);
-            qDebug()<<"MILIEU SEP : "<<separatorsOfWords(&words)->count();
-            addSeparator(s->getTime1(), s->getLength());
-
-
-            qDebug()<<"APRE SEP : "<<separatorsOfWords(&words)->count();
-
-
-
-            break;
-        }
-        last = w;
-    }
-}
-
-USeparateur *  Lyrics::addSeparator(int time, int length)
-{
-
-    Word * w ;
-    Sentence * s;
-    Sentence * into = NULL;
-
-    foreach(s,sentences)
-    {
-        if(s->getWords()->first()->getTime() < time
-           && s->getWords()->last()->getTime() > time )
-        {
-            into = s;
-            break;
-        }
-    }
-
-    if(!into) return NULL;
-
-    Sentence * newSent = new Sentence(this);
-    USeparateur * newSep = new USeparateur(time,length);
-
-
-    QList<Word*> wordChange;
-    foreach(w,*into->getWords())
-    {
-        if(w->getTime()>time)
-        {
-            wordChange.push_back(w);
-        }
-    }
-
-    foreach(w,wordChange)
-    {
-        into->getWords()->removeOne(w);
-        newSent->addWord(w);
-    }
-
-    newSent->setSepAfter(into->getSepAfter());
-    newSent->setSepBefore(newSep);
-
-    into->setSepAfter(newSep);
-
-    addSentence(newSent);
-
-    return newSep;
-
-
-
-}
-void Lyrics::deleteSeparator(USeparateur *s)
-{
-    if(s==NULL) return;
-
-    Sentence * before=NULL;
-    Sentence * sent;
-    Sentence * Supp=NULL;
-
-    foreach(sent,sentences)
-    {
-        if(sent->getSepAfter() == s)
-        {
-            before = sent;
-        }
-        else
-        if(before && sent->getSepBefore() == s) // move those words to the sentence before
-        {
-            Supp = sent;
-            before->addWords(*sent->getWords());
-            break;
-        }
-    }
-
-    if(Supp)
-    {
-        before->setSepAfter(Supp->getSepAfter());
-
-        sentences.removeOne(Supp);
-    }
-
-}
-
-void Lyrics::addSentence(Sentence *sent)
-{
-    Sentence * s;
-
-    int k=0;
-    if(sent->getSepAfter())
-    {
-        foreach(s,sentences)
-        {
-            if(s->getSepAfter() && sent->getSepAfter()->getTime1() < s->getSepAfter()->getTime1())
-            {
-                sentences.insert(k,sent);
-                return;
-            }
-            ++k;
-        }
-    }
-
-    sentences.push_back(sent);
+    Word * sep = new Word(this, time, 0, 0, Word::Separator);
+    addWord(sep);
+    return sep;
 }
 
 void Lyrics::removeWord(Word *w)
 {
-    Sentence  * s;
-    foreach(s,sentences)
-    {
-        if(s->getWords()->contains(w))
-        {
-            s->getWords()->removeOne(w);
-            if(s->getWords()->empty())
-            {
-                removeSentence(s);
-            }
-            break;
-        }
-    }
-    words.removeOne(w);
-
-}
-void Lyrics::removeSentence(Sentence *sent)
-{
-    if(!sent->getWords()->empty())
-    {
-        foreach(Word *w,*sent->getWords())
-        {
-            removeWord(w);
-        }
-    }
-
-    if(sent->getSepBefore())
-    {
-        deleteSeparator(sent->getSepBefore());
-        return;
-    }
-
-    if(sent->getSepAfter())
-    {
-        deleteSeparator(sent->getSepAfter());
-        return;
-    }
-
-    sentences.removeAll(sent);
-
+    _words.removeOne(w);
 }
 void Lyrics::addWord(Word *ws)
 {
-    Sentence  * s;
-
-    if(sentences.empty())
-    {
-        sentences.push_back(new Sentence(this,0,0));
-    }
-
-    foreach(s,sentences)
-    {
-        if(!s->getSepAfter() || s->getSepAfter()->getTime1() > ws->getTime())
-        {
-            s->addWord(ws);
-            break;
-        }
-    }
-
     Word  * w;
     int k =0;
-    foreach(w,words)
+    foreach(w,_words)
     {
         if(w->getTime() > ws->getTime())
         {
-            words.insert(k,ws);
+            _words.insert(k,ws);
             return;
         }
         ++k;
     }
-    words.push_back(ws);
-
-
+    _words.push_back(ws);
 }
 
 void Lyrics::sortAll()
 {
-    if(words.empty()) return;
-/*
-    _lines.clear();
+    if(_words.empty()) return;
 
-
-    foreach(Sentence*s,sentences)
-    {
-        foreach(Word*w,*s->getWords())
-        {
-             _lines.push_back(w);
-         }
-
-        if(s->getSepAfter() && !_lines.contains(s->getSepAfter()))
-        {
-                _lines.push_back(s->getSepAfter());
-        }
-    }
-
-   // qSort(_lines.begin(),_lines.end(),UAbstractLine::lessThan);
-
-    //fromLines(&_lines);*/
-
-
-
-
-    qSort(words.begin(),words.end(),Word::wordLessThanPtr);
-
-    foreach(Sentence *s,sentences)
-    {
-        qSort(s->getWords()->begin(),s->getWords()->end(),Word::wordLessThanPtr);
-    }
-
-    USeparateur * rightSep;
-
-    foreach(Sentence *s,sentences)
-    {
-        if(s->getSepAfter() && s->getSepBefore())
-        {
-            rightSep = s->getSepAfter();
-
-            foreach(Word * w,*rightSep->getRightSentence()->getWords())
-            {
-                if(w->getTime()>rightSep->getTime1()) break;
-/*
-                rightSep->getRightSentence()->getWords()->removeAll(w);
-                s->addWord(w);*/
-                qDebug()<<"HAPPEN1 "<<w->getWord();
-           }
-           if(rightSep->getRightSentence()->getWords()->empty())
-            {
-                this->removeSentence(rightSep->getRightSentence());
-            }
-
-
-            if(rightSep->getTime1()<s->getSepBefore()->getTime1())
-            {
-                qDebug()<<"HAPPEN ";//<<w->getWord();
-
-                USeparateur * temps = s->getSepBefore();
-                s->setSepBefore(s->getSepAfter());
-                s->setSepAfter(rightSep->getRightSentence()->getSepAfter());
-
-                rightSep->getRightSentence()->setSepBefore(temps);
-                rightSep->getRightSentence()->setSepAfter(s->getSepBefore());
-
-                int i = sentences.indexOf(s);
-                sentences.removeOne(s);
-                sentences.insert(i+1,s);
-
-            }
-
-        }
-
-    }
-
-
-
-}
-
-int * Lyrics::fromLines(QList<UAbstractLine *> *lines)
-{
-    words.clear();
-    sentences.clear();
-
-    QList<USeparateur*> sep;
-
-    foreach(UAbstractLine*l,*lines)
-    {
-        if(lines->first()->getType()==TYPE_NOTE)
-        {
-            words.push_back((Word*)l);
-        }
-        else
-        {
-            sep.push_back((USeparateur*)l);
-        }
-    }
-    if(words.empty()) return NULL;
-
-    Sentence * sent = new Sentence(this,0,0);
-    sent->addWords(words);
-    sentences.push_back(sent);
-
-    foreach(USeparateur * s,sep)
-    {
-        addSeparator(s->getTime(),s->getLength());
-    }
-
-    return NULL;
-
+    qSort(_words.begin(),_words.end(),Word::wordLessThanPtr);
 }
 
 void Lyrics::doublePresicion()
 {
     if(_bpm>800) {
-        QMessageBox::warning(NULL,tr("impossible"),tr("le BPM est déjà bien assez grand"));
+        QMessageBox::warning(NULL,tr("impossible"),tr("le BPM est dÃ©jÃ  bien assez grand"));
         return;
     }
 
-    foreach(Word *w,words)
+    foreach(Word *w,_words)
     {
         w->setTime(w->getTime()*2);
         w->setLength(w->getLength()*2);
-    }
-
-    foreach(Sentence*s,sentences)
-    {
-        if(s->getSepAfter())
-        {
-            s->getSepAfter()->setTime(s->getSepAfter()->getTime()*2);
-            s->getSepAfter()->setLength(s->getSepAfter()->getLength());
-        }
     }
 
 }

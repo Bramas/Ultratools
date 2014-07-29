@@ -49,28 +49,8 @@
 #include <QObject>
 #include <QDesktopServices>
 
-enum { TYPE_NOTE, TYPE_SEPARATOR };
 
-class UAbstractLine
-{
-public:
-    UAbstractLine(quint8 type){ _TYPE=type; };
-
-    virtual int getTime() const = 0;
-    quint8 getType(void) { return _TYPE; };
-
-
-    static bool lessThan(const UAbstractLine * a,const UAbstractLine * b);
-
-    quint8 _TYPE;
-
-};
-
-
-
-class Sentence;
-
-class USeparateur : public UAbstractLine
+class USeparator
 {
 public:
     USeparateur(int time, int length) : UAbstractLine(TYPE_SEPARATOR) { _oTime = _time = time; _oLength = _length = length; }

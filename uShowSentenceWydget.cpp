@@ -24,6 +24,11 @@
 
 
 #include "uShowSentenceWydget.h"
+#include <QMoveEvent>
+#include <QMessageBox>
+#include <QPainter>
+#include <math.h>
+#include <QDebug>
 
 #define TAILLE_FENETRE 1000
 #define HAUTEUR_NOTE 20
@@ -86,7 +91,7 @@ _previousDisplayed=2;
 
      _mousePressed = _isPlaying = _clickAndMoveSelection = false;
 
-     _fPointPress=QPointF(0.0,0.0);
+     _fPointPress=QPointF::QPointF(0.0,0.0);
      _timePress=QTime::currentTime();
     _hSizeCursor=_hSplitHCursor=_sizeAllCursor=_timeLocked=false;
      _overed=NULL;
@@ -119,7 +124,7 @@ void ShowSentenceWidget::mousePressEvent(QMouseEvent *event)
 {
     emit singleClik();
     _clickAndMoveSelection = false;
-    _fPointPress =QPointF(event->x(),event->y());
+    _fPointPress = QPointF::QPointF(event->x(),event->y());
     _timePress = QTime::currentTime();
     _mousePressed = true;
 
@@ -131,7 +136,7 @@ void ShowSentenceWidget::mousePressEvent(QMouseEvent *event)
         if(_nextClick==ShowSentenceWidget::NEXT_CLICK_ADD_NOTE)
         {
             Word * w = new Word(NULL,mouseTime,4,mousePitch);
-            w->setWord("~");
+            w->setText("~");
             lyrics->addWord(w);
             _selected.push_back(w);
             emit modified();
@@ -139,7 +144,7 @@ void ShowSentenceWidget::mousePressEvent(QMouseEvent *event)
         }else
         if(_nextClick==ShowSentenceWidget::NEXT_CLICK_ADD_SEPARATOR)
         {
-            _overSep = lyrics->addSeparator(mouseTime,0);
+            _overSep = lyrics->addSeparator(mouseTime);
 
         }
 
@@ -156,18 +161,18 @@ void ShowSentenceWidget::mousePressEvent(QMouseEvent *event)
     if(UInputManager::Instance.isKeyPressed(Qt::Key_Control) && _selected.contains(_overed) )
     {
         _selected.removeOne(_overed);
-        _overed->_selected = false;
+        _overed->setSelected(false);
         if(!_selected.empty())
         {
-            emit selection(Word::minIndexOfWords(_selected,*_wordsDisplayed),Word::maxIndexOfWords(_selected,*_wordsDisplayed));
+            emit selection(Word::minIndexOfWords(_selected,lyrics->words()),Word::maxIndexOfWords(_selected,lyrics->words()));
         }
     }
     else
     if(!_selected.contains(_overed) && _overed)
     {
-        _overed->_selected=true;
+        _overed->setSelected(true);
         _selected.push_back(_overed);
-        emit selection(Word::minIndexOfWords(_selected,*_wordsDisplayed),Word::maxIndexOfWords(_selected,*_wordsDisplayed));
+        emit selection(Word::minIndexOfWords(_selected,lyrics->words()),Word::maxIndexOfWords(_selected,lyrics->words()));
     }
     else
     if(!_overed)
@@ -208,22 +213,14 @@ void ShowSentenceWidget::mouseReleaseEvent(QMouseEvent *event)
        foreach(w,_selected)
        {
            w->hold();// finish the modification
-           lyrics->sortThisWord(w);
+           lyrics->resortWord(w);
            emit modified();
        }
-       QList<USeparateur*>  * sep = lyrics->separatorsOfWords(&_selected);
-       sep->removeAll(_selected.first()->getParent()->getSepBefore());
-       sep->removeAll(_selected.last()->getParent()->getSepAfter());
-       foreach(USeparateur * se , *sep)
-       {
-            se->hold();
-       }
-
    }
    if(_overSep)
    {
        _overSep->hold();
-       lyrics->sortThisSeparator(_overSep);
+       lyrics->resortWord(_overSep);
 
      //  qDebug()<<_overSep->getLength();
    }
@@ -245,8 +242,6 @@ void ShowSentenceWidget::mouseReleaseEvent(QMouseEvent *event)
         _seekPosition = *range[0];
         emitSeek();
 
-        delete range[0];
-        delete range[1];
 
     }
 #ifndef UPDATE_BY_TIMER
@@ -273,8 +268,10 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
 
 
    mouseTime=((float)(_lastBeatDisplayed-_firstBeatDisplayed))*(((float)event->x())/((float)width()))+_firstBeatDisplayed;
-   mousePitch=(((-(float)vScale)/10.0))*(((float)event->y())/((float)height()))+(256-vScroll);
+   mousePitch=(256-vScroll) - (vScale/10)*(((qreal)event->y())/((qreal)height()));
 
+   //qDebug()<<(((qreal)event->y())/((qreal)height()))<<" "<<(vScale/10)*(((qreal)event->y())/((qreal)height()))<<" "<<(256-vScroll);
+   //qDebug()<<mousePitch;
 
     if(_mousePressed && !_isPlaying && (_fMousePosition-_fPointPress).manhattanLength()<10 && _timePress.msecsTo(QTime::currentTime())<500 && _overed==NULL)
     {
@@ -334,10 +331,10 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
              {
                  //QMessageBox::warning(NULL,"" ,"lol");
                      _selected.push_back(w);
-                     w->_selected = true;
+                     w->setSelected();
               }
         }
-        emit selection(Word::minIndexOfWords(_selected,*_wordsDisplayed),Word::maxIndexOfWords(_selected,*_wordsDisplayed));
+        emit selection(Word::minIndexOfWords(_selected,lyrics->words()),Word::maxIndexOfWords(_selected,lyrics->words()));
 
     }
     else
@@ -391,13 +388,6 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
                     w->setTime(w->getOTime()+diffX,false);
                 }
             }
-            QList<USeparateur*>  * sep = lyrics->separatorsOfWords(&_selected);
-            sep->removeAll(_selected.first()->getParent()->getSepBefore());
-            sep->removeAll(_selected.last()->getParent()->getSepAfter());
-            foreach(USeparateur * se , *sep)
-            {
-                 se->setTime(se->getOTime()+diffX,false);
-            }
        }
    }
     else
@@ -439,18 +429,39 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
 
 }
 
+QRectF ShowSentenceWidget::scaleRect(qreal x, qreal y, qreal w, qreal h)
+{
+    return QRectF(scaledCoordinates(x,y), scaledCoordinates(x+w, y+h));
+}
+qreal ShowSentenceWidget::scaleWidth(qreal w)
+{
+    return w*(qreal)width()/(qreal)hScale;
+}
+qreal ShowSentenceWidget::scaleHeight(qreal h)
+{
+    return h*(qreal)height()/(qreal)vScale;
+}
 
-
-
-
+QPointF ShowSentenceWidget::scaledCoordinates(qreal x, qreal y)
+{
+    return QPoint((x - realHStartView + _gap)*(qreal)width()/(qreal)hScale, (y-vScroll*10.0)*(qreal)height()/(qreal)vScale);
+}
+QPointF ShowSentenceWidget::scaledCoordinates(const QPointF &point)
+{
+    return scaledCoordinates(point.x(), point.y());
+}
+QPointF ShowSentenceWidget::scaledCoordinates(const QPoint &point)
+{
+    return scaledCoordinates(point.x(), point.y());
+}
 
 void ShowSentenceWidget::paintEvent(QPaintEvent * event)
 {
-    QPainter * painter = new QPainter(this);
-     painter->setRenderHint(QPainter::Antialiasing);
-     painter->scale((float)width()/(float)hScale, (float)height()/(float)vScale);
+    QPainter painter(this);
+     painter.setRenderHint(QPainter::Antialiasing);
+     //painter.scale((float)width()/(float)hScale, (float)height()/(float)vScale);
 
-    painter->translate(-realHStartView+_gap,-vScroll*10.0);
+    //painter.translate(-realHStartView+_gap,-vScroll*10.0);
 
 //qDebug()<<(lyrics->getGap()/1000.0-floor(lyrics->getGap()/1000.0));
 _firstBeatDisplayed = hScroll - _gap;
@@ -471,12 +482,12 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
 {
 
 
-    painter->setPen(QPen(QColor(0,173,232,170)));
+    painter.setPen(QPen::QPen(QColor::QColor(0,173,232,170)));
 
-    painter->setBrush(QBrush(QColor(255,255,255,255)));
+    painter.setBrush(QBrush::QBrush(QColor::QColor(255,255,255,255)));
 
 
-    painter->drawRect(_firstBeatDisplayed,sc,30,30);
+    painter.drawRect(QRectF(scaledCoordinates(_firstBeatDisplayed,sc),scaledCoordinates(_firstBeatDisplayed+30,sc+30)));
 
 
 }
@@ -485,60 +496,59 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
 
 
 
-     painter->setPen(QPen(QColor(0,0,0,170)));
-     painter->setBrush(QBrush(QColor(0,255,255,255)));
+     painter.setPen(QPen::QPen(QColor::QColor(0,0,0,170)));
+     painter.setBrush(QBrush::QBrush(QColor::QColor(0,255,255,255)));
 
 
 
 
-     painter->setPen(QPen(QColor(0,173,232,170)));
+     painter.setPen(QPen::QPen(QColor::QColor(0,173,232,170)));
 
-     painter->setBrush(QBrush(QColor(255,255,255,255)));
+     painter.setBrush(QBrush::QBrush(QColor::QColor(255,255,255,255)));
 
 
 
-   //  //qDebug()<<"vscale : "<<vScale<<"  "<<((float)height()/(float)vScale);
       QTextOption numbreTextOption;
       numbreTextOption.setWrapMode(QTextOption::NoWrap);
 
       for(int i=ceil(vScroll*10.0/20);i<=ceil((vScroll*10.0+vScale)/20);i++)
      {
-         painter->drawLine(_firstBeatDisplayed,i*20,_lastBeatDisplayed,i*20);
+         painter.drawLine(scaledCoordinates(_firstBeatDisplayed,i*20),scaledCoordinates(_lastBeatDisplayed,i*20));
          
 
 
      }
 
 
-      painter->setPen(QPen(QColor(0,0,0,linearRangeOpacity(1500, 7000,250,80))));
+      painter.setPen(QPen::QPen(QColor::QColor(0,0,0,linearRangeOpacity(1500, 7000,250,80))));
       //1500, 7000
-
 
 
 // RENDER verticale lines
        if(!_isPlaying  || _mousePressed) //to go faster while playing
       {
-           for(int i=_firstBeatDisplayed-ceil(mod(_firstBeatDisplayed,pas));i<=_lastBeatDisplayed;i+=pas)
+           for(int i=_firstBeatDisplayed - ceil(mod(_firstBeatDisplayed,pas)) ; i<=_lastBeatDisplayed;i+=pas)
             {
-                 painter->drawLine(i,sc,i,sc2);
+                 painter.drawLine(scaledCoordinates(i,0).x(),0,scaledCoordinates(i,0).x(),height());
             }
+
 
             if(( opacity=expRangeOpacity(100,2000,200))>20)
             {
                 //opacity=expRangeOpacity(100,1000,200);
-                painter->setPen(QPen(QColor(0,0,0,opacity)));
+                painter.setPen(QPen::QPen(QColor::QColor(0,0,0,opacity)));
                pas=10;
                 iA=ceil((realHStartView)/pas);
                 iB=ceil(realHEndView/pas);
                 for(int i=max(0,_firstBeatDisplayed-ceil(mod(_firstBeatDisplayed,pas)));i<=_lastBeatDisplayed;i+=pas)
                 {
-                     painter->drawLine(i,sc,i,sc2);
+                     painter.drawLine(scaledCoordinates(i,0).x(), 0,scaledCoordinates(i,0).x(), height());
                 }
 
                  if((opacity=expRangeOpacity(20,340,200))>20)
                 {
                      ////qDebug()<<opacity;
-                    painter->setPen(QPen(QColor(0,0,0,opacity)));
+                    painter.setPen(QPen::QPen(QColor::QColor(0,0,0,opacity)));
 
                    pas=1;
 
@@ -548,122 +558,32 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
                     iB=ceil(realHEndView/pas);
                     for(int i=max(0,_firstBeatDisplayed-ceil(mod(_firstBeatDisplayed,pas)));i<=_lastBeatDisplayed;i+=pas)
                     {
-                         painter->drawLine(i,sc,i,sc2);
+                         painter.drawLine(scaledCoordinates(i,0).x(), 0,scaledCoordinates(i,0).x(), height());
                     }
                 }
            }
         }// if( RENDER verticale lines )
 
+       if(!_mousePressed)
+           _overSep=NULL;
 
-        if(lyrics)
+       if(lyrics)
        {
-            renderLyrics(painter);
+            renderLyrics(&painter);
             sortSelected();
-
-            renderPreviousSentence(painter);
+            renderPreviousSentence(&painter);
         }
 
-
-        painter->setPen(QPen(QColor(255,0,0,255)));
-
-        painter->drawLine(QPointF(_seekPosition,sc),QPointF(_seekPosition,sc2));
-
-if(!_mousePressed)
-    _overSep=NULL;
-
-
-        QList<USeparateur*> * sep = lyrics->separatorsOfWords(_wordsDisplayed);
-        if(sep)
+// Draw cursor
+        painter.setPen(QPen::QPen(QColor::QColor(255,0,0,255)));
         {
-            USeparateur *s;
-            painter->setPen(QPen(QColor(100,255,100,210)));
-            painter->setBrush(QBrush(QColor(100,255,100,210)));
-            QRectF rect[3];
-
-            //qDebug()<<_fMousePosition.y()<<"  "<<_fMousePosition.y()*vScale/height()<<"  "<<vScroll*10;
-            foreach(s,*sep)
-            {
-
-                if(s) // s may be NULL if it's the first separator or the last
-                {
-
-                    rect[0].setRect(s->getTime1()-1,vScroll*10+5,s->getLength()+2,15);
-
-                    rect[1].setRect(s->getTime1()-1,vScroll*10+30,0.5+s->getLength()/4.0,15);
-
-                    rect[2].setRect(s->getTime2()+0.5-s->getLength()/4.0,vScroll*10+30,0.5+s->getLength()/4.0,15);
-
-
-
-                        if(!_nextClick && mouseTime>s->getTime1()-1 && mouseTime<s->getTime2()+1 &&
-                          _fMousePosition.y()*vScale/height()>5 &&
-                         _fMousePosition.y()*vScale/height()<20 &&
-                         (!_overSep || (_overSep == s && _overSep->getOver() == 0)) // if it's currently selected
-                         )
-                        {
-                            painter->setBrush(QBrush(QColor(255,100,100,210)));
-                            _hSplitHCursor=true;
-                            _overSep = s;
-                            s->setOver(0);
-                        }
-                        else
-                        {
-                            painter->setBrush(QBrush(QColor(100,255,100,210)));
-                        }
-
-                        painter->drawRect(rect[0]);
-
-
-                        if(!_nextClick && mouseTime>s->getTime1()-1 && mouseTime<s->getTime1()-0.5+s->getLength()/4.0 &&
-                          _fMousePosition.y()*vScale/height()>30 &&
-                         _fMousePosition.y()*vScale/height()<45 &&
-                         (!_overSep || (_overSep == s && _overSep->getOver() & ShowSentenceWidget::OVER_LEFT)) )
-                        {
-                            painter->setBrush(QBrush(QColor(255,100,100,210)));
-                            _hSizeCursor=true;
-                            _overSep = s;
-                            s->setOver(ShowSentenceWidget::OVER_LEFT);
-                        }
-                        else
-                        {
-                            painter->setBrush(QBrush(QColor(100,255,100,210)));
-                        }
-
-                        painter->drawRect(rect[1]);
-
-                        if(!_nextClick && mouseTime<s->getTime2()+1 && mouseTime>s->getTime2()+0.5-s->getLength()/4.0 &&
-                          _fMousePosition.y()*vScale/height()>30 &&
-                         _fMousePosition.y()*vScale/height()<45 &&
-                         (!_overSep || (_overSep == s && _overSep->getOver() & ShowSentenceWidget::OVER_RIGHT)))
-                        {
-                            painter->setBrush(QBrush(QColor(255,100,100,210)));
-                            _hSizeCursor=true;
-                            _overSep = s;
-                            s->setOver(ShowSentenceWidget::OVER_RIGHT);
-                        }
-                        else
-                        {
-                            painter->setBrush(QBrush(QColor(100,255,100,210)));
-                        }
-
-
-                    painter->drawRect(rect[2]);
-
-
-                }
-            }
-
-            painter->setBrush(QBrush(QColor(40,40,40,120)));
-            foreach(s,*sep)
-            {
-                if(s) // s may be NULL if it's the first separator or the last
-                {
-                    //painter->drawImage(QRect(s->getTime1(),sc,vScale/height()*25,hScale/width()*25),QImage("move.png"));
-                    painter->drawRect(s->getTime1(),sc+70,s->getLength()+0.1,sc2-sc-70);
-                }
-
-            }
+            qreal x = scaledCoordinates(_seekPosition,0).x();
+            painter.drawLine(x,0,x,height());
         }
+
+
+
+
 
 
         // THE SELECTION____________________
@@ -671,15 +591,9 @@ if(!_mousePressed)
         if(_clickAndMoveSelection || !_selected.empty())
         {
             //QMessageBox::warning(NULL,"","lol");
-            painter->setBrush(QBrush(QColor(0,0,255,60)));
-            painter->drawRect(QRectF(_floatSelection[0],sc,_floatSelection[1]-_floatSelection[0],sc2-sc));
+            painter.setBrush(QBrush::QBrush(QColor::QColor(0,0,255,60)));
+            painter.drawRect(QRectF(scaledCoordinates(_floatSelection[0],0).x(),0,scaleWidth(_floatSelection[1]-_floatSelection[0]), height()));
         }
-        /*else if()
-        {
-            painter->setBrush(QBrush(QColor(0,0,255,60)));
-            painter->drawRect(QRectF(_floatSelection[0],sc,_floatSelection[1]-_floatSelection[0],sc2-sc));
-
-        }*/
 
         // END THE SELECTION__________________________
 
@@ -703,8 +617,6 @@ if(!_mousePressed)
             this->setCursor(Qt::ArrowCursor);
         }
 
-delete painter;
-
 
 #ifdef DISPLAY_FPS
     parent->setWindowTitle(QString::number(time.restart()));
@@ -719,41 +631,29 @@ void ShowSentenceWidget::renderLyrics(QPainter * painter)
 {
     _wordsDisplayed->clear();
     _overed=NULL;
-    painter->setPen(QPen(QColor(0,0,0,170)));
-     painter->setBrush(QBrush(QColor(0,173,232,170)));
-       QFont font;
+    QFont font;
+    font.setPixelSize(15);
+    font.setFamily("Niagara");
+    painter->setFont(font);
 
-
-       font.setPixelSize(8);
-       font.setFamily("Niagara");
-
-
-       if(200>this->hScale)
+    foreach(Word* tWord,lyrics->words())
+    {
+        painter->setPen(QPen::QPen(QColor::QColor(0,0,0,170)));
+        painter->setBrush(QBrush::QBrush(QColor::QColor(0,173,232,170)));
+        if(tWord->getTime()+tWord->getLength()>=_firstBeatDisplayed && tWord->getTime()<_lastBeatDisplayed)
         {
-             font.setStretch(30);
-         }
+            _wordsDisplayed->push_back(tWord);
+            if(tWord->isSeparator())
+            {
+                renderSeparator(painter, tWord);
+            }
+            else
+            {
+                renderWord(painter,tWord);
+            }
+        }
 
-
-       painter->setFont(font);
-
-         QListIterator<Word *> Iwords(*lyrics->getAllWords());
-            Word* tWord;
-
-         foreach(tWord,*lyrics->getAllWords())
-         {
-
-               if(tWord->getTime()+tWord->getLength()>=_firstBeatDisplayed && tWord->getTime()<_lastBeatDisplayed)
-              {
-
-                    _wordsDisplayed->push_back(tWord);
-                   renderWord(painter,tWord);
-
-               }
-
-         }
-
-
-
+    }
 }
 
 void ShowSentenceWidget::deselect()
@@ -761,7 +661,7 @@ void ShowSentenceWidget::deselect()
     Word * w;
     foreach(w,_selected)
     {
-        w->_selected = false;
+        w->setSelected(false);
     }
     _selected.clear();
 }
@@ -771,54 +671,55 @@ bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w)
 {
 
 
-    painter->setBrush(QBrush(QColor(0,173,232,170)));
+    painter->setBrush(QBrush::QBrush(QColor::QColor(0,173,232,170)));
 
 
     if(!_nextClick && mouseTime>w->getTime() && mouseTime<w->getTime()+w->getLength() &&
       mousePitch>w->getPitch() && mousePitch<w->getPitch()+2)
     {
-        painter->setBrush(QBrush(QColor(232,173,0,170)));
+        painter->setBrush(QBrush::QBrush(QColor::QColor(232,173,0,170)));
         _overed=w;
 
        _sizeAllCursor=true;
     }
     else if(w->isGold())
     {
-        painter->setBrush(QBrush(QColor(255,255,0,210)));
+        painter->setBrush(QBrush::QBrush(QColor::QColor(255,255,0,210)));
     }
     else if(w->isFree())
     {
-        painter->setBrush(QBrush(QColor(232,173,0,170)));
+        painter->setBrush(QBrush::QBrush(QColor::QColor(232,173,0,170)));
 
-        painter->setBrush(QBrush(QColor(0,0,0,40)));
+        painter->setBrush(QBrush::QBrush(QColor::QColor(0,0,0,40)));
     }
    else
    {
-        painter->setBrush(QBrush(QColor(0,173,232,170)));
+        painter->setBrush(QBrush::QBrush(QColor::QColor(0,173,232,170)));
     }
 
-   if(w->_selected)
+   if(w->isSelected())
    {
-       painter->setBrush(QBrush(QColor(255,173,0,255)));
+       painter->setBrush(QBrush::QBrush(QColor::QColor(255,173,0,255)));
    }
 
 
-   painter->drawText(
-           w->getTime(),
-           (255-w->getPitch())*10+HAUTEUR_NOTE/2+5,
+   QPointF p = scaledCoordinates(w->getTime(),(255-w->getPitch())*10+HAUTEUR_NOTE/2+5);
+   painter->drawText(p.x(), p.y(),
            200,
            30,
-           Qt::TextWordWrap,w->getWord());
+           Qt::TextWordWrap,w->getText());
 
+   p = scaledCoordinates(w->getTime(),(255-w->getPitch())*10-HAUTEUR_NOTE/2);
+   QRectF r(p.x(), p.y(), scaleWidth(w->getLength()), scaleHeight(HAUTEUR_NOTE));
     if(80<this->hScale)
     {
-          painter->drawRect(w->getTime(),(255-w->getPitch())*10-HAUTEUR_NOTE/2,w->getLength(),HAUTEUR_NOTE);
+          painter->drawRect(r);
     }
     else
     {
-        painter->drawRoundedRect(w->getTime(),(255-w->getPitch())*10-HAUTEUR_NOTE/2,w->getLength(),HAUTEUR_NOTE,
-                                 10.0/((float)width()/(float)hScale),
-                                 10.0/((float)height()/(float)vScale));
+        painter->drawRoundedRect(r,
+                                 scaleWidth(10.0/((float)width()/(float)hScale)),
+                                 scaleHeight(10.0/((float)height()/(float)vScale)));
     }
 
 
@@ -830,9 +731,9 @@ bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w)
           mousePitch>w->getPitch() && mousePitch<w->getPitch()+1  )
         {
 
-            painter->setBrush(QBrush(QColor(0,0,0,100)));
+            painter->setBrush(QBrush::QBrush(QColor::QColor(0,0,0,100)));
             w->setOver(ShowSentenceWidget::OVER_LEFT);
-            painter->drawRect(QRectF(w->getTime(),(255-w->getPitch())*10,min(w->getLength()/2.0,1.5),HAUTEUR_NOTE/2));
+            painter->drawRect(scaleRect(w->getTime(),(255-w->getPitch())*10,min(w->getLength()/2.0,1.5),HAUTEUR_NOTE/2));
 
             _hSizeCursor=true;
         }
@@ -840,9 +741,9 @@ bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w)
           mousePitch>w->getPitch() && mousePitch<w->getPitch()+1 )
         {
 
-            painter->setBrush(QBrush(QColor(0,0,0,100)));
+            painter->setBrush(QBrush::QBrush(QColor::QColor(0,0,0,100)));
             w->setOver(ShowSentenceWidget::OVER_RIGHT);
-            painter->drawRect(QRectF(w->getTime()+w->getLength()-min(w->getLength()/2.0,1.5),(255-w->getPitch())*10,min(w->getLength()/2.0,1.5),HAUTEUR_NOTE/2));
+            painter->drawRect(scaleRect(w->getTime()+w->getLength()-min(w->getLength()/2.0,1.5),(255-w->getPitch())*10,min(w->getLength()/2.0,1.5),HAUTEUR_NOTE/2));
 
             _hSizeCursor=true;
         }
@@ -858,35 +759,22 @@ void ShowSentenceWidget::renderPreviousSentence(QPainter * painter)
 {
     if(_wordsDisplayed->empty() || !_previousDisplayed) return;
 
+    return;
+    /** FIXEME*/
+/*
+    painter->setBrush(QBrush::QBrush(QColor::QColor(0,0,0,40)));
+    painter->setPen(QPen::QPen(QColor::QColor(0,0,0,0)));
 
-      painter->setBrush(QBrush(QColor(0,0,0,40)));
-      painter->setPen(QPen(QColor(0,0,0,0)));
+    int add;
 
-int add;
-Sentence * prevSent;
-
-     foreach(Sentence * s,*lyrics->sentencesOfWords(_wordsDisplayed))
-      {
-         if(lyrics->getSentences()->indexOf(_wordsDisplayed->first()->getParent())<_previousDisplayed) continue;
-
-              add = s->getWords()->first()->getTime();
-
-              prevSent = lyrics->getSentences()->at(lyrics->getSentences()->indexOf(s)-_previousDisplayed);
-
-
-              if(prevSent->getWords()->empty()) return;
-
-              if(prevSent->getSepBefore())
-              {
-                  add-=prevSent->getWords()->first()->getTime();
-              }
-
-
-            foreach(Word * w,*prevSent->getWords())
-            {
-                painter->drawRect(w->getTime()+add,(255-w->getPitch())*10-HAUTEUR_NOTE/2,w->getLength(),HAUTEUR_NOTE);
-            }
+    foreach(Sentence * s,*lyrics->sentencesOfWords(_wordsDisplayed))
+    {
+        if(lyrics->getSentences()->indexOf(_wordsDisplayed->first()->getParent())<_previousDisplayed) continue;
+        foreach(Word * w,*prevSent->getWords())
+        {
+            painter->drawRect(w->getTime()+add,(255-w->getPitch())*10-HAUTEUR_NOTE/2,w->getLength(),HAUTEUR_NOTE);
         }
+    }*/
 }
 
 void ShowSentenceWidget::setHScale(int s)
@@ -912,9 +800,6 @@ void ShowSentenceWidget::setVScale(int s)
 
 int ShowSentenceWidget::expRangeOpacity(int a, int b,int opaque)
 {
-
-
-
     if(hScale<b && hScale>a)
     {
 
@@ -950,7 +835,6 @@ void ShowSentenceWidget::setLyrics(Lyrics * lyrics)
 
      _gap = (floor(lyrics->getGap())/1000.0)*lyrics->getBpm()/15.0f;
 
-
 #ifndef UPDATE_BY_TIMER
     update();
 #endif
@@ -958,7 +842,7 @@ void ShowSentenceWidget::setLyrics(Lyrics * lyrics)
 void ShowSentenceWidget::updateGap(void)
 {
 
-     _gap = (floor(lyrics->getGap())/1000.0)*lyrics->getBpm()/15.0f;
+     _gap = (floor(lyrics->getGap())/1000.0)*lyrics->getBpm()/15.0;
 
 
 #ifndef UPDATE_BY_TIMER
@@ -1038,17 +922,79 @@ QList<Word*> * ShowSentenceWidget::getWordsDisplayedPtr()
 
 
 }
-QRectF * ShowSentenceWidget::separatorLines(USeparateur *s,QRectF * rect)
+void ShowSentenceWidget::renderSeparator(QPainter * painter, Word * w)
 {
-
-    rect[0].setRect(s->getTime1()-1,vScroll*10+5,s->getLength()+2,15);
-
-    rect[1].setRect(s->getTime1()-1,vScroll*10+30,0.5+s->getLength()/4.0,15);
-
-    rect[2].setRect(s->getTime2()+0.5-s->getLength()/4.0,vScroll*10+30,0.5+s->getLength()/4.0,15);
+    painter->setPen(QPen::QPen(QColor::QColor(100,255,100,210)));
+    painter->setBrush(QBrush::QBrush(QColor::QColor(100,255,100,210)));
+    QRectF rect[3];
 
 
-return rect;
+    rect[0] = QRectF(scaledCoordinates(w->getTime1()-1,0).x(),0, scaleWidth(w->getLength()+2),15);
+
+    rect[1] = QRectF(scaledCoordinates(w->getTime1()-1,0).x(), 17,scaleWidth(w->getLength()/4.0)+2,15);
+
+    rect[2] = QRectF(scaledCoordinates(w->getTime2()+1-w->getLength()/4.0,0).x()-2,17,scaleWidth(w->getLength()/4.0)+2,15);
+
+
+    if(!_nextClick && _fMousePosition.x() > rect[0].left() - 1 &&
+            _fMousePosition.x() < rect[0].right() + 1 &&
+            _fMousePosition.y() > rect[0].top() &&
+            _fMousePosition.y() < rect[0].bottom() &&
+     (!_overSep || (_overSep == w && _overSep->getOver() == 0)) // if it's currently selected
+     )
+    {
+        painter->setBrush(QBrush::QBrush(QColor::QColor(255,100,100,210)));
+        _hSplitHCursor=true;
+        _overSep = w;
+        w->setOver(0);
+    }
+    else
+    {
+        painter->setBrush(QBrush::QBrush(QColor::QColor(100,255,100,210)));
+    }
+
+    painter->drawRect(rect[0]);
+
+
+    if(!_nextClick && _fMousePosition.x() > rect[1].left() - 1 &&
+      _fMousePosition.x() < rect[1].right() &&
+      _fMousePosition.y() > rect[1].top() &&
+      _fMousePosition.y() < rect[1].bottom() + 1 &&
+     (!_overSep || (_overSep == w && _overSep->getOver() & ShowSentenceWidget::OVER_LEFT)) )
+    {
+        painter->setBrush(QBrush::QBrush(QColor::QColor(255,100,100,210)));
+        _hSizeCursor=true;
+        _overSep = w;
+        w->setOver(ShowSentenceWidget::OVER_LEFT);
+    }
+    else
+    {
+        painter->setBrush(QBrush::QBrush(QColor::QColor(100,255,100,210)));
+    }
+
+    painter->drawRect(rect[1]);
+
+    if(!_nextClick &&  _fMousePosition.x() > rect[2].left() - 1 &&
+            _fMousePosition.x() < rect[2].right() + 1 &&
+            _fMousePosition.y() > rect[2].top() &&
+            _fMousePosition.y() < rect[2].bottom() &&
+     (!_overSep || (_overSep == w && _overSep->getOver() & ShowSentenceWidget::OVER_RIGHT)))
+    {
+        painter->setBrush(QBrush::QBrush(QColor::QColor(255,100,100,210)));
+        _hSizeCursor=true;
+        _overSep = w;
+        w->setOver(ShowSentenceWidget::OVER_RIGHT);
+    }
+    else
+    {
+        painter->setBrush(QBrush::QBrush(QColor::QColor(100,255,100,210)));
+    }
+
+
+    painter->drawRect(rect[2]);
+
+    painter->drawRect(scaledCoordinates(w->getTime1(),0).x(),30,scaleWidth(w->getLength()+0.1),height()-30);
+
 }
 
 void ShowSentenceWidget::setNormal()
@@ -1095,7 +1041,7 @@ int fTime = _selected.first()->getTime()
 
     foreach(w,_selected)
     {
-        newW->setWord(newW->getWord()+w->getWord());
+        newW->setText(newW->getText()+w->getText());
         if(w->getTime() < fTime)
         {
             fTime = w->getTime();
@@ -1139,21 +1085,21 @@ void ShowSentenceWidget::scinder()
 
     QRegExp reg("[, -:!.]");
 
-    QStringList strlist = w->getWord().split(reg,QString::SkipEmptyParts);
+    QStringList strlist = w->getText().split(reg,QString::SkipEmptyParts);
 
     w->setLength(ceil(w->getLength()/2));
 
     if(strlist.count()<2)
     {
         lyrics->addWord(newW);
-        newW->setWord("~");
+        newW->setText("~");
         return;
     }
 
-    //newW->setWord(strlist.last());
-    newW->setWord(w->getWord().section(reg,-2,-1,QString::SectionSkipEmpty | QString::SectionIncludeLeadingSep));
+    //newW->setText(strlist.last());
+    newW->setText(w->getText().section(reg,-2,-1,QString::SectionSkipEmpty | QString::SectionIncludeLeadingSep));
 
-    w->setWord(w->getWord().section(reg,0,-3,QString::SectionSkipEmpty | QString::SectionIncludeLeadingSep));
+    w->setText(w->getText().section(reg,0,-3,QString::SectionSkipEmpty | QString::SectionIncludeLeadingSep));
     lyrics->addWord(newW);
 
 #ifndef UPDATE_BY_TIMER
@@ -1200,7 +1146,9 @@ void ShowSentenceWidget::calquer()
 {
     if(_selected.empty()) { return; }
 
-
+    return;
+    /** FIXEME */
+/*
     if(lyrics->getSentences()->indexOf(_selected.first()->getParent())<_previousDisplayed) return;
 
          int add = _selected.first()->getParent()->getWords()->first()->getTime();
@@ -1253,14 +1201,14 @@ void ShowSentenceWidget::calquer()
         {
             if(w->getTime()<max)
             {
-                str.append(w->getWord());
+                str.append(w->getText());
                 lyrics->removeWord(w);
                 _selected.removeAll(w);
                 delete w;
             }
         }
 
-        wordAdded.first()->setWord(str);
+        wordAdded.first()->setText(str);
         int k = 0;
         QString tempS;
         foreach(Word*w,wordAdded)
@@ -1283,7 +1231,7 @@ void ShowSentenceWidget::calquer()
                 tempS=  str.section(QRegExp("[ ,'\"-;:!.]"),k,-1,QString::SectionIncludeLeadingSep);
             }
 
-            w->setWord((tempS.compare("")?tempS:"~"));
+            w->setText((tempS.compare("")?tempS:"~"));
         }
 
         lyrics->addSeparator(wordAdded.first()->getTime()-2,0);
@@ -1292,7 +1240,7 @@ void ShowSentenceWidget::calquer()
 #ifndef UPDATE_BY_TIMER
     update();
 #endif
-
+*/
 }
 void ShowSentenceWidget::sortSelected()
 {

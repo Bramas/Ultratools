@@ -24,6 +24,10 @@
 
 #include <QApplication>
 #include <QFileInfo>
+#include <math.h>
+#include <QDebug>
+#include "uWord.h"
+#include "uLyrics.h"
 #include "uNoteManager.h"
 
 UNoteManager UNoteManager::Instance;
@@ -65,6 +69,12 @@ void UNoteManager::setupAudio(QObject *parent)
 
 
     }
+/*   FMOD_BOOL rep;
+   FMOD_Channel_GetPaused(_channels[-15], &rep);
+   qDebug()<<(bool)rep;
+   FMOD_Channel_SetPaused(_channels[-15],false);
+   FMOD_Channel_GetPaused(_channels[-15], &rep);
+   qDebug()<<(bool)rep;
 /* */
 
 }
@@ -81,19 +91,27 @@ void UNoteManager::play(Word * w)
   // _violonList.value(pitchToNote(w->getPitch()))->play();
 
 
-
-    FMOD_Channel_SetPaused(_channels[pitchToNote(w->getPitch())],false);
+    FMOD_BOOL rep;
+    FMOD_Channel_GetPaused(_channels[pitchToNote(w->getPitch())], &rep);
+    if(rep)
+    {
+        FMOD_Channel_SetPaused(_channels[pitchToNote(w->getPitch())],false);
+        //qDebug()<<"play "<<pitchToNote(w->getPitch());
+    }
 
 
 }
 
 int UNoteManager::pitchToNote(int note)
 {
-    while(note>3+_maxPitch+5-(_maxPitch+5)%12 + 12) { note-=12; }
-    while(note<-36+_maxPitch+5-(_maxPitch+5)%12 + 12) { note+=12; }
+    int noteOffset = _maxPitch;
+    while(noteOffset > 0) { noteOffset -= 12; }
+    while(noteOffset < -10) { noteOffset += 12; }
+    noteOffset = noteOffset - _maxPitch;
 
-    note -= _maxPitch+5-(_maxPitch+5)%12 + 12;
+    note += noteOffset;
     note += 1;
+    //qDebug()<<_maxPitch << "  "<<noteOffset + _maxPitch<< "  " << noteOffset<<"  :  "<<note;
 
     return note;
 }
@@ -131,15 +149,16 @@ void UNoteManager::tick(quint64 time)
     {
         if( temp  > w->getTime() + w->getLength()+2 || temp < w->getTime())
         {
-
-
-            //_violonList.value(pitchToNote(w->getPitch()))->stop();
-           // if(_played.empty()) _violon->stop();
             _played.removeOne(w);
-
             if(!checkPitch(w->getPitch()))
             {
-                FMOD_Channel_SetPaused(_channels[pitchToNote(w->getPitch())],true);
+                FMOD_BOOL rep;
+                FMOD_Channel_GetPaused(_channels[pitchToNote(w->getPitch())], &rep);
+                if(!rep)
+                {
+                    FMOD_Channel_SetPaused(_channels[pitchToNote(w->getPitch())],true);
+                    //qDebug()<<"stop "<<pitchToNote(w->getPitch());
+                }
                 FMOD_Channel_SetPosition(_channels[pitchToNote(w->getPitch())],0,FMOD_TIMEUNIT_MS);
             }
 

@@ -22,7 +22,7 @@
 **
 ****************************************************************************/
 
-
+#include "uFile.h"
 #include "uDialog_fileheader.h"
 #include "ui_udialog_fileheader.h"
 
