@@ -40,5 +40,5 @@ void UDialogHelp::paintEvent(QPaintEvent * event)
 
     //painter->drawImage(QRect(0,0,800,600),QImage::QImage(tr("images/Help.fr.jpg")));
    // painter->drawImage(QPoint(0,0),QImage::QImage(tr("images/Help.fr.jpg")));
-    painter->drawImage(QPoint(0,0),QImage::QImage(tr(":/Images/images/Help.fr.jpg")));
+    painter->drawImage(QPoint(0,0),QImage(tr(":/Images/images/Help.fr.jpg")));
 }
