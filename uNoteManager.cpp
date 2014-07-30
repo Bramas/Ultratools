@@ -26,6 +26,7 @@
 #include <QFileInfo>
 #include <math.h>
 #include <QDebug>
+#include <QMessageBox>
 #include "uWord.h"
 #include "uLyrics.h"
 #include "uNoteManager.h"
@@ -43,7 +44,23 @@ _isPlaying= false;
 
 QString UNoteManager::violonFile(int i)
 {
-    QFileInfo f(QApplication::applicationDirPath()+"/../../../violon/"+QString::number(i)+".mp3");
+#ifdef __APPLE__
+
+    QFileInfo f(QApplication::applicationDirPath()+"/../Resources/violon/"+QString::number(i)+".mp3");
+    if(!f.exists())
+    {
+        f = QFileInfo(QApplication::applicationDirPath()+"/../../../violon/"+QString::number(i)+".mp3");
+    }
+#else
+#ifdef _WIN32
+    QFileInfo f(QApplication::applicationDirPath()+"/violon/"+QString::number(i)+".mp3");
+#endif
+#endif
+    if(!f.exists())
+    {
+        QMessageBox::warning(0, trUtf8("Fichier introuvable"), trUtf8("Les fichiers des notes de musiques sont introuvalbes:")+" "+f.absoluteFilePath());
+        return "";
+    }
     return f.absoluteFilePath();
 }
 
@@ -58,7 +75,13 @@ void UNoteManager::setupAudio(QObject *parent)
     QString tmp;
    for(int i = -36 ; i<5 ; ++i)//5
     {
-        _result = FMOD_System_CreateSound(_system,violonFile(i).toLatin1().data(), FMOD_DEFAULT, 0, &sound);		// FMOD_DEFAULT uses the defaults.  These are the same as FMOD_LOOP_OFF | FMOD_2D | FMOD_HARDWARE.
+       QString violonFilePath = violonFile(i);
+       if(violonFilePath.isEmpty())
+       {
+            return;
+       }
+        _result = FMOD_System_CreateSound(_system,violonFilePath.toLatin1().data(),
+                                          FMOD_LOOP_NORMAL | FMOD_2D | FMOD_SOFTWARE, 0, &sound);		// FMOD_DEFAULT uses the defaults.  These are the same as FMOD_LOOP_OFF | FMOD_2D | FMOD_HARDWARE.
         //ERRCHECK(result);
 
         _result = FMOD_System_PlaySound(_system,FMOD_CHANNEL_FREE, sound, true, &channel);
@@ -147,7 +170,7 @@ void UNoteManager::tick(quint64 time)
 
     foreach(Word * w, _played)
     {
-        if( temp  > w->getTime() + w->getLength()+2 || temp < w->getTime())
+        if( temp  > w->getTime() + w->getLength() + 0.5 || temp < w->getTime() - 0.2)
         {
             _played.removeOne(w);
             if(!checkPitch(w->getPitch()))

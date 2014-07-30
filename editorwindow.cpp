@@ -29,6 +29,7 @@
 #include "uWydget_lyrics.h"
 #include "uNoteManager.h"
 #include "uRecorder.h"
+#include "uDialogAbout.h"
 #include <math.h>
 #include <QUrl>
 #include <QMimeData>
@@ -82,7 +83,7 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
         connect(ui->vSlider,SIGNAL(sliderMoved(int)),this,SLOT(changeVSlider(int)));
         connect(ui->actionOuvrir,SIGNAL(triggered()),this,SLOT(openFile()));
         connect(ui->actionEditer_les_ent_tes,SIGNAL(triggered()),this,SLOT(editHeader()));
-
+        connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
 
     connect(playAction, SIGNAL(triggered()), this, SLOT(tooglePlay()));
     connect(pauseAction, SIGNAL(triggered()), this, SLOT(tooglePlay()));
@@ -179,25 +180,34 @@ void UEditorWindow::autoSave()
 }
 
 void UEditorWindow::readLastFile()
-{
-    _recentFiles="";
-
-    QFile file("lastFile.txt");
-         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-             return;
-
-         QTextStream in(&file);
-         while (!in.atEnd()) {
-             _recentFiles.append(in.readLine());
-         }
-    file.close();
-
-ui->actionFichiers_r_cents->setText(_recentFiles.section('/',-2,-1));
-
+{    
+    foreach(const QString &filename, USetting::Instance.lastOpenFiles())
+    {
+        QFileInfo info(filename);
+        if(!info.exists())
+        {
+            continue;
+        }
+        QAction * a = new QAction(info.baseName(), 0);
+        a->setProperty("absolutePath", info.absoluteFilePath());
+        connect(a, SIGNAL(triggered()), this, SLOT(openLastFile()));
+        ui->menuFichier->insertAction(ui->actionFichiers_r_cents, a);
+    }
+    ui->menuFichier->removeAction(ui->actionFichiers_r_cents);
 }
 void UEditorWindow::openLastFile()
 {
-    openFile(_recentFiles);
+    QAction * from = qobject_cast<QAction*>(sender());
+    if(!from)
+    {
+        return;
+    }
+    QString filename = from->property("absolutePath").toString();
+    if(filename.isEmpty() || !QFileInfo(filename).exists())
+    {
+        return;
+    }
+    openFile(filename);
 }
 void UEditorWindow::gapModified(double n)
 {
@@ -231,10 +241,9 @@ void UEditorWindow::openFile(QString fileName)
 
     if(discardChange() != QMessageBox::Yes) return;
 
-
     if(fileName=="")
     {
-        fileName = QFileDialog::getOpenFileName(this,tr("Choisir un fichier song"),USetting::Instance.getSongsLocation(),tr("texte (*.txt)"));
+        fileName = QFileDialog::getOpenFileName(this,trUtf8("Choisir un fichier song"),USetting::Instance.getSongsLocation(),tr("texte (*.txt)"));
     }
 
     if(!fileName.length()) return;
@@ -243,22 +252,15 @@ void UEditorWindow::openFile(QString fileName)
     {
         fileDisconnect();
         delete _currentFile;
+        _currentFile = 0;
     }
 
 
-    QFile file("lastFile.txt");
-         if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-             return;
-
-         QTextStream out(&file);
-         out << fileName;
-
-     file.close();
-
-
     _currentFile = new UFile(this,fileName);// "songs/arkol - vingt ans/Arkol - vingt ans.txt");
-
     fileConnect();
+
+    USetting::Instance.addOpenFile(fileName);
+
 
     this->showSentenceWidget->setLyrics(_currentFile->lyrics);
     UNoteManager::Instance.setLyrics(_currentFile->lyrics);
@@ -291,7 +293,6 @@ else
         QMessageBox::warning(this,tr("Attention"),tr("Il y a eu un problème lors de la lecture du fichier son")+" : "+fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3);
     }
 }
-
 
  }
 
@@ -354,6 +355,15 @@ void UEditorWindow::changeHSlider(int s)
    _wydget_timeline->setMax(exp(((double)ui->hSlider->value())/100.0) + ui->hScroll->value());
 
    _wydget_lyrics->onScroll();
+}
+
+QScrollBar * UEditorWindow::verticalScrollBar()
+{
+    return this->ui->vScroll;
+}
+QScrollBar * UEditorWindow::horizontalScrollBar()
+{
+    return this->ui->hScroll;
 }
 
 void UEditorWindow::changeVScroll(int s)
@@ -440,7 +450,7 @@ ui->tabEditeurLayMain->addWidget(_wydget_timeline,0,1);
         pauseAction = new QAction(QIcon(":/images/player_pause.png"), tr("Pause"), this);
         pauseAction->setShortcut(tr("Ctrl+A"));
         pauseAction->setVisible(false);
-        recordAction = new QAction(QIcon(":/images/recordnormal.png"), tr("Pause"), this);
+        recordAction = new QAction(QIcon(":/images/recordnormal.png"), tr("Record"), this);
         recordAction->setShortcut(tr("Ctrl+R"));
 
         ui->lcd_music->display("00:00");
@@ -536,6 +546,12 @@ if(_currentFile->lyrics->words().empty()) return;
 
 
 }
+void UEditorWindow::about()
+{
+    DialogAbout a(this);
+    a.exec();
+}
+
 void UEditorWindow::aboutToFinish()
 {
 
@@ -770,7 +786,11 @@ void UEditorWindow::displayHelpScreen()
 }
 void UEditorWindow::onConnected()
 {
-
+    qDebug()<<"onConnected";
+    if(!ui)
+    {
+        return;
+    }
     QMenu * m = new QMenu(tr("Envoyer une suggestion/remarque rapide"),NULL);
     QList<QAction*> l;
     l.append(ui->actionEnvoyer_une_suggestion_remarque_rapide);

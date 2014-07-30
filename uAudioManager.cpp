@@ -61,7 +61,7 @@ bool UAudioManager::setSource(QString source)
         FMOD_Sound_Release(_sound);
     }
 
-    _result = FMOD_System_CreateSound(_system,_source.toStdString().c_str(), FMOD_LOOP_NORMAL | FMOD_2D | FMOD_HARDWARE , 0, &_sound);		// FMOD_DEFAULT uses the defaults.  These are the same as FMOD_LOOP_OFF | FMOD_2D | FMOD_HARDWARE.
+    _result = FMOD_System_CreateSound(_system,_source.toStdString().c_str(), FMOD_LOOP_NORMAL | FMOD_2D | FMOD_SOFTWARE , 0, &_sound);		// FMOD_DEFAULT uses the defaults.  These are the same as FMOD_LOOP_OFF | FMOD_2D | FMOD_HARDWARE.
     //ERRCHECK(result);
 
     _result = FMOD_System_PlaySound(_system,FMOD_CHANNEL_FREE, _sound, true, &_channel);

@@ -88,6 +88,23 @@ int Word::setPitch(int newPitch, bool definitly)
      return _pitch = newPitch;
 }
 
+void Word::setGold(bool newGold)
+{
+    if(_parent) _parent->modified("setGold()");
+    _type = (Word::Type)(newGold ? _type | Word::Gold : _type & ~Word::Gold);
+}
+void Word::setFree(bool in)
+{
+    if(_parent) _parent->modified("setFree()");
+    _type = (Word::Type)(in ? _type | Word::Free : _type & ~Word::Free);
+}
+void Word::hold(void) {
+    if(_parent)
+    {
+        _parent->modified("hold()");
+    }
+    _oTime=_time; _oPitch=_pitch; _oLength=_length;
+}
 int Word::getLength(void) const
 {
     return _length;
@@ -100,11 +117,6 @@ int Word::getPitch(void) const
 void Word::setParent(Lyrics *par)
 {
     _parent = par;
-
-    if(_parent)
-    {
-        _parent->modified("in the setParent");
-    }
 }
 
 int ** Word::rangeTime(QList<Word *> *wlist)
