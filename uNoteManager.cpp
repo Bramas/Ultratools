@@ -70,6 +70,7 @@ void UNoteManager::setupAudio(QObject *parent)
 
     FMOD_SOUND * sound;
     FMOD_CHANNEL * channel;
+    FMOD_System_CreateChannelGroup(_system, NULL, &_notesGroup);
 
 
     QString tmp;
@@ -89,6 +90,7 @@ void UNoteManager::setupAudio(QObject *parent)
 
        _sounds.insert(i,sound);
         _channels.insert(i,channel);
+        FMOD_Channel_SetChannelGroup(channel, _notesGroup);
 
 
     }
@@ -112,7 +114,6 @@ void UNoteManager::play(Word * w)
 
     //QMessageBox::information(NULL,"",QString::number(pitchToNote(w->getPitch())));
   // _violonList.value(pitchToNote(w->getPitch()))->play();
-
 
     FMOD_BOOL rep;
     FMOD_Channel_GetPaused(_channels[pitchToNote(w->getPitch())], &rep);
@@ -154,10 +155,7 @@ void UNoteManager::setVolume(int v)
 {
     float f=v;
     f/=100;
-    for(int i = -36 ; i<5 ; ++i)//5
-    {
-        FMOD_Channel_SetVolume(_channels[i],f);
-    }
+    FMOD_ChannelGroup_SetVolume(_notesGroup, f);
 }
 
 void UNoteManager::tick(quint64 time)

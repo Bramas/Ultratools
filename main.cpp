@@ -112,6 +112,17 @@ int main(int argc, char *argv[])
          qDebug()<<"undeployed";
      }
 #endif
+#ifdef _WIN32
+     QDir dir(QFileInfo(argv[0]).path());  // e.g. appdir/Contents/MacOS
+     if(dir.cd("PlugIns"))// e.g. appdir/PlugIns
+     {
+        QApplication::setLibraryPaths( QStringList(dir.absolutePath()));
+     }
+     else
+     {
+         qDebug()<<"undeployed";
+     }
+#endif
 
     QApplication a(argc, argv);
 
