@@ -24,11 +24,13 @@
 
 
 #include "uShowSentenceWydget.h"
+#include "editorwindow.h"
 #include <QMoveEvent>
 #include <QMessageBox>
 #include <QPainter>
 #include <math.h>
 #include <QDebug>
+#include <QScrollBar>
 
 #define TAILLE_FENETRE 1000
 #define HAUTEUR_NOTE 20
@@ -67,7 +69,7 @@ double min(double a,double b)
 }
 
 
-ShowSentenceWidget::ShowSentenceWidget(QWidget * parent)
+ShowSentenceWidget::ShowSentenceWidget(UEditorWindow * parent)
 {
     hScale=100;// nombre de deciseconds visible sur une fenettre
     vScale=500;
@@ -99,6 +101,8 @@ _previousDisplayed=2;
 
 
         _wordsDisplayed = new QList<Word*>();
+
+        connect(&UInputManager::Instance, SIGNAL(keyPressEvent(QKeyEvent*)), this, SLOT(onKeyPressEvent(QKeyEvent*)));
 
 }
 ShowSentenceWidget::~ShowSentenceWidget()
@@ -179,9 +183,23 @@ void ShowSentenceWidget::mousePressEvent(QMouseEvent *event)
     {
         emit emptyClik();
     }
+}
 
-
-
+void ShowSentenceWidget::wheelEvent(QWheelEvent * event)
+{
+    if(event->orientation() == Qt::Horizontal)
+    {
+        int value = parent->horizontalScrollBar()->value();
+        value -= event->delta()/2;
+        parent->horizontalScrollBar()->setValue(value);
+    }
+    else
+    {
+        int value = parent->verticalScrollBar()->value();
+        value -= event->delta()/2;
+        parent->verticalScrollBar()->setValue(value);
+    }
+    event->accept();
 }
 
 double ShowSentenceWidget::posXToBeat(double in_x)
@@ -256,6 +274,44 @@ void ShowSentenceWidget::emitSeek()
     emit click(msc);
 }
 
+void ShowSentenceWidget::onKeyPressEvent(QKeyEvent * event)
+{
+    if(_selected.isEmpty())
+    {
+        return;
+    }
+    if(event->key() == Qt::Key_Up)
+    {
+        foreach(Word * w, _selected)
+        {
+            w->setPitch(w->getPitch() + 1);
+        }
+    }
+    else if(event->key() == Qt::Key_Down)
+    {
+        foreach(Word * w, _selected)
+        {
+            w->setPitch(w->getPitch() - 1);
+        }
+    }
+    else if(event->key() == Qt::Key_Left)
+    {
+        foreach(Word * w, _selected)
+        {
+            w->setTime(w->getTime() - 1);
+            lyrics->resortWord(w);
+        }
+    }
+    else if(event->key() == Qt::Key_Right)
+    {
+        foreach(Word * w, _selected)
+        {
+            w->setTime(w->getTime() + 1);
+            lyrics->resortWord(w);
+        }
+    }
+    update();
+}
 
 void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
 {
@@ -929,11 +985,14 @@ void ShowSentenceWidget::renderSeparator(QPainter * painter, Word * w)
     QRectF rect[3];
 
 
-    rect[0] = QRectF(scaledCoordinates(w->getTime1()-1,0).x(),0, scaleWidth(w->getLength()+2),15);
+    qreal middle =  scaledCoordinates((w->getTime1()+w->getTime2())/2.0,0).x();
+    qreal m = max(scaleWidth(w->getLength()+2), 20);
+    rect[0] = QRectF(middle-m/2,0, m,15);
 
-    rect[1] = QRectF(scaledCoordinates(w->getTime1()-1,0).x(), 17,scaleWidth(w->getLength()/4.0)+2,15);
+    qreal s = max(scaleWidth(w->getLength()/2.0), 8);
+    rect[1] = QRectF(middle - s - 5, 18, s, 15);
 
-    rect[2] = QRectF(scaledCoordinates(w->getTime2()+1-w->getLength()/4.0,0).x()-2,17,scaleWidth(w->getLength()/4.0)+2,15);
+    rect[2] = QRectF(middle+5, 18, s, 15);
 
 
     if(!_nextClick && _fMousePosition.x() > rect[0].left() - 1 &&
@@ -993,7 +1052,8 @@ void ShowSentenceWidget::renderSeparator(QPainter * painter, Word * w)
 
     painter->drawRect(rect[2]);
 
-    painter->drawRect(scaledCoordinates(w->getTime1(),0).x(),30,scaleWidth(w->getLength()+0.1),height()-30);
+    painter->setBrush(QBrush(QColor(100,255,100,210)));
+    painter->drawRect(scaledCoordinates(w->getTime1(),0).x(),35,scaleWidth(w->getLength()+0.1),height()-30);
 
 }
 

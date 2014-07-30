@@ -124,6 +124,7 @@
      <string>Aide</string>
     </property>
     <addaction name="actionAide"/>
+    <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuEdition">
     <property name="title">
@@ -405,6 +406,9 @@
    <property name="statusTip">
     <string>Préférences du logiciel</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::PreferencesRole</enum>
+   </property>
   </action>
   <action name="actionMorphe">
    <property name="icon">
@@ -465,6 +469,11 @@
    </property>
    <property name="text">
     <string>Envoyer une suggestion/remarque rapide</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>

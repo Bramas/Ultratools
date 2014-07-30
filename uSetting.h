@@ -29,6 +29,7 @@
 #define USETTING_H
 
 #include <QSettings>
+#include <QStringList>
 #include "USettingDialog.h"
 
 class USetting : public QObject
@@ -42,9 +43,11 @@ public slots:
 public:
     static USetting Instance;
 
+    void addOpenFile(QString fileName);
+    QStringList lastOpenFiles() const;
     QString getSoftId(void);
     QString getUltrastarLocation(void);
-    QString getSongsLocation(void){ return getUltrastarLocation() + "/Songs"; }
+    QString getSongsLocation(void);
     int getAutoSaveInterval(void);
     bool isRestartAfterStop(void) { return true;  }
 

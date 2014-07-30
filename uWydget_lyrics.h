@@ -35,7 +35,7 @@ class Word;
 
 #include "uWydget_timeline.h"
 
-class UWydget_Lyrics : public QWidget
+class UWydget_Lyrics : public QPlainTextEdit
 {
     Q_OBJECT
 
@@ -56,20 +56,17 @@ public:
     void setWidgetWords(ShowSentenceWidget* wydgetWords);
 protected:
 
-    void paintEvent(QPaintEvent * event);
+    void insertFromMimeData(const QMimeData * source);
 
-int _cursorPosition;
-void saveChange();
-    void mousePressEvent(QMouseEvent *event);
+    int _cursorPosition;
+    void saveChange();
 
     int _maxHeight;
-    QHBoxLayout * _lay;
     ShowSentenceWidget * _wydgetWords;
     QString _brutText;
     int _fontSize;
     int _fontSizeEdit;
     bool _isEditing;
-    QPlainTextEdit _editor;
     int _selectedTextFirstIndex, _selectedTextLastIndex;
 
 };

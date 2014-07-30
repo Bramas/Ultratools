@@ -48,9 +48,9 @@ private slots:
     void downloadFile();
     void cancelDownload();
     void httpFinished();
-    void httpReadyRead();
     void updateDataReadProgress(qint64 bytesRead, qint64 totalBytes);
     void checkVersion();
+    void emitConnected();
 
 
 private:
