@@ -206,6 +206,19 @@ double ShowSentenceWidget::posXToBeat(double in_x)
 {
     return ((in_x)*_lastBeatDisplayed + ((width()-in_x))*_firstBeatDisplayed)/((qreal)width());
 }
+qreal ShowSentenceWidget::startTime()
+{
+    return lyrics->beatToMsc(hScroll) - lyrics->getGap();
+}
+qreal ShowSentenceWidget::duration()
+{
+    return lyrics->beatToMsc(hScale)-lyrics->getGap();
+}
+
+qreal ShowSentenceWidget::posXToMs(double in_x)
+{
+    return duration() * in_x/(qreal)width() + startTime();
+}
 
 void ShowSentenceWidget::mouseReleaseEvent(QMouseEvent *event)
 {
@@ -221,6 +234,7 @@ void ShowSentenceWidget::mouseReleaseEvent(QMouseEvent *event)
 
         emitSeek();
         _clickAndMoveSelection = false;
+        emit floatSelection(-1, -1);
 
    }
 
@@ -253,11 +267,11 @@ void ShowSentenceWidget::mouseReleaseEvent(QMouseEvent *event)
 
     if(!_clickAndMoveSelection && !_selected.empty() && !_isPlaying)
     {
-        int ** range;
-        range = Word::rangeTime(&_selected);
-        _floatSelection[0] = *range[0];// - _gap;
-        _floatSelection[1] = *range[1];// - _gap;
-        _seekPosition = *range[0];
+        QPair<int,int> range = Word::rangeTime(&_selected);
+        _floatSelection[0] = range.first;// - _gap;
+        _floatSelection[1] = range.second;// - _gap;
+        emit floatSelection(lyrics->beatToMsc(range.first), lyrics->beatToMsc(range.second));
+        _seekPosition = range.first;
         emitSeek();
 
 
@@ -376,6 +390,7 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
     {
         _floatSelection[0] = posXToBeat(min(_fPointPress.x(),_fMousePosition.x()));
         _floatSelection[1] = posXToBeat(max(_fPointPress.x(),_fMousePosition.x()));
+        emit floatSelection(posXToMs(min(_fPointPress.x(),_fMousePosition.x())), posXToMs(max(_fPointPress.x(),_fMousePosition.x())));
 
 
         deselect();

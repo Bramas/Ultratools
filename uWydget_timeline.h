@@ -27,7 +27,7 @@
 #define UWYDGET_TIMELINE_H
 
 #include "uDialog_fileheader.h"
-
+class ShowSentenceWidget;
 class UWydget_Timeline : public QWidget
 {
     Q_OBJECT
@@ -35,6 +35,7 @@ class UWydget_Timeline : public QWidget
 signals:
 
     void gapModified(double);
+    void click(quint64);
 
 public:
     UWydget_Timeline();
@@ -42,6 +43,7 @@ public:
     void setMax(int in) { max = in; update(); };
     void setBpm(int n) { _bpm = n; };
     void setGap(int n) { _lastGap = _gap = n; };
+    void setWidgetSentence(ShowSentenceWidget* showSentenceWidget) { _showSentenceWidget = showSentenceWidget; }
 
 protected:
     int min, max;
@@ -51,6 +53,7 @@ protected:
      void mousePressEvent(QMouseEvent * event);
      void mouseReleaseEvent(QMouseEvent * event);
      void mouseMoveEvent(QMouseEvent * event);
+     ShowSentenceWidget* _showSentenceWidget;
      bool _gapSelected;
      float _lastGap;
 

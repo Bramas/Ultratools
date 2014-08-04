@@ -194,11 +194,11 @@ void UNoteManager::tick(quint64 time)
 void UNoteManager::pause()
 {
     _isPlaying=false;
-    foreach(Word * w, _played)
-    {
-        FMOD_Channel_SetPosition(_channels[pitchToNote(w->getPitch())],0,FMOD_TIMEUNIT_MS);
-        FMOD_Channel_SetPaused(_channels[pitchToNote(w->getPitch())],true);
 
+    for(int i = -36 ; i<5 ; ++i)//5
+    {
+        FMOD_Channel_SetPaused(_channels[i],true);
+        FMOD_Channel_SetPosition(_channels[i],0,FMOD_TIMEUNIT_MS);
     }
 
     _played.clear();

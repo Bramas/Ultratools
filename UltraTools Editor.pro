@@ -29,7 +29,8 @@ SOURCES += main.cpp \
     uDialogHelp.cpp \
     uDialogFeedback.cpp \
     uRecorder.cpp \
-    uDialogAbout.cpp
+    uDialogAbout.cpp \
+    uWidgetSongData.cpp
 HEADERS += editorwindow.h \
     uWord.h \
     uLyrics.h \
@@ -50,7 +51,8 @@ HEADERS += editorwindow.h \
     uDialogHelp.h \
     uDialogFeedback.h \
     uRecorder.h \
-    uDialogAbout.h
+    uDialogAbout.h \
+    uWidgetSongData.h
 FORMS += editorwindow.ui \
     udialog_fileheader.ui \
     uNewSongForm_Browse.ui \

@@ -50,6 +50,7 @@ signals:
      void haveToStop(void);
      void singleClik(void);
      void emptyClik(void);
+     void floatSelection(float, float);
 
 public slots:
      void onKeyPressEvent(QKeyEvent*);
@@ -73,13 +74,16 @@ void nextClickAddNote(void);
 
        void deleteNotes();
 
-       void play(void) { _isPlaying = true; };
-       void stop(void) { _isPlaying = false; };
+       void play(void) { _isPlaying = true; }
+       void stop(void) { _isPlaying = false; }
 
-       void lockTime(bool n) { _timeLocked = n; };
+       void lockTime(bool n) { _timeLocked = n; }
 public:
+       qreal duration();
+       qreal startTime();
 
-    quint16 getHScale(void) { return hScale; }
+       quint32 getHScale(void) { return hScale; }
+       int getHScroll(void) { return (int)hScroll; }
     void emitSeek();
     ShowSentenceWidget(UEditorWindow * parent);
 
@@ -160,6 +164,7 @@ protected:
     bool _timeLocked;
 
     double posXToBeat(double in_x);
+    qreal posXToMs(double in_x);
 
 
     QTime time;
