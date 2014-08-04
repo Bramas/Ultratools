@@ -67,6 +67,7 @@ protected:
 
     FMOD_RESULT _result;
     FMOD_SYSTEM *_system;
+    FMOD_CHANNELGROUP * _notesGroup;
     QString _source;
 
 
