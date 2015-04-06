@@ -121,6 +121,11 @@ void UWydget_Lyrics::onTextChanged()
             ++it;
         }
     }
+    if (_updateTimer)
+    {
+        killTimer(_updateTimer);
+	_updateTimer = 0;
+    }
     _wydgetWords->update();
 }
 
