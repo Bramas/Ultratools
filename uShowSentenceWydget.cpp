@@ -245,9 +245,13 @@ void ShowSentenceWidget::mouseReleaseEvent(QMouseEvent *event)
        foreach(w,_selected)
        {
            w->hold();// finish the modification
-           lyrics->resortWord(w);
-           emit modified();
+           lyrics->removeWord(w);
        }
+       foreach(w,_selected)
+       {
+           lyrics->addWord(w);
+       }
+       emit modified();
    }
    if(_overSep)
    {
