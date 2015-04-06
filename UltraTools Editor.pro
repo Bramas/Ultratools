@@ -66,8 +66,18 @@ FORMS += editorwindow.ui \
 RESOURCES = data.qrc \
     Lang.qrc
 
-OS_STRING = \\\"'Linux'\\\"
+linux{
+    TARGET = ultratools-editor
+    release:LIBS += -lfmodex
+    debug:LIBS += -lfmodexL
+    OS_STRING = \\\"'Linux'\\\"
 
+    isEmpty(PREFIX):PREFIX = "/usr/local"
+    target.path = $$PREFIX/bin
+    notes.path = $$PREFIX/share/Ultratools/Editor
+    notes.files = violon
+    INSTALLS += target notes
+}
 
 # CODECFORSRC     = UTF-8
 TRANSLATIONS = UltraTools_Editor_fr.ts \
