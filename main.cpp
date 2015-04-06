@@ -42,7 +42,7 @@ void setLang(QApplication& app, const QString& idl){
 
 
 void manageLang(QApplication& app){
-        QSettings settings("Ultratools", "Editor");
+        QSettings settings;
         int lang = settings.value("lang", -1).toInt();
         if( lang == -1){
                 QStringList languages;
@@ -69,7 +69,7 @@ void manageLang(QApplication& app){
 
 
 void donate(){
-        QSettings settings("Ultratools", "Editor");
+        QSettings settings;
         bool showDonate = settings.value("donate", true).toBool();
         if( showDonate ){
                 QMessageBox msgDonate;
@@ -125,7 +125,9 @@ int main(int argc, char *argv[])
 #endif
 
     QApplication a(argc, argv);
-
+    a.setOrganizationName("Ultratools");
+    a.setOrganizationDomain("ultratools.org");
+    a.setApplicationName("Editor");
     qDebug()<<"Ultratools Editor "VERSION;
 
     manageLang(a);

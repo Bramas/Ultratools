@@ -570,7 +570,7 @@ void UEditorWindow::aboutToFinish()
 
 void UEditorWindow::writeSettings()
 {
-    QSettings settings("Ultratools", "Editor");
+    QSettings settings;
 
     settings.beginGroup("EditorWindow");
     settings.setValue("size", size());
@@ -582,7 +582,7 @@ void UEditorWindow::readSettings()
 {
     //this->setWindowTitle(WINDOW_TITLE);
 
-    QSettings settings("Ultratools", "Editor");
+    QSettings settings;
 
     settings.beginGroup("EditorWindow");
     resize(settings.value("size", QSize(400, 400)).toSize());
