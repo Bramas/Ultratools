@@ -84,6 +84,20 @@ TRANSLATIONS = UltraTools_Editor_fr.ts \
     UltraTools_Editor_en.ts \
     UltraTools_Editor_es.ts
 
+for(ts, TRANSLATIONS) {
+    qm = $$ts
+    qm ~= s/\.ts$/.qm/
+    !exists($$qm) {
+        system($$[QT_INSTALL_BINS]/lrelease $$ts)
+    }
+}
+
+QMAKE_EXTRA_COMPILERS += lrelease
+lrelease.input = TRANSLATIONS
+lrelease.output = ${QMAKE_FILE_BASE}.qm
+lrelease.commands = $$[QT_INSTALL_BINS]/lrelease ${QMAKE_FILE_IN} -qm ${QMAKE_FILE_BASE}.qm
+lrelease.CONFIG += no_link target_predeps
+
 
 mac{
     ICON = ultratools.icns
