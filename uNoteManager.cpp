@@ -27,6 +27,7 @@
 #include <math.h>
 #include <QDebug>
 #include <QMessageBox>
+#include <QStandardPaths>
 #include "uWord.h"
 #include "uLyrics.h"
 #include "uNoteManager.h"
@@ -54,6 +55,14 @@ QString UNoteManager::violonFile(int i)
 #else
 #ifdef _WIN32
     QFileInfo f(QApplication::applicationDirPath()+"/violon/"+QString::number(i)+".mp3");
+#else
+    QStringList dirs(QStandardPaths::standardLocations(QStandardPaths::AppDataLocation));
+    QFileInfo f;
+    foreach(const QString &d, dirs) {
+        f.setFile(d+"/violon/"+QString::number(i)+".mp3");
+        if (f.exists())
+            break;
+    }
 #endif
 #endif
     if(!f.exists())
