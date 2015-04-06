@@ -25,8 +25,8 @@
 
 
 
-#include "USettingDialog.h"
-#include "ui_USettingDialog.h"
+#include "uSettingDialog.h"
+#include "ui_uSettingDialog.h"
 
 #include "uSetting.h"
 
