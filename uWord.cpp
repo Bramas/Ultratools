@@ -162,6 +162,7 @@ int Word::indexOfWord(const QList<Word*> & list, Word * word)
         }
         ++idx;
     }
+    return -1;
 }
 
 

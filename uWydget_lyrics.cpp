@@ -112,7 +112,6 @@ void UWydget_Lyrics::onTextChanged()
     }
     else
     {
-        Word * last = (*it);
         while(it != _wydgetWords->getLyrics()->words().end())
         {
             if(!(*it)->isSeparator())
@@ -164,7 +163,7 @@ void UWydget_Lyrics::onScroll()
 
 }
 
-void UWydget_Lyrics::ondoubleClick(int s)
+void UWydget_Lyrics::ondoubleClick(int /*s*/)
 {
 
 }
@@ -174,7 +173,7 @@ void UWydget_Lyrics::separeOnSelect()
 
 }
 
-void UWydget_Lyrics::cursorPositionChanged(int old,int pos){
+void UWydget_Lyrics::cursorPositionChanged(int /*old*/,int /*pos*/){
 
 }
 void UWydget_Lyrics::onSelectionChange(int s, int f)

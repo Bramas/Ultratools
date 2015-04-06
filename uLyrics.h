@@ -47,7 +47,7 @@ public:
     void parseLine(QString &line);
     void parseCode(QString &code);
 
-    void modified(QString sender="") { _modified=true; emit hasBeenModified(); }
+    void modified(QString sender="") { Q_UNUSED(sender); _modified=true; emit hasBeenModified(); }
     bool isModified() { return _modified; }
     void setModified(bool b=true) { if(b==true) modified(); else _modified=false; }
 

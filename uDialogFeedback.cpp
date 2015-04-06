@@ -54,7 +54,7 @@ void UDialogFeedback::onFinished()
     QDialog::accept();
 }
 
-void UDialogFeedback::onError(QNetworkReply::NetworkError error)
+void UDialogFeedback::onError(QNetworkReply::NetworkError /*error*/)
 {
     QMessageBox::warning(this, trUtf8("Erreur"), _reply->errorString());
     QDialog::reject();

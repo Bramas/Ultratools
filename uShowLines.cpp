@@ -32,7 +32,7 @@ ShowLines::ShowLines()
     min=max=0;
     update();
 }
-void ShowLines::paintEvent(QPaintEvent * event)
+void ShowLines::paintEvent(QPaintEvent * /*event*/)
 {
  QPainter painter(this);
 

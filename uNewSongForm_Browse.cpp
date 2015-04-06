@@ -88,7 +88,7 @@ void UNewSongForm_Browse::browseMp3(void)
 
 }
 
-void UNewSongForm_Browse::updateFolder(QString no)
+void UNewSongForm_Browse::updateFolder(QString /*no*/)
 {
     if(_edited) return;
 

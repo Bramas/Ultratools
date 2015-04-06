@@ -109,7 +109,7 @@ ShowSentenceWidget::~ShowSentenceWidget()
 {
 
 }
-void ShowSentenceWidget::mouseDoubleClickEvent(QMouseEvent *event)
+void ShowSentenceWidget::mouseDoubleClickEvent(QMouseEvent * /*event*/)
 {
     //QMessageBox::warning(NULL,"","LOL");
 
@@ -526,7 +526,7 @@ QPointF ShowSentenceWidget::scaledCoordinates(const QPoint &point)
     return scaledCoordinates(point.x(), point.y());
 }
 
-void ShowSentenceWidget::paintEvent(QPaintEvent * event)
+void ShowSentenceWidget::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter painter(this);
      painter.setRenderHint(QPainter::Antialiasing);
@@ -543,8 +543,8 @@ _hSplitHCursor=_hSizeCursor=_sizeAllCursor=false;
 
 
 int pas=100;
-int opacity=200,sc=vScroll*10.0, sc2=vScale+vScroll*10.0; //sc=vScroll*vScale/12, sc2=vScale+vScroll*vScale/8;
- int iA,iB;
+int opacity=200,sc=vScroll*10.0; //sc=vScroll*vScale/12, sc2=vScale+vScroll*vScale/8;
+
 
 //backgroud Test_______________________
 
@@ -609,8 +609,6 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
                 //opacity=expRangeOpacity(100,1000,200);
                 painter.setPen(QPen(QColor(0,0,0,opacity)));
                pas=10;
-                iA=ceil((realHStartView)/pas);
-                iB=ceil(realHEndView/pas);
                 for(int i=max(0,_firstBeatDisplayed-ceil(mod(_firstBeatDisplayed,pas)));i<=_lastBeatDisplayed;i+=pas)
                 {
                      painter.drawLine(scaledCoordinates(i,0).x(), 0,scaledCoordinates(i,0).x(), height());
@@ -625,8 +623,6 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
 
                    if(this->hScale>100) pas=2;
 
-                    iA=ceil(realHStartView/pas);
-                    iB=ceil(realHEndView/pas);
                     for(int i=max(0,_firstBeatDisplayed-ceil(mod(_firstBeatDisplayed,pas)));i<=_lastBeatDisplayed;i+=pas)
                     {
                          painter.drawLine(scaledCoordinates(i,0).x(), 0,scaledCoordinates(i,0).x(), height());
@@ -826,7 +822,7 @@ bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w)
 }
 
 
-void ShowSentenceWidget::renderPreviousSentence(QPainter * painter)
+void ShowSentenceWidget::renderPreviousSentence(QPainter * /*painter*/)
 {
     if(_wordsDisplayed->empty() || !_previousDisplayed) return;
 
@@ -871,12 +867,12 @@ void ShowSentenceWidget::setVScale(int s)
 
 int ShowSentenceWidget::expRangeOpacity(int a, int b,int opaque)
 {
-    if(hScale<b && hScale>a)
+    if(hScale < (quint32)b && hScale > (quint32)a)
     {
 
         return ((float)(opaque))*exp(-(((float)(hScale-a))/(((float)(b-hScale))/3)));
     }
-    if(hScale<=a)
+    if(hScale <= (quint32)a)
     {
         return  opaque;
     }
@@ -887,12 +883,12 @@ int ShowSentenceWidget::linearRangeOpacity(int a, int b,int op1,int op2)
 {
    // bool sign=a<b
 
-    if(hScale<b && hScale>a)
+    if(hScale< (quint32)b && hScale> (quint32)a)
     {
 
         return   op1 + ((float)(op2-op1))*((float)(hScale-a))/((float)(b-a));//(((float)(b-hScale))/3)));
     }
-    if(hScale<=a)
+    if(hScale<= (quint32)a)
     {
         return  op1;
     }

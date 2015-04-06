@@ -154,7 +154,7 @@ Word * Lyrics::moveRight(Word *from, int indexIWant)
 
     Word * ret = from;
     bool trouve = false;
-    Word * w;
+    Word * w = 0;
     Word * wBefore=NULL;
 
     QString temp="", temp2="";
@@ -197,7 +197,7 @@ Word * Lyrics::moveRight(Word *from, int indexIWant)
         wBefore=w;
     }
 
-    if(temp.compare("")) // !=""
+    if(w && temp.compare("")) // !=""
     {
         w->setText(w->getText()+temp);
     }
@@ -210,6 +210,7 @@ Word * Lyrics::moveRight(Word *from, int indexIWant)
 
 QList<Word*> * Lyrics::separatorsOfWords(QList<Word *> * list) const
 {
+    Q_UNUSED(list);
     QList<Word*> * sep= new QList<Word*>();
     return sep;
     /** FIXME */
@@ -233,6 +234,7 @@ QList<Word*> * Lyrics::separatorsOfWords(QList<Word *> * list) const
 }
 QList<Word*> * Lyrics::sentencesOfWords(QList<Word *> * list) const
 {
+    Q_UNUSED(list);
     QList<Word*> * sen= new QList<Word*>();
 
     return sen;

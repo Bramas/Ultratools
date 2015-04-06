@@ -43,7 +43,7 @@ void hasBeenModified(bool);
 public slots:
 
 bool saveInFile(QString fileName="",bool autoSave=false);
-void autoSave(QString fileName="");
+void autoSave();
 void modified() {  emit hasBeenModified(true); _modified=true; }
 void doublePrecision(void) { lyrics->doublePresicion(); setBpm(getBpm()*2); }
 

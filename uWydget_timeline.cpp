@@ -70,13 +70,12 @@ void UWydget_Timeline::mouseMoveEvent(QMouseEvent *event)
     {
         _gap = event->x()*_showSentenceWidget->duration()/(qreal)width() + _showSentenceWidget->startTime();
         emit click(_gap);
-        qDebug()<<"moveTo "<<_gap;
     }
 
     update();
 }
 
-void UWydget_Timeline::mouseReleaseEvent(QMouseEvent *event)
+void UWydget_Timeline::mouseReleaseEvent(QMouseEvent * /*event*/)
 {
     if(_gapSelected)
     {
@@ -91,10 +90,6 @@ void UWydget_Timeline::mouseReleaseEvent(QMouseEvent *event)
 void UWydget_Timeline::mousePressEvent(QMouseEvent *event)
 {
 
-    float duration = 15.0f/_bpm;
-     float fMin = min * duration;
-     float fMax = max * duration;
-    float fTempsR = ((float)(fMax-fMin))/((float)width());
 
     qreal gap = _showSentenceWidget->getLyrics()->getGap();
     if(width()*(gap-_showSentenceWidget->startTime())/_showSentenceWidget->duration() + 5 > event->x()
@@ -108,7 +103,7 @@ void UWydget_Timeline::mousePressEvent(QMouseEvent *event)
 
 }
 
-void UWydget_Timeline::paintEvent(QPaintEvent * event)
+void UWydget_Timeline::paintEvent(QPaintEvent * /*event*/)
 {
  QPainter painter(this);
 if(!_showSentenceWidget)
@@ -121,11 +116,7 @@ if(!_showSentenceWidget)
 
 //painter.drawText(QRect(0,0,50,50),QString::number(255));
 
- qreal tempsR = ((qreal)width())/((qreal)(max-min));
  qreal longueur = duration/1000.0; // longueur en second
- qreal fMin = min * duration;
- qreal fMax = max * duration;
- qreal fTempsR = ((float)width())/((float)(fMax-fMin));
 
 
 
@@ -152,7 +143,7 @@ painter.setPen(QPen(QColor(0,173,232,255)));
  painter.setBrush(QBrush(QColor(255,255,255,255)));
  painter.translate(-width()*(start/1000.0-floor(start/1000.0))/(duration/1000.0), 0);
 
- int pas;
+ int pas = 120;
  if(longueur<20)
  {
      pas = 1;

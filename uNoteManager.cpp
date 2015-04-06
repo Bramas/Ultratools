@@ -64,7 +64,7 @@ QString UNoteManager::violonFile(int i)
     return f.absoluteFilePath();
 }
 
-void UNoteManager::setupAudio(QObject *parent)
+void UNoteManager::setupAudio(QObject * /*parent*/)
 {
     _system = UAudioManager::Instance.getSystem();
 
@@ -100,7 +100,7 @@ void UNoteManager::setupAudio(QObject *parent)
    FMOD_Channel_SetPaused(_channels[-15],false);
    FMOD_Channel_GetPaused(_channels[-15], &rep);
    qDebug()<<(bool)rep;
-/* */
+ */
 
 }
 
