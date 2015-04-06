@@ -67,9 +67,9 @@ void Lyrics::parseLine(QString &line)
     {
         int time1, time2 = 0;
         in >> time1;
-        if(!in.atEnd())
+        in >> time2;
+        if (in.status() == QTextStream::Ok)
         {
-            in >> time2;
             time2 -= time1;
         }
         //qDebug()<<line<<" sep : "<<time1<<" "<<time2;
@@ -104,7 +104,6 @@ void Lyrics::parseCode(QString &code)
     QString line;
     while(!(line = in.readLine()).isNull())
     {
-        line = line.trimmed();
         parseLine(line);
     }
 }
