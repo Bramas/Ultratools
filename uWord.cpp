@@ -144,6 +144,8 @@ QPair<int, int> Word::rangeTime(QList<Word *> *wlist)
 
 bool Word::wordLessThanPtr(const Word *a, const Word *b)
 {
+    if (a->getTime() == b->getTime())
+        return (a->isSeparator() && !b->isSeparator());
     return a->getTime()<b->getTime();
 }
 

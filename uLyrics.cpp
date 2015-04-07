@@ -106,6 +106,7 @@ void Lyrics::parseCode(QString &code)
     {
         parseLine(line);
     }
+    sortAll();
 }
 
 int Lyrics::getPitchMax()
@@ -281,7 +282,8 @@ void Lyrics::addWord(Word *ws)
 
     while(it != _words.end())
     {
-        if((*it)->getTime() > ws->getTime())
+        if((*it)->getTime() > ws->getTime() ||
+	   ((*it)->getTime() == ws->getTime() && ws->isSeparator()))
         {
             if((*it)->isSeparator() && ws->isSeparator())
             {
