@@ -39,10 +39,10 @@ signals:
 
 public:
     UWydget_Timeline();
-    void setMin(int in) { min = in; update(); };
-    void setMax(int in) { max = in; update(); };
-    void setBpm(int n) { _bpm = n; };
-    void setGap(int n) { _lastGap = _gap = n; };
+    void setMin(int in) { min = in; update(); }
+    void setMax(int in) { max = in; update(); }
+    void setBpm(int n) { _bpm = n; }
+    void setGap(int n) { _lastGap = _gap = n; }
     void setWidgetSentence(ShowSentenceWidget* showSentenceWidget) { _showSentenceWidget = showSentenceWidget; }
 
 protected:
