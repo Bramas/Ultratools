@@ -27,6 +27,7 @@
 #include "uShowSentenceWydget.h"
 #include <QDebug>
 #include <QMouseEvent>
+#include "uNoteManager.h"
 #include <QPainter>
 #include <math.h>
 
@@ -124,16 +125,6 @@ if(!_showSentenceWidget)
  painter.setBrush(QBrush(QColor(240,240,240,255)));
  painter.drawRect(0,0,width(),40);
 
-qreal gap = _gap;//_showSentenceWidget->getLyrics()->getGap();
- if(start < gap && gap < start + duration)
- {
-     painter.setPen(QPen(QColor(255,60,60,255)));
-     painter.setBrush(QBrush(QColor(255,60,60,255)));
-    // gap Cursor
-    painter.drawRect(QRectF(width()*(_gap-start)/(qreal)duration - 5,0,10,20));
-    painter.drawRect(QRectF(width()*(_gap-start)/(qreal)duration,20,0,20));
- }
-
 
 
 
@@ -189,39 +180,53 @@ for(int i = 0; i < duration/1000.0; ++i)
  }
 
 
-     //SECONDS
-/*if(longueur<200)
-for(int i=min-min%10;i<=max;i+=10)
-{
-   if(!(i%60)) continue;
+qreal gap = _gap;//_showSentenceWidget->getLyrics()->getGap();
+ if(start < gap && gap < start + duration)
+ {
+     // gap Cursor
+     painter.setPen(QPen(QColor(0,0,0,180)));
+     painter.setBrush(QBrush(QColor(0,0,0,180)));
+    painter.drawRect(QRectF(width()*(_gap-start)/(qreal)duration - 5,0,10,20));
+    painter.drawRect(QRectF(width()*(_gap-start)/(qreal)duration,20,0,20));
+ }
 
-    painter.drawText(QRect(((float)(i-min))*tempsR+2,0,50,50),QString::number((i-i%60)/60)+":"+QString::number(i%60));
-//  //qDebug()<<(max-i);
-  painter.drawLine(((float)(i-min))*tempsR,0,((float)(i-min))*tempsR,25);
+ if(start < _seek && _seek < start + duration)
+ {
+     // time Cursor
+     qreal left = width()*(_seek-start)/(qreal)duration;
+     painter.setPen(QPen(QColor(255,60,60,255)));
+     painter.setBrush(QBrush(QColor(255,60,60,255)));
+     painter.drawRect(QRectF(left,0,1,height()));
+
+     if(!UNoteManager::Instance.isPlaying())
+     {
+        //draw a cursor to move all the notes before the current time
+         qreal h = height()/2.0;
+
+         QPolygonF arrow;
+         arrow.append(QPointF(left+7, h-2));
+         arrow.append(QPointF(left+20, h-2));
+         arrow.append(QPointF(left+20, h-10));
+         arrow.append(QPointF(left+30, h));
+         arrow.append(QPointF(left+20, h+10));
+         arrow.append(QPointF(left+20, h+2));
+         arrow.append(QPointF(left+7, h+2));
+         arrow.append(QPointF(left+7, h-2));
+         painter.drawPolygon(arrow);
+     }
+ }
+
 
 }
-else
-if(longueur<1000)
-for(int i=min-min%30;i<=max;i+=30)
+
+void UWydget_Timeline::setWidgetSentence(ShowSentenceWidget *showSentenceWidget)
 {
-    if(!(i%60)) continue;
-
-
-     painter.drawText(QRect(((float)(i-min))*tempsR+2,0,50,50),QString::number((i-i%60)/60)+":"+QString::number(i%60));
-//  //qDebug()<<(max-i);
-  painter.drawLine(((float)(i-min))*tempsR,0,((float)(i-min))*tempsR,25);
-
+   _showSentenceWidget = showSentenceWidget;
+   connect(_showSentenceWidget, SIGNAL(click(quint64)), this, SLOT(setSeekPosition(quint64)));
 }
 
-//MINUTES
-for(int i=min-min%60;i<=max;i+=60)
+void UWydget_Timeline::setSeekPosition(quint64 seek)
 {
-    painter.drawText(QRect(((float)(i-min))*tempsR+2,0,50,50),QString::number((i-i%60)/60)+":00");
-//  //qDebug()<<(max-i);
-  painter.drawLine(((float)(i-min))*tempsR,0,((float)(i-min))*tempsR,25);
-
-}
-
-*/
-
+    _seek = seek;
+    update();
 }

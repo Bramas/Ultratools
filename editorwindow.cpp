@@ -49,8 +49,6 @@ UEditorWindow::UEditorWindow(QWidget *parent)
     : QMainWindow(parent), _spaceNoteGeneration(false), ui(new Ui::EditWindowClass)
 {
 
-//    QMessageBox::information(NULL,"",QDesktopServices::storageLocation(QDesktopServices::DataLocation));
-
     this->setFocusPolicy(Qt::StrongFocus);
 _startTime=0;
     _playViolon = false;
@@ -63,12 +61,9 @@ USetting::Instance.init();
 UCheckUpdate * check = new UCheckUpdate(QUrl(URL_VERSION));
 connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
 
-//connect(check,SIGNAL(readVersion(QString)),&USetting::Instance,SLOT(checkVersion(QString)));
-
 
     setupAudio();
     setupUi();
-        ////qDebug()<<exp(t/1)
 
             _currentFile = new UFile(this);// "songs/arkol - vingt ans/Arkol - vingt ans.txt");
 
@@ -533,6 +528,7 @@ void UEditorWindow::tick(quint64 time)
 
     showSentenceWidget->setSeekPosition(_currentFile->lyrics->timeToBeat(time));
     _widgetSongData->setSeekPosition(time);
+    _wydget_timeline->setSeekPosition(time);
 
 
 

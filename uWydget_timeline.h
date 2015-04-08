@@ -43,7 +43,10 @@ public:
     void setMax(int in) { max = in; update(); }
     void setBpm(int n) { _bpm = n; }
     void setGap(int n) { _lastGap = _gap = n; }
-    void setWidgetSentence(ShowSentenceWidget* showSentenceWidget) { _showSentenceWidget = showSentenceWidget; }
+    void setWidgetSentence(ShowSentenceWidget* showSentenceWidget);
+
+public slots:
+    void setSeekPosition(quint64 seek);
 
 protected:
     int min, max;
@@ -56,6 +59,7 @@ protected:
      ShowSentenceWidget* _showSentenceWidget;
      bool _gapSelected;
      float _lastGap;
+     quint64 _seek;
 
 };
 
