@@ -179,6 +179,8 @@ for(int i = 0; i < duration/1000.0; ++i)
 
  }
 
+//reset the painter translation
+painter.setTransform(QTransform());
 
 qreal gap = _gap;//_showSentenceWidget->getLyrics()->getGap();
  if(start < gap && gap < start + duration)
@@ -186,8 +188,8 @@ qreal gap = _gap;//_showSentenceWidget->getLyrics()->getGap();
      // gap Cursor
      painter.setPen(QPen(QColor(0,0,0,180)));
      painter.setBrush(QBrush(QColor(0,0,0,180)));
-    painter.drawRect(QRectF(width()*(_gap-start)/(qreal)duration - 5,0,10,20));
-    painter.drawRect(QRectF(width()*(_gap-start)/(qreal)duration,20,0,20));
+     painter.drawRect(QRectF(width()*(_gap-start)/(qreal)duration - 5,0,10,20));
+     painter.drawRect(QRectF(width()*(_gap-start)/(qreal)duration,20,0,20));
  }
 
  if(start < _seek && _seek < start + duration)
