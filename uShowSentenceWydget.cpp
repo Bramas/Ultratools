@@ -394,9 +394,12 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
             QList<USeparateur*>  * sep = lyrics->separatorsOfWords(&_selected);
             sep->removeAll(_selected.first()->getParent()->getSepBefore());
             sep->removeAll(_selected.last()->getParent()->getSepAfter());
-            foreach(USeparateur * se , *sep)
+            if(!_timeLocked)
             {
-                 se->setTime(se->getOTime()+diffX,false);
+                foreach(USeparateur * se , *sep)
+                {
+                     se->setTime(se->getOTime()+diffX,false);
+                }
             }
        }
    }
@@ -892,8 +895,11 @@ Sentence * prevSent;
 void ShowSentenceWidget::setHScale(int s)
 {
 
-        double temp=s;
-    this->hScale=exp(temp/100.0);
+        quint32 temp=(quint32) s;
+
+        this->hScale=s;//exp(temp/100.0);
+
+
     updateRangeView();
 #ifndef UPDATE_BY_TIMER
     update();
@@ -1203,44 +1209,45 @@ void ShowSentenceWidget::calquer()
 
     if(lyrics->getSentences()->indexOf(_selected.first()->getParent())<_previousDisplayed) return;
 
-         int add = _selected.first()->getParent()->getWords()->first()->getTime();
+    int add = _selected.first()->getParent()->getWords()->first()->getTime();
 
-         Sentence * prevSent = lyrics->getSentences()->at(lyrics->getSentences()->indexOf(_selected.first()->getParent())-_previousDisplayed);
-
-
-         if(prevSent->getWords()->empty()) return;
-
-         if(prevSent->getSepBefore())
-         {
-             add-=prevSent->getWords()->first()->getTime();
-         }
+    Sentence * prevSent = lyrics->getSentences()->at(lyrics->getSentences()->indexOf(_selected.first()->getParent())-_previousDisplayed);
 
 
+    if(prevSent->getWords()->empty()) return;
 
-         int max = _floatSelection[1];
+    if(prevSent->getSepBefore())
+    {
+         add-=prevSent->getWords()->first()->getTime();
+    }
 
 
-         if(_selected.first()->getParent() == _selected.last()->getParent()) // all the selected note are in the same sentence
-         {
-             //Sentence * p = _selected.first()->getParent();
-             //if(p->getSepAfter());
-         }
-         else
-         {
-             if(_selected.first()->getParent()->getSepAfter())
-             {
-                max = _selected.first()->getParent()->getSepAfter()->getTime1();
-             }
-         }
 
-         Word * newWord;
+    int max = _floatSelection[1];
 
-         QList<Word*> wordAdded;
+
+    if(_selected.first()->getParent() == _selected.last()->getParent()) // all the selected note are in the same sentence
+    {
+         //Sentence * p = _selected.first()->getParent();
+         //if(p->getSepAfter());
+    }
+    else
+    {
+        if(_selected.first()->getParent()->getSepAfter())
+        {
+           max = _selected.first()->getParent()->getSepAfter()->getTime1();
+        }
+    }
+
+    Word * newWord;
+
+    QList<Word*> wordAdded;
        foreach(Word * w,*prevSent->getWords())
        {
            if(w->getTime()+add<max)
            {
                newWord = new Word(NULL,w->getTime()+add,w->getLength(),w->getPitch());
+               newWord->setWord("~");
                wordAdded.push_back(newWord);
            }
        }
@@ -1249,17 +1256,59 @@ void ShowSentenceWidget::calquer()
 
         QString str;
 
+        QList<Word*> wordRemoved;
         foreach(Word*w,*_selected.first()->getParent()->getWords())
         {
             if(w->getTime()<max)
             {
-                str.append(w->getWord());
-                lyrics->removeWord(w);
+                wordRemoved.push_back(w);
+
+                //str.append(w->getWord());
+                //lyrics->removeWord(w);
                 _selected.removeAll(w);
-                delete w;
+                //delete w;
             }
         }
 
+        if(wordAdded.count()==wordRemoved.count())
+        {
+            for(int i=0;i<wordAdded.count();++i)
+            {
+                wordAdded.at(i)->setWord(wordRemoved.at(i)->getWord());
+            }
+        }
+        else
+        if(wordAdded.count()>wordRemoved.count())
+        {
+            for(int i=0;i<wordRemoved.count();++i)
+            {
+                wordAdded.at(i)->setWord(wordRemoved.at(i)->getWord());
+            }
+
+        }
+        else
+        {
+            for(int i=0;i<wordAdded.count();++i)
+            {
+                wordAdded.at(i)->setWord(wordRemoved.at(i)->getWord());
+            }
+            for(int i=wordAdded.count();i<wordRemoved.count();++i)
+            {
+                wordAdded.back()->setWord(wordAdded.back()->getWord()+wordRemoved.at(i)->getWord());
+            }
+
+        }
+
+        foreach(Word*w,wordRemoved)
+        {
+            lyrics->removeWord(w);
+            delete w;
+        }
+        foreach(Word*w,wordAdded)
+        {
+            lyrics->addWord(w);
+        }
+/*
         wordAdded.first()->setWord(str);
         int k = 0;
         QString tempS;
@@ -1284,7 +1333,7 @@ void ShowSentenceWidget::calquer()
             }
 
             w->setWord((tempS.compare("")?tempS:"~"));
-        }
+        }*/
 
         lyrics->addSeparator(wordAdded.first()->getTime()-2,0);
 

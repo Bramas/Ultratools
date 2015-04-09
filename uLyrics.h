@@ -28,6 +28,9 @@
 
 #include "uSentence.h"
 
+#include <Phonon/MediaObject>
+#include <Phonon/AudioOutput>
+#include <Phonon/MediaNode>
 class Lyrics : public QObject
 {
     Q_OBJECT
@@ -65,16 +68,19 @@ public:
 
     void sortThisWord(Word * w);
     void sortThisSeparator(USeparateur * s);
-    USeparateur * addSeparator(int time, int length);
-    void deleteSeparator(USeparateur *s);
+
+    void addWord(Word * w);
     void addSentence(Sentence * sent);
-    void removeSentence(Sentence * sent);
+    USeparateur * addSeparator(int time, int length);
 
     void removeWord(Word * w);
-    void addWord(Word * w);
+    void removeSentence(Sentence * sent);
+    void deleteSeparator(USeparateur *s);
 
      QList<USeparateur*> *  separatorsOfWords(QList<Word*> * list);
      QList<Sentence*> *  sentencesOfWords(QList<Word*> * list);
+
+     bool setDelay(int delay, quint64 from=0);
 
 
     void moveLeft(Word * from);

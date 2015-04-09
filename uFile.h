@@ -41,7 +41,7 @@ public slots:
 
 bool saveInFile(QString fileName="",bool autoSave=false);
 void autoSave(QString fileName="");
-void modified() {  emit hasBeenModified(true); _modified=true; }
+void modified() { emit hasBeenModified(true); _modified=true; }
 void doublePrecision(void) { lyrics->doublePresicion(); setBpm(getBpm()*2); }
 
 public:
@@ -66,9 +66,9 @@ public:
     QString getMp3Location(void) { return _fileName.section('/',0,-2) + "/" +_headMp3; };
     QString getFileName(void) { return _fileName; };
 
-    qreal timeToBeat(quint64 time);
+   qreal timeToBeat(quint64 time);
    // static qreal timeToBeat(quint64 time, Lyrics * l) { return (time/1000.0) * l->getBpm()/15.0f; };
-    quint64 beatToMsc(int n);
+    quint64 beatToMsc(int n,bool withGap=true);
 
     Lyrics *lyrics;
     QString sourceCode;
@@ -88,10 +88,10 @@ public:
     float _headVideogap;
     float _headGap;
     float _headBpm;
-    void setBpm(float n){ lyrics->setBpm(n); _headBpm=n; emit bpmChanged(n); };
-    void setGap(float n){ lyrics->setGap(n); _headGap=n; emit gapChanged(n); };
+    void setBpm(float n){ lyrics->setBpm(n); _headBpm=n; emit bpmChanged(n); modified(); };
+    void setGap(float n){ lyrics->setGap(n); _headGap=n; emit gapChanged(n); modified(); };
     float getBpm(){  return _headBpm; }
-
+    float getGap(){  return _headGap; }
 
     ~UFile(void);
 private:

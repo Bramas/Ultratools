@@ -28,6 +28,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>
+#include "uSentence.h"
 
 Lyrics::Lyrics(QWidget * parent)
 {
@@ -707,4 +708,51 @@ void Lyrics::doublePresicion()
         }
     }
 
+}
+
+
+bool Lyrics::setDelay(int delay, quint64 from)
+{
+    double temp = (((from-floor(this->getGap()))/1000.0) * this->getBpm()/15.0f);
+
+
+    Word * last=NULL;
+    // check only if the delay is negative
+    bool firstWordCheck=(delay>=0);
+    foreach(Word * w, words)
+    {
+
+
+        if( temp  <= w->getTime() && !firstWordCheck)
+        {
+            if(w->getTime() + delay < 0 ||
+               (w->getParent()->getSepBefore() && w->getParent()->getSepBefore()->getTime()<temp && w->getTime() + delay < w->getParent()->getSepBefore()->getTime2()) ||
+               (last && w->getTime() + delay < last->getTime() + last->getLength()))
+            {
+                return false;
+            }
+            else
+            {
+                firstWordCheck=true;
+            }
+            w->setTime(w->getTime()+delay);
+        }
+        else if( temp  <= w->getTime() )
+        {
+            w->setTime(w->getTime()+delay);
+        }
+        else
+        {
+            last=w;
+        }
+    }
+    foreach(Sentence * s, sentences)
+    {
+        if(s->getSepAfter())
+        if( temp  <= s->getSepAfter()->getTime())
+        {
+            s->getSepAfter()->setTime(s->getSepAfter()->getTime()+delay);
+        }
+    }
+    return true;
 }

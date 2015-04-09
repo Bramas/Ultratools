@@ -25,8 +25,8 @@
 
 #include "editorwindow.h"
 #include "ui_editorwindow.h"
+#include "uDialog_timing.h"
 #include <QUrl>
-#include <QMimeData>
 
 #define USEMEMLOAD
 #define USEFMOD TRUE
@@ -45,10 +45,10 @@ UEditorWindow::UEditorWindow(QWidget *parent)
 _startTime=0;
     _playViolon = false;
     _currentFile = NULL;
-
+_lastHSlideValue=0;
     _isPlaying=false;
 setAcceptDrops(true);
-
+_lastHScrollValue=0;
 USetting::Instance.init();
 UCheckUpdate * check = new UCheckUpdate(QUrl(URL_VERSION));
 connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
@@ -68,12 +68,21 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
 
         connect(ui->vScroll,SIGNAL(valueChanged(int)),this,SLOT(changeVScroll(int)));
         //connect(ui->vScroll,SIGNAL(actionTriggered(int)),this,SLOT(changeVScroll(int)));
+
         connect(ui->hScroll,SIGNAL(valueChanged(int)),this,SLOT(changeHScroll(int)));
         //connect(ui->hScroll,SIGNAL(actionTriggered(int)),this,SLOT(changeHScroll(int)));
+
         connect(ui->hSlider,SIGNAL(sliderMoved(int)),this,SLOT(changeHSlider(int)));
+
         connect(ui->vSlider,SIGNAL(sliderMoved(int)),this,SLOT(changeVSlider(int)));
+
+
+
+
         connect(ui->actionOuvrir,SIGNAL(triggered()),this,SLOT(openFile()));
+
         connect(ui->actionEditer_les_ent_tes,SIGNAL(triggered()),this,SLOT(editHeader()));
+        connect(ui->actionD_caler_les_notes,SIGNAL(triggered()),this,SLOT(openTiming()));
 
 
     connect(playAction, SIGNAL(triggered()), this, SLOT(tooglePlay()));
@@ -107,7 +116,7 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
 
         connect(&UInputManager::Instance,SIGNAL(spacePressEvent(void)),this,SLOT(tooglePlay()));
 
-        connect(_wydget_timeline, SIGNAL(gapModified(double)),this, SLOT(gapModified(double)));
+        connect(_wydget_timeline, SIGNAL(gapModified()),this, SLOT(gapModified()));
 
         connect(ui->pushButton_separe,SIGNAL(clicked()),_wydget_lyrics,SLOT(separeOnSelect()));
         connect(ui->pushButton_separe,SIGNAL(clicked()),showSentenceWidget,SLOT(setFocus()));
@@ -195,9 +204,8 @@ void UEditorWindow::openLastFile()
 {
     openFile(_recentFiles);
 }
-void UEditorWindow::gapModified(double n)
+void UEditorWindow::gapModified()
 {
-    _currentFile->setGap(n);
     showSentenceWidget->updateGap();
 }
 
@@ -269,22 +277,22 @@ void UEditorWindow::openFile(QString fileName)
 adaptNewFile();
 if(!_currentFile->_headMp3.compare(""))
 {
-    QMessageBox::warning(this,tr("Attention"),tr("Pensez Ã  indiquer oÃ¹ ce trouve le fichier mp3 (menu Edition >> Edtiter les EntÃªtes)"));
+    QMessageBox::warning(this,tr("Attention"),tr("Pensez à indiquer où ce trouve le fichier mp3 (menu Edition >> Edtiter les Entêtes)"));
 }
 else
 if(!QFile::exists(fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3))
 {
-    QMessageBox::warning(this,tr("Attention"),tr("Le fichier mp3 n'a pas Ã©tÃ© trouvÃ©."));
+    QMessageBox::warning(this,tr("Attention"),tr("Le fichier mp3 n'a pas été trouvé."));
 }
 else
 {
     if(UAudioManager::Instance.setSource(fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3))
     {
-
+        stateChanged(Phonon::StoppedState);
     }
     else
     {
-        QMessageBox::warning(this,tr("Attention"),tr("Il y a eu un problÃ¨me lors de la lecture du fichier son")+" : "+fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3);
+        QMessageBox::warning(this,tr("Attention"),tr("Il y a eu un problème lors de la lecture du fichier son")+" : "+fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3);
     }
 }
 
@@ -342,14 +350,31 @@ this->showLines->setMax(s*2+ui->vScroll->value());
 }
 void UEditorWindow::changeHSlider(int s)
 {
-    ui->hScroll->setPageStep(exp(((double)ui->hSlider->value())/100.0));
- //  this->hScroll->setMaximum(*range/10-hSlider->value());
-   this->showSentenceWidget->setHScale(s);
+    double diff = _lastHSlideValue - exp(s/100.0);
+    diff/=2.0;
+    diff=floor(diff);
+    if(diff>1 || diff<-1)
+    {
 
-   _wydget_timeline->setMin(ui->hScroll->value());
-   _wydget_timeline->setMax(exp(((double)ui->hSlider->value())/100.0) + ui->hScroll->value());
+        ui->hScroll->setValue(ui->hScroll->value()+diff);
 
-   _wydget_lyrics->onScroll();
+
+        _lastHSlideValue=_lastHSlideValue-diff*2;
+
+
+        qDebug()<<diff;
+        qDebug()<<" ----------";
+
+        ui->hScroll->setPageStep(exp(((double)ui->hSlider->value())/100.0));
+     //  this->hScroll->setMaximum(*range/10-hSlider->value());
+       this->showSentenceWidget->setHScale(_lastHSlideValue);
+
+       _wydget_timeline->setMin(ui->hScroll->value());
+      // _wydget_timeline->setMax(exp(((double)_lastHSlideValue)/100.0) + ui->hScroll->value());
+       _wydget_timeline->setMax(_lastHSlideValue + ui->hScroll->value());
+
+       _wydget_lyrics->onScroll();
+   }
 }
 
 void UEditorWindow::changeVScroll(int s)
@@ -385,6 +410,7 @@ void UEditorWindow::bpmChanged(int n)
 }
 void UEditorWindow::gapChanged(float n)
 {
+
     _wydget_timeline->setGap(n);
     showSentenceWidget->updateGap();
 }
@@ -401,7 +427,7 @@ void UEditorWindow::setupUi()
 
         showLines = new  ShowLines();
         showSentenceWidget = new ShowSentenceWidget(this);
-        _wydget_timeline = new UWydget_Timeline();
+        _wydget_timeline = new UWydget_Timeline(_currentFile);
         _wydget_lyrics = new UWydget_Lyrics();
 
 
@@ -437,7 +463,7 @@ ui->tabEditeurLayMain->addWidget(_wydget_timeline,0,1);
 
         playAction = new QAction(style()->standardIcon(QStyle::SP_MediaPlay), tr("Play"), this);
         playAction->setShortcut(tr("Crl+P"));
-        //playAction->setDisabled(true);
+        playAction->setDisabled(true);
         pauseAction = new QAction(style()->standardIcon(QStyle::SP_MediaPause), tr("Pause"), this);
         pauseAction->setShortcut(tr("Ctrl+A"));
         pauseAction->setDisabled(true);
@@ -481,12 +507,29 @@ void UEditorWindow::changeSeek(quint64 time)
     QTime displayTime(0, (time / 60000) % 60, (time / 1000) % 60);
 
     ui->lcd_music->display(displayTime.toString("mm:ss"));
+    _wydget_timeline->setSeek(time);
     //UNoteManager::Instance.pause();
 }
 
 void UEditorWindow::setupAudio()
 {
+  /*  audioOutput = new Phonon::AudioOutput(Phonon::MusicCategory, this);
+    mediaObject = new Phonon::MediaObject(this);
+    //metaInformationResolver = new Phonon::MediaObject(this);
 
+
+    mediaObject->setTickInterval(50);
+
+    connect(mediaObject, SIGNAL(tick(qint64)), this, SLOT(tick(qint64)));
+    connect(mediaObject, SIGNAL(stateChanged(Phonon::State,Phonon::State)),
+            this, SLOT(stateChanged(Phonon::State,Phonon::State)));
+    connect(mediaObject, SIGNAL(currentSourceChanged(Phonon::MediaSource)),
+            this, SLOT(sourceChanged(Phonon::MediaSource)));
+    connect(mediaObject, SIGNAL(aboutToFinish()), this, SLOT(aboutToFinish()));
+
+    Phonon::createPath(mediaObject, audioOutput);
+
+*/
     //UMidiManager  * mgr = new UMidiManager();
 
 
@@ -500,6 +543,32 @@ void UEditorWindow::setupAudio()
 
 
 }
+
+void UEditorWindow::stateChanged(Phonon::State newState)
+{
+    switch (newState) {
+
+//![10]
+        case Phonon::PlayingState:
+                playAction->setEnabled(false);
+                pauseAction->setEnabled(true);
+                break;
+        case Phonon::StoppedState:
+                playAction->setEnabled(true);
+                pauseAction->setEnabled(false);
+                ui->lcd_music->display("00:00");
+                break;
+        case Phonon::PausedState:
+                pauseAction->setEnabled(false);
+                playAction->setEnabled(true);
+                break;
+//![10]
+        case Phonon::BufferingState:
+                break;
+        default:
+            ;
+    }
+}
 void UEditorWindow::tick(qint64 time)
 {
    UNoteManager::Instance.tick(time);
@@ -509,7 +578,7 @@ void UEditorWindow::tick(qint64 time)
 
 
     showSentenceWidget->setSeekPosition(_currentFile->timeToBeat(time));
-
+    _wydget_timeline->setSeek(time);
 
 
 if(_currentFile->lyrics->getSentences()->empty()) return;
@@ -526,7 +595,7 @@ if(_currentFile->lyrics->getSentences()->empty()) return;
 
   Word * w = NULL;
 
-  //qDebug()<<time<<" : s :"<<_currentFile->beatToMsc(_currentFile->lyrics->getSentences()->first()->getSepAfter()->getTime2())<< "Sentence commenÃ§ant par "<<s->getWords()->first()->getWord();
+  //qDebug()<<time<<" : s :"<<_currentFile->beatToMsc(_currentFile->lyrics->getSentences()->first()->getSepAfter()->getTime2())<< "Sentence commençant par "<<s->getWords()->first()->getWord();
 
   if(UNoteManager::Instance.isPlaying())
   foreach(w,*s->getWords())
@@ -644,13 +713,20 @@ void UEditorWindow::tooglePlay()
         UNoteManager::Instance.pause();
         showSentenceWidget->stop();
         _isPlaying=false;
+
+        stateChanged(Phonon::StoppedState);
         if(USetting::Instance.isRestartAfterStop())
         {
             UAudioManager::Instance.seek(_startTime);
+
+
         }
+
     }
     else
     {
+
+        stateChanged(Phonon::PlayingState);
         _startTime = UAudioManager::Instance.currentTime();
         UAudioManager::Instance.play();
         UNoteManager::Instance.play();
@@ -669,6 +745,8 @@ void UEditorWindow::newSong(void)
         fileDisconnect();
         delete _currentFile;
     }
+
+
     _currentFile = new UFile(this);// "songs/arkol - vingt ans/Arkol - vingt ans.txt");
 
     fileConnect();
@@ -686,26 +764,28 @@ void UEditorWindow::newSong(void)
 
     if(!_currentFile->_headMp3.compare(""))
     {
-        QMessageBox::warning(this,tr("Attention"),tr("Pensez Ã  indiquer oÃ¹ ce trouve le fichier mp3 (menu Edition >> Edtiter les EntÃªtes)"));
+        QMessageBox::warning(this,tr("Attention"),tr("Pensez à indiquer où ce trouve le fichier mp3 (menu Edition >> Edtiter les Entêtes)"));
         return;
     }
 
     if(!QFile::exists(_currentFile->getMp3Location()))
     {
-        QMessageBox::warning(this,tr("Attention"),tr("Le fichier mp3 n'a pas Ã©tÃ© trouvÃ©."));
+        QMessageBox::warning(this,tr("Attention"),tr("Le fichier mp3 n'a pas été trouvé."));
         return;
     }
 
     UAudioManager::Instance.setSource(_currentFile->getMp3Location());
-    QMessageBox::information(this,tr("Prochaine Ã©tape"),
+
+
+      QMessageBox::information(this,tr("Prochaine étape"),
 
 tr("Maintenant Votre musique va se lancez et vous devrez appuyer la barre "
    "d'espace a chaque nouvelle note. Nous vous conseillons de regarder un exemple"
    " sur le site http://www.ultratools.org pour bien comprendre comment cela "
    "fonctionne.\n\n\nUtilisez votre feeling et appuyer sur la bar d'espace un peu "
    "comme si vous chantiez. Si vous avez l'impression d'avoir ratez une partie ne "
-   "vous arretez pas et essayer de rester calÃ©, cela vous fera gagner beaucoup de "
-   "temps lors de l'Ã©dition.\n c'est partie."));
+   "vous arretez pas et essayer de rester calé, cela vous fera gagner beaucoup de "
+   "temps lors de l'édition.\n c'est partie."));
 
       _spaceNote = new USpaceNoteGenerator(_currentFile);
 
@@ -717,7 +797,7 @@ tr("Maintenant Votre musique va se lancez et vous devrez appuyer la barre "
 
       _spaceNoteGeneration = true;
 
-
+      stateChanged(Phonon::PlayingState);
       connect(pauseAction,SIGNAL(triggered()),this,SLOT(aboutToFinish()));
 
 }
@@ -726,6 +806,7 @@ void UEditorWindow::fileConnect()
 {
     if(!_currentFile) return;
 
+    _wydget_timeline->setFile(_currentFile);
 
     connect(_currentFile,SIGNAL(bpmChanged(int)),this,SLOT(bpmChanged(int)));
     connect(_currentFile,SIGNAL(gapChanged(float)),this,SLOT(gapChanged(float)));
@@ -810,4 +891,19 @@ void UEditorWindow::displayFeedback()
     UDialogFeedback f(NULL);
     f.exec();
 }
+void UEditorWindow::openTiming(void)
+{
+    UDialog_timing * edit = new UDialog_timing(this,_currentFile);
+    edit->show();
 
+}
+void UEditorWindow::onFileModified(bool k)
+{
+       if(k)
+            setWindowTitle(USetting::Instance.getWindowTitle(this->windowTitle()," - "+_currentFile->getFileName().section('/',-1,-1)+"*"));
+        else
+            setWindowTitle(USetting::Instance.getWindowTitle(this->windowTitle()," - "+_currentFile->getFileName().section('/',-1,-1)));
+
+
+        showSentenceWidget->update();
+}

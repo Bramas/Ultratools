@@ -65,12 +65,13 @@ public slots:
    void changeHScroll(int);
    void openFile(QString fileName="");
    void openLastFile(void);
+   void openTiming(void);
    void readLastFile(void);
    void writeSettings();
    void bpmChanged(int);
    void gapChanged(float);
    void changeSeek(quint64);
-   void gapModified(double);
+   void gapModified();
    void saveAs(void);
    void save(void);
    void newFile(void);
@@ -78,15 +79,11 @@ public slots:
    void newSong(void);
    void updatePlainText(void);
    void centerView(void);
-   void onFileModified(bool k) {
-       if(k)
-            setWindowTitle(USetting::Instance.getWindowTitle(this->windowTitle()," - "+_currentFile->getFileName().section('/',-1,-1)+"*"));
-        else
-            setWindowTitle(USetting::Instance.getWindowTitle(this->windowTitle()," - "+_currentFile->getFileName().section('/',-1,-1)));
-   };
+   void onFileModified(bool k);
 
 
 private slots:
+  void stateChanged(Phonon::State newState);
    void tick(qint64 time);
    void aboutToFinish();
 
@@ -109,6 +106,9 @@ private:
     qint64 _startTime;
     QAction *playAction;
     QAction *pauseAction;
+    Phonon::MediaObject *mediaObject;
+    Phonon::MediaObject *metaInformationResolver;
+    Phonon::AudioOutput *audioOutput;
 
     QString _recentFiles;
 
@@ -124,6 +124,8 @@ private:
     UNewSongForm_Browse * _newSongBrowse;
     USpaceNoteGenerator * _spaceNote;
 
+    int _lastHSlideValue;
+    float _lastHScrollValue;
 
     QTimer * _autoSaveTimer;
 

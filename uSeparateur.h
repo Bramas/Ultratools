@@ -26,7 +26,7 @@
 #ifndef USEPARATEUR_H
 #define USEPARATEUR_H
 
-#include <QMainWindow>
+#include <QtGui/QMainWindow>
 #include <QWidget>
 #include <QTranslator>
 #include <QFile>

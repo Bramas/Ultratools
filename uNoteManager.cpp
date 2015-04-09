@@ -22,25 +22,18 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QFileInfo>
+
 #include "uNoteManager.h"
 
 UNoteManager UNoteManager::Instance;
 
 UNoteManager::UNoteManager()
 {
-
+    _violonOutput=NULL;
     _lyrics = NULL;
 _maxPitch = 18;
 _isPlaying= false;
 
-}
-
-QString UNoteManager::violonFile(int i)
-{
-    QFileInfo f(QApplication::applicationDirPath()+"/../../../violon/"+QString::number(i)+".mp3");
-    return f.absoluteFilePath();
 }
 
 void UNoteManager::setupAudio(QObject *parent)
@@ -51,10 +44,12 @@ void UNoteManager::setupAudio(QObject *parent)
     FMOD_CHANNEL * channel;
 
 
+    QString root = "violon/";
     QString tmp;
    for(int i = -36 ; i<5 ; ++i)//5
     {
-        _result = FMOD_System_CreateSound(_system,violonFile(i).toLatin1().data(), FMOD_DEFAULT, 0, &sound);		// FMOD_DEFAULT uses the defaults.  These are the same as FMOD_LOOP_OFF | FMOD_2D | FMOD_HARDWARE.
+        tmp=root+QString::number(i)+".mp3";
+        _result = FMOD_System_CreateSound(_system,tmp.toStdString().c_str(), FMOD_DEFAULT, 0, &sound);		// FMOD_DEFAULT uses the defaults.  These are the same as FMOD_LOOP_OFF | FMOD_2D | FMOD_HARDWARE.
         //ERRCHECK(result);
 
         _result = FMOD_System_PlaySound(_system,FMOD_CHANNEL_FREE, sound, true, &channel);
@@ -170,7 +165,6 @@ void UNoteManager::play()
     {
         foreach(Word * w, _played)
         {
-
                 FMOD_Channel_SetPaused(_channels[pitchToNote(w->getPitch())],false);
 
         }

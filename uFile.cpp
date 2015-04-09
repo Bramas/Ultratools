@@ -338,9 +338,9 @@ qreal UFile::timeToBeat(quint64 time)
 }
 
 
-quint64 UFile::beatToMsc(int n)
+quint64 UFile::beatToMsc(int n,bool withGap)
 {
-     return _headGap + (n)*1000.0 * 15.0f/_headBpm;
+    return (withGap?_headGap:0) + (n)*1000.0 * 15.0f/_headBpm;
 }
 
 void UFile::setFileName(QString f)

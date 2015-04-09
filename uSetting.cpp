@@ -57,11 +57,11 @@ _windowEditorTitleSet = false;
            QUuid r(QUuid::createUuid());
 
            QString rs=r.toString();
-           int i = (int)rs[1].toLatin1();
-           i+=(int)rs[6].toLatin1();
-           i+=(int)rs[11].toLatin1();
-           i+=(int)rs[12].toLatin1();
-           i+=(int)rs[21].toLatin1();
+           int i = (int)rs[1].toAscii();
+           i+=(int)rs[6].toAscii();
+           i+=(int)rs[11].toAscii();
+           i+=(int)rs[12].toAscii();
+           i+=(int)rs[21].toAscii();
 
            id.append(QString::number(i)+"-");
            id.append(rs);
@@ -92,7 +92,7 @@ int USetting::getAutoSaveInterval(void)
 }
 QString USetting::getSoftId(void)
 {
-    return _settings->value("softId").toString();
+    return _settings->value("softId",NULL).toString();
 }
 
 

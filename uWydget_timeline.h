@@ -28,30 +28,36 @@
 
 #include "uDialog_fileheader.h"
 
+
 class UWydget_Timeline : public QWidget
 {
     Q_OBJECT
 
 signals:
 
-    void gapModified(double);
+    void gapModified();
 
 public:
-    UWydget_Timeline();
+    UWydget_Timeline(UFile * file);
+    void setFile(UFile * file) { _file=file; }
     void setMin(int in) { min = in; update(); };
     void setMax(int in) { max = in; update(); };
     void setBpm(int n) { _bpm = n; };
-    void setGap(int n) { _lastGap = _gap = n; };
+    void setGap(int n) { _lastGap = _gap = n; update(); };
 
+    void setSeek(quint64 time);
+    bool isGapLocked() { return _gapLocked; };
 protected:
     int min, max;
     float _bpm;
     float _gap;
+    quint64 _seek;
+    UFile * _file;
      void paintEvent(QPaintEvent * event);
      void mousePressEvent(QMouseEvent * event);
      void mouseReleaseEvent(QMouseEvent * event);
      void mouseMoveEvent(QMouseEvent * event);
-     bool _gapSelected;
+     bool _gapSelected, _gapOver, _seekSelected, _seekOver, _gapLocked;
      float _lastGap;
 
 };
