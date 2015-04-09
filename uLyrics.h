@@ -68,7 +68,7 @@ public:
     void addWord(Word *ws);
 
      QList<Word*> *  separatorsOfWords(QList<Word*> * list) const;
-     QList<Word*> *  sentencesOfWords(QList<Word*> * list) const;
+     QList<Word *> sentencesOfWord(Word* w) const;
 
      bool setDelay(int delay, quint64 from=0);
      qreal timeToBeat(quint64 time)

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>498</width>
+    <width>960</width>
     <height>534</height>
    </rect>
   </property>
@@ -51,6 +51,20 @@
          <widget class="QSlider" name="Slider_NoteVolume">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>prévisualiser avec un décalage de</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="offsetSpinBox">
+          <property name="maximum">
+           <number>120</number>
           </property>
          </widget>
         </item>
@@ -106,8 +120,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>498</width>
-     <height>22</height>
+     <width>960</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFichier">
@@ -481,8 +495,8 @@
   <action name="actionD_caler_les_notes">
    <property name="text">
     <string>Décaler les notes</string>
-    </property>
-   </action>
+   </property>
+  </action>
   <action name="actionAbout">
    <property name="text">
     <string>About</string>

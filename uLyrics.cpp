@@ -233,27 +233,32 @@ QList<Word*> * Lyrics::separatorsOfWords(QList<Word *> * list) const
     return sep;
 
 }
-QList<Word*> * Lyrics::sentencesOfWords(QList<Word *> * list) const
+QList<Word*> Lyrics::sentencesOfWord(Word *w) const
 {
-    Q_UNUSED(list);
-    QList<Word*> * sen= new QList<Word*>();
+    Q_UNUSED(w);
+    QList<Word*> sentence;
 
-    return sen;
-    /** FIXME */
-    /*
-    Word* w;
-    foreach(w,*list)
+    QList<Word*>::const_iterator wordIt = this->words().constBegin() + this->words().indexOf(w);
+
+    while(wordIt != this->words().constBegin() && !(*wordIt)->isSeparator())
+        --wordIt;
+
+    if(!(*wordIt)->isSeparator())
     {
-        if(!sen->contains(w->getParent()))
-        {
-            sen->push_back(w->getParent());
-        }
-
+        wordIt = this->words().constBegin();
+    }
+    if((*wordIt)->isSeparator())
+    {
+        ++wordIt;
     }
 
+    while(wordIt != this->words().constEnd() && !(*wordIt)->isSeparator())
+    {
+        sentence << (*wordIt);
+        ++wordIt;
+    }
 
-    return sen;
-*/
+    return sentence;
 
 }
 void Lyrics::resortWord(Word *wdr)

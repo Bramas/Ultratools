@@ -833,26 +833,62 @@ bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w)
 }
 
 
-void ShowSentenceWidget::renderPreviousSentence(QPainter * /*painter*/)
+void ShowSentenceWidget::renderPreviousSentence(QPainter * painter)
 {
     if(_wordsDisplayed->empty() || !_previousDisplayed) return;
 
-    return;
-    /** FIXEME*/
-/*
     painter->setBrush(QBrush(QColor(0,0,0,40)));
     painter->setPen(QPen(QColor(0,0,0,0)));
 
-    int add;
-
-    foreach(Sentence * s,*lyrics->sentencesOfWords(_wordsDisplayed))
+    foreach(Word * wd, *_wordsDisplayed)
     {
-        if(lyrics->getSentences()->indexOf(_wordsDisplayed->first()->getParent())<_previousDisplayed) continue;
-        foreach(Word * w,*prevSent->getWords())
+        QList<Word*> sentence = lyrics->sentencesOfWord(wd);
+
+        if(wd->isSeparator() || wd != sentence.first() && wd != _wordsDisplayed->first())
         {
-            painter->drawRect(w->getTime()+add,(255-w->getPitch())*10-HAUTEUR_NOTE/2,w->getLength(),HAUTEUR_NOTE);
+            // we draw the sentence once
+            continue;
         }
-    }*/
+
+        QList<Word*>::const_iterator wordIt = lyrics->words().constBegin() + lyrics->words().indexOf(sentence.first());
+
+        int nbSkip = _previousDisplayed + 1;
+        while(nbSkip > 0 && wordIt != lyrics->words().constBegin())
+        {
+            --wordIt;
+            while(wordIt != lyrics->words().constBegin() && !(*wordIt)->isSeparator())
+                --wordIt;
+            --nbSkip;
+        }
+        if(nbSkip > 0)
+        {
+            continue;
+        }
+        if(!(*wordIt)->isSeparator())
+        {
+            wordIt = lyrics->words().constBegin();
+        }
+        else
+        {
+            ++wordIt;
+        }
+        if((*wordIt)->isSeparator())
+        {
+            continue;
+        }
+
+        int add = sentence.first()->getTime() - (*wordIt)->getTime();
+
+        while(wordIt != lyrics->words().constEnd() && !(*wordIt)->isSeparator())
+        {
+
+            QPointF p = scaledCoordinates((*wordIt)->getTime()+add,(255-(*wordIt)->getPitch())*10-HAUTEUR_NOTE/2);
+            QRectF r(p.x(), p.y(), scaleWidth((*wordIt)->getLength()), scaleHeight(HAUTEUR_NOTE));
+
+            painter->drawRect(r);
+            ++wordIt;
+        }
+    }
 }
 
 void ShowSentenceWidget::setHScale(int s)
@@ -1229,107 +1265,128 @@ void ShowSentenceWidget::calquer()
 {
     if(_selected.empty()) { return; }
 
-    return;
-    /** FIXEME */
-/*
-    if(lyrics->getSentences()->indexOf(_selected.first()->getParent())<_previousDisplayed) return;
+    Word * firstWord = _selected.first();
+    QList<Word*>::const_iterator firstSentenceWordIt = lyrics->words().constEnd();
+    QList<Word*> originSentence;
+    QList<Word*> destinationSentence;
 
-    int add = _selected.first()->getParent()->getWords()->first()->getTime();
-
-    Sentence * prevSent = lyrics->getSentences()->at(lyrics->getSentences()->indexOf(_selected.first()->getParent())-_previousDisplayed);
-
-
-    if(prevSent->getWords()->empty()) return;
-
-    if(prevSent->getSepBefore())
+    QList<Word*>::const_iterator wordIt = lyrics->words().constBegin() + lyrics->words().indexOf(firstWord);
+    for(int i = 0; i < _previousDisplayed; ++i) // ignore _previousDisplay separator to find the origin sentence
     {
-         add-=prevSent->getWords()->first()->getTime();
+        while(!(*wordIt)->isSeparator() && wordIt != lyrics->words().constBegin())
+            --wordIt;
+        if(wordIt == lyrics->words().constBegin())
+        {
+            return;
+        }
+        if(firstSentenceWordIt == lyrics->words().constEnd())
+        {
+            firstSentenceWordIt = (wordIt + 1); //the first word of the sentence that contains the first selected word.
+        }
+        --wordIt;
+    }
+
+    // fill originSentence with the words of the sentence we want to match
+    while(!(*wordIt)->isSeparator() && wordIt != lyrics->words().constBegin())
+    {
+        originSentence << *wordIt;
+        --wordIt;
+    }
+    if(wordIt == lyrics->words().constBegin())
+    {
+        originSentence << *wordIt;
+    }
+    if(originSentence.empty())
+    {
+        qDebug()<<"originSentence.empty()";
+        return;
+    }
+    // time to add to the time of the word we want to match.
+    int add = (*firstSentenceWordIt)->getTime() - originSentence.first()->getTime();
+
+    wordIt = firstSentenceWordIt;
+    // fill destinationSentence with the words of the sentence we want to replace
+    while(!(*wordIt)->isSeparator()
+          && wordIt != lyrics->words().constEnd()
+          && (destinationSentence.size() < originSentence.size()
+              || (*wordIt)->getTime() < originSentence.last()->getTime() + add))
+    {
+        destinationSentence << *wordIt;
+        ++wordIt;
+    }
+    if(destinationSentence.empty())
+    {
+        return;
+    }
+
+    // the maximum possible time is time of the next separator (or a dummy value if it is the last sentence)
+    int maxAllowedTime = lyrics->words().last()->getTime() + add;
+    if(wordIt != lyrics->words().constEnd())
+    {
+        maxAllowedTime = (*wordIt)->getTime();
     }
 
 
 
-    int max = _floatSelection[1];
-
-
-    if(_selected.first()->getParent() == _selected.last()->getParent()) // all the selected note are in the same sentence
+    QList<Word*> wordAdded;
+    foreach(Word * w, originSentence) // create a new word for each word in the origin sentence
     {
-         //Sentence * p = _selected.first()->getParent();
-         //if(p->getSepAfter());
+        if( w->getTime() + add < maxAllowedTime)
+        {
+            Word * newWord = new Word(0, w->getTime()+add, w->getLength(), w->getPitch());
+            newWord->setText("~");
+            wordAdded << newWord;
+        }
+    }
+
+    QList<Word*> wordRemoved;
+    foreach(Word *w, destinationSentence)
+    {
+        if(w->getTime() < maxAllowedTime)
+        {
+            wordRemoved << w;
+        }
+    }
+
+
+    if(wordAdded.count()==wordRemoved.count())
+    {
+        for(int i=0;i<wordAdded.count();++i)
+        {
+            wordAdded.at(i)->setText(wordRemoved.at(i)->getText());
+        }
+    }
+    else
+    if(wordAdded.count()>wordRemoved.count())
+    {
+        for(int i=0;i<wordRemoved.count();++i)
+        {
+            wordAdded.at(i)->setText(wordRemoved.at(i)->getText());
+        }
+
     }
     else
     {
-        if(_selected.first()->getParent()->getSepAfter())
+        for(int i=0;i<wordAdded.count();++i)
         {
-           max = _selected.first()->getParent()->getSepAfter()->getTime1();
+            wordAdded.at(i)->setText(wordRemoved.at(i)->getText());
         }
+        for(int i=wordAdded.count();i<wordRemoved.count();++i)
+        {
+            wordAdded.back()->setText(wordAdded.back()->getText()+wordRemoved.at(i)->getText());
+        }
+
     }
 
-    Word * newWord;
-
-    QList<Word*> wordAdded;
-       foreach(Word * w,*prevSent->getWords())
-       {
-           if(w->getTime()+add<max)
-           {
-               newWord = new Word(NULL,w->getTime()+add,w->getLength(),w->getPitch());
-               newWord->setWord("~");
-               wordAdded.push_back(newWord);
-           }
-       }
-
-       if(wordAdded.empty()) return;
-
-        QString str;
-
-        QList<Word*> wordRemoved;
-        foreach(Word*w,*_selected.first()->getParent()->getWords())
-        {
-            if(w->getTime()<max)
-            {
-                wordRemoved.push_back(w);
-                _selected.removeAll(w);
-                //delete w;
-            }
-        }
-
-        if(wordAdded.count()==wordRemoved.count())
-        {
-            for(int i=0;i<wordAdded.count();++i)
-            {
-                wordAdded.at(i)->setWord(wordRemoved.at(i)->getWord());
-            }
-        }
-        else
-        if(wordAdded.count()>wordRemoved.count())
-        {
-            for(int i=0;i<wordRemoved.count();++i)
-            {
-                wordAdded.at(i)->setWord(wordRemoved.at(i)->getWord());
-            }
-
-        }
-        else
-        {
-            for(int i=0;i<wordAdded.count();++i)
-            {
-                wordAdded.at(i)->setWord(wordRemoved.at(i)->getWord());
-            }
-            for(int i=wordAdded.count();i<wordRemoved.count();++i)
-            {
-                wordAdded.back()->setWord(wordAdded.back()->getWord()+wordRemoved.at(i)->getWord());
-            }
-
-        }
-
-        foreach(Word*w,wordRemoved)
-        {
-            lyrics->removeWord(w);
-            delete w;
-        }
-        foreach(Word*w,wordAdded)
-        {
-            lyrics->addWord(w);
-        }
+    foreach(Word*w,wordRemoved)
+    {
+        lyrics->removeWord(w);
+        delete w;
+    }
+    foreach(Word*w,wordAdded)
+    {
+        lyrics->addWord(w);
+    }
 /*
         wordAdded.first()->setText(str);
         int k = 0;

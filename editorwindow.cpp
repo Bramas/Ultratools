@@ -103,6 +103,8 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
         connect(showSentenceWidget,SIGNAL(haveToStop()),mediaObject,SLOT(pause()));
         connect(showSentenceWidget,SIGNAL(haveToStop()),&UNoteManager::Instance,SLOT(pause()));
 */
+        connect(this->ui->offsetSpinBox, SIGNAL(valueChanged(int)), showSentenceWidget, SLOT(setPreviousDisplayed(int)));
+        this->ui->offsetSpinBox->setValue(2);
         connect(ui->actionNode_normale,SIGNAL(triggered()),showSentenceWidget, SLOT(setNormal()));
         connect(ui->actionNote_freestyle,SIGNAL(triggered()),showSentenceWidget, SLOT(setFree()));
         connect(ui->actionNote_Gold,SIGNAL(triggered()),showSentenceWidget, SLOT(setGold()));
