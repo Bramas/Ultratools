@@ -326,29 +326,26 @@ void Lyrics::doublePresicion()
 
 bool Lyrics::setDelay(int delay, quint64 from)
 {
-    /** FIXEME */
-    /*
-    double temp = (((from-qFloor(this->getGap()))/1000.0) * this->getBpm()/15.0f);
+    double temp = 0;
+    if(from > 0)
+        temp = (((from-qFloor(this->getGap()))/1000.0) * this->getBpm()/15.0f);
 
 
     Word * last=NULL;
     // check only if the delay is negative
-    bool firstWordCheck=(delay>=0);
-    foreach(Word * w, words)
+    bool firstWordChecked=(delay>=0);
+    foreach(Word * w, words())
     {
-
-
-        if( temp  <= w->getTime() && !firstWordCheck)
+        if( temp  <= w->getTime() && !firstWordChecked)
         {
             if(w->getTime() + delay < 0 ||
-               (w->getParent()->getSepBefore() && w->getParent()->getSepBefore()->getTime()<temp && w->getTime() + delay < w->getParent()->getSepBefore()->getTime2()) ||
                (last && w->getTime() + delay < last->getTime() + last->getLength()))
             {
                 return false;
             }
             else
             {
-                firstWordCheck=true;
+                firstWordChecked=true;
             }
             w->setTime(w->getTime()+delay);
         }
@@ -361,13 +358,5 @@ bool Lyrics::setDelay(int delay, quint64 from)
             last=w;
         }
     }
-    foreach(Sentence * s, sentences)
-    {
-        if(s->getSepAfter())
-        if( temp  <= s->getSepAfter()->getTime())
-        {
-            s->getSepAfter()->setTime(s->getSepAfter()->getTime()+delay);
-        }
-    }*/
     return true;
 }

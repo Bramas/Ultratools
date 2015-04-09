@@ -108,19 +108,11 @@ void UWydget_Timeline::mouseMoveEvent(QMouseEvent *event)
                 {
                     if(_file->lyrics->setDelay(diff>=1?floor(diff):ceil(diff)))
                     {
-                        qDebug()<<_gap;
-                        //_gap = ((((event->x())*fTempsR)+fMin)*1000.0);
                         _gap -= ((diff>=1?floor(diff):ceil(diff))*1000.0 * 15.0f/_bpm);
-                        qDebug()<<_gap;
-                        qDebug()<<((diff>=1?floor(diff):ceil(diff))*1000.0 * 15.0f/_bpm);
-
-                        qDebug()<<"--";
                         _file->setGap(_gap);
                         emit gapModified(_gap);
                     }
                 }
-                // + _lastGap;
-                //QMessageBox::information(NULL,"lol",QString::number(diff));
             }
         }
     }

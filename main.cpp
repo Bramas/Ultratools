@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
      }
      else
      {
-         qDebug()<<"undeployed";
+         qDebug()<<"not deployed";
      }
 #endif
 #ifdef _WIN32
@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
      }
      else
      {
-         qDebug()<<"undeployed";
+         qDebug()<<"not deployed";
      }
 #endif
 
