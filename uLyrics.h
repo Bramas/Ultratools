@@ -75,6 +75,14 @@ public:
      QList<Word*> *  sentencesOfWords(QList<Word*> * list);
 
      bool setDelay(int delay, quint64 from=0);
+     qreal timeToBeat(quint64 time)
+     {
+         return (time/1000.0) * _bpm/15.0f;
+     }
+     quint64 beatToMsc(int n)
+     {
+          return _gap + (n)*1000.0 * 15.0f/_bpm;
+     }
 
 
     void moveLeft(Word * from);

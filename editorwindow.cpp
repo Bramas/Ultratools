@@ -26,6 +26,10 @@
 #include "editorwindow.h"
 #include "ui_editorwindow.h"
 #include "uDialog_timing.h"
+#include "uWydget_timeline.h"
+#include "uWydget_lyrics.h"
+#include "uNoteManager.h"
+#include "uRecorder.h"
 #include <math.h>
 #include <QUrl>
 #include <QMimeData>
@@ -37,7 +41,7 @@
 #define USEFMOD TRUE
 
 
-#define WINDOW_TITLE "Ultratools - Edirot"
+#define WINDOW_TITLE "Ultratools Editor"
 #define URL_VERSION "http://ultratools.org/version.php?soft=editor"
 
 UEditorWindow::UEditorWindow(QWidget *parent)
@@ -92,6 +96,7 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
 
     connect(playAction, SIGNAL(triggered()), this, SLOT(tooglePlay()));
     connect(pauseAction, SIGNAL(triggered()), this, SLOT(tooglePlay()));
+    connect(recordAction, SIGNAL(triggered()), this, SLOT(toggleRecord()));
     connect(showSentenceWidget,SIGNAL(haveToStop()), this, SLOT(tooglePlay()));
         /*connect(playAction, SIGNAL(triggered()), mediaObject, SLOT(play()));
         connect(playAction, SIGNAL(triggered()), &UNoteManager::Instance, SLOT(play()));
@@ -159,6 +164,7 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
 
         readSettings();
 
+        _spaceNote = new Recorder(this->showSentenceWidget);
 
         _autoSaveTimer = new QTimer(this);
           connect(_autoSaveTimer, SIGNAL(timeout()), this, SLOT(autoSave()));
@@ -308,7 +314,7 @@ void UEditorWindow::adaptNewFile()
     showSentenceWidget->setVScroll((255-_currentFile->lyrics->words().at(0)->getPitch())*2);
 
     //qDebug()<<*range;
-    ui->hScroll->setMaximum(_currentFile->getMax()+_currentFile->timeToBeat(_currentFile->lyrics->getGap()));
+    ui->hScroll->setMaximum(_currentFile->getMax()+_currentFile->lyrics->timeToBeat(_currentFile->lyrics->getGap()));
 
     ui->vScroll->setValue((255-_currentFile->lyrics->words().at(0)->getPitch()));
 
@@ -456,12 +462,14 @@ ui->tabEditeurLayMain->addWidget(_wydget_timeline,0,1);
      //ui->tabEditeurLayMain->addWidget(ui->hSlider,2,1);
 
 
-        playAction = new QAction(style()->standardIcon(QStyle::SP_MediaPlay), tr("Play"), this);
+        playAction = new QAction(QIcon(":/images/player_play.png"), tr("Play"), this);
         playAction->setShortcut(tr("Crl+P"));
         playAction->setDisabled(true);
-        pauseAction = new QAction(style()->standardIcon(QStyle::SP_MediaPause), tr("Pause"), this);
+        pauseAction = new QAction(QIcon(":/images/player_pause.png"), tr("Pause"), this);
         pauseAction->setShortcut(tr("Ctrl+A"));
-        pauseAction->setDisabled(true);
+        pauseAction->setVisible(false);
+        recordAction = new QAction(QIcon(":/images/recordnormal.png"), tr("Pause"), this);
+        recordAction->setShortcut(tr("Ctrl+R"));
 
         ui->lcd_music->display("00:00");
 
@@ -479,6 +487,7 @@ ui->tabEditeurLayMain->addWidget(_wydget_timeline,0,1);
 
         bar->addAction(playAction);
         bar->addAction(pauseAction);
+        bar->addAction(recordAction);
 
         ui->HLayAudioDevice->insertWidget(1,bar);
 
@@ -534,6 +543,7 @@ void UEditorWindow::setupAudio()
     UNoteManager::Instance.setupAudio(this);
 
     connect( &UAudioManager::Instance, SIGNAL(tick(qint64)), this, SLOT(tick(qint64)));
+    connect( &UAudioManager::Instance, SIGNAL(endOfSong()), this, SLOT(pause()));
 
 
 
@@ -572,7 +582,7 @@ void UEditorWindow::tick(qint64 time)
     ui->lcd_music->display(displayTime.toString("mm:ss"));
 
 
-    showSentenceWidget->setSeekPosition(_currentFile->timeToBeat(time));
+    showSentenceWidget->setSeekPosition(_currentFile->lyrics->timeToBeat(time));
     _wydget_timeline->setSeek(time);
 
 
@@ -586,8 +596,8 @@ if(_currentFile->lyrics->words().empty()) return;
   if(UNoteManager::Instance.isPlaying())
   foreach(w,_currentFile->lyrics->words())
   {
-        if(!w->isSeparator() && _currentFile->beatToMsc(w->getTime())-20<=time
-           && _currentFile->beatToMsc(w->getTime()+w->getLength())>time
+        if(!w->isSeparator() && _currentFile->lyrics->beatToMsc(w->getTime())-20<=time
+           && _currentFile->lyrics->beatToMsc(w->getTime()+w->getLength())>time
            )
         {
 
@@ -599,37 +609,6 @@ if(_currentFile->lyrics->words().empty()) return;
 }
 void UEditorWindow::aboutToFinish()
 {
-    if(_spaceNoteGeneration)
-    {
-        _spaceNoteGeneration=false;
-
-        UAudioManager::Instance.pause();
-
-
-        disconnect(&UAudioManager::Instance,SIGNAL(tick(qint64)),_spaceNote,SLOT(tick(qint64)));
-        disconnect(pauseAction,SIGNAL(triggered()),this,SLOT(aboutToFinish()));
-
-        connect(&UInputManager::Instance,SIGNAL(spacePressEvent(void)),this,SLOT(tooglePlay()));
-
-        UNewSongForm_Lyrics * dialogForLyrics = new UNewSongForm_Lyrics(this);
-
-        dialogForLyrics->exec();
-
-        _spaceNote->generateLyrics(dialogForLyrics->getText(),_currentFile->lyrics);
-
-        _currentFile->setGap(_currentFile->beatToMsc(_currentFile->lyrics->getGap()));
-
-
-        save();
-        openFile(_currentFile->getFileName());
-        delete _spaceNote;
-
-        /*
-        foreach(Word * w,_spaceNote->result())
-        {
-            _currentFile->lyrics->addWord(w);
-        }*/
-    }
 
 }
 
@@ -690,40 +669,56 @@ void UEditorWindow::save()
     _currentFile->saveInFile();
 
 }
+void UEditorWindow::toggleRecord()
+{
+    if(_spaceNote->isRecording())
+    {
+        _spaceNote->stop();
+        recordAction->setIcon(QIcon(":/images/recordnormal.png"));
+    }
+    else
+    {
+        _spaceNote->start();
+        recordAction->setIcon(QIcon(":/images/recordpressed.png"));
+    }
+}
+
+void UEditorWindow::pause()
+{
+    UAudioManager::Instance.pause();
+    UNoteManager::Instance.pause();
+    showSentenceWidget->stop();
+    if(USetting::Instance.isRestartAfterStop())
+    {
+        UAudioManager::Instance.seek(_startTime);
+    }
+    pauseAction->setVisible(false);
+    playAction->setVisible(true);
+}
+void UEditorWindow::play()
+{
+    _startTime = UAudioManager::Instance.currentTime();
+    UAudioManager::Instance.play();
+    UNoteManager::Instance.play();
+    showSentenceWidget->play();
+    playAction->setVisible(false);
+    pauseAction->setVisible(true);
+}
 
 void UEditorWindow::tooglePlay()
 {
     if(UNoteManager::Instance.isPlaying())
     {
-        UAudioManager::Instance.pause();
-        UNoteManager::Instance.pause();
-        showSentenceWidget->stop();
-        _isPlaying=false;
-
-        stateChanged(Phonon::StoppedState);
-        if(USetting::Instance.isRestartAfterStop())
-        {
-            UAudioManager::Instance.seek(_startTime);
-
-
-        }
-
+        pause();
     }
     else
     {
-
-        stateChanged(Phonon::PlayingState);
-        _startTime = UAudioManager::Instance.currentTime();
-        UAudioManager::Instance.play();
-        UNoteManager::Instance.play();
-        showSentenceWidget->play();
-        _isPlaying=true;
+        play();
     }
 }
 
 void UEditorWindow::newSong(void)
 {
-
     if(discardChange() != QMessageBox::Yes) return;
 
     if(_currentFile)
@@ -773,18 +768,12 @@ tr("Maintenant Votre musique va se lancez et vous devrez appuyer la barre "
    "vous arretez pas et essayer de rester calé, cela vous fera gagner beaucoup de "
    "temps lors de l'édition.\n c'est partie."));
 
-      _spaceNote = new USpaceNoteGenerator(_currentFile);
 
-      disconnect(&UInputManager::Instance,SIGNAL(spacePressEvent(void)),this,SLOT(tooglePlay()));
-
-      connect(&UAudioManager::Instance,SIGNAL(tick(qint64)),_spaceNote,SLOT(tick(qint64)));
-
-      UAudioManager::Instance.play();
-
-      _spaceNoteGeneration = true;
-
-      stateChanged(Phonon::PlayingState);
-      connect(pauseAction,SIGNAL(triggered()),this,SLOT(aboutToFinish()));
+     play();
+     if(!_spaceNote->isRecording())
+     {
+         recordAction->trigger();
+     }
 
 }
 
@@ -842,9 +831,9 @@ void UEditorWindow::dragEnterEvent(QDragEnterEvent *event)
 void UEditorWindow::centerView()
 {
     int time = UAudioManager::Instance.currentTime();
-    if(ui->hScroll->value()>_currentFile->timeToBeat(time) || ui->hScroll->value() + showSentenceWidget->getHScale()<_currentFile->timeToBeat(time))
+    if(ui->hScroll->value()>_currentFile->lyrics->timeToBeat(time) || ui->hScroll->value() + showSentenceWidget->getHScale()<_currentFile->lyrics->timeToBeat(time))
     {
-        changeHScroll(max(0.0,_currentFile->timeToBeat(time)-showSentenceWidget->getHScale()/2));
+        changeHScroll(max(0.0,_currentFile->lyrics->timeToBeat(time)-showSentenceWidget->getHScale()/2));
         //QMessageBox::warning(NULL,"","ok");
     }
 }

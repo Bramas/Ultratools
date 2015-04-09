@@ -66,12 +66,9 @@ public:
     UFile(QMainWindow * parent, QString fileName);
     int getMax(void);
 
-    QString getMp3Location(void) { return _fileName.section('/',0,-2) + "/" +_headMp3; };
-    QString getFileName(void) { return _fileName; };
+    QString getMp3Location(void) { return _fileName.section('/',0,-2) + "/" +_headMp3; }
+    QString getFileName(void) { return _fileName; }
 
-   qreal timeToBeat(quint64 time);
-   // static qreal timeToBeat(quint64 time, Lyrics * l) { return (time/1000.0) * l->getBpm()/15.0f; };
-    quint64 beatToMsc(int n,bool withGap=true);
 
     Lyrics *lyrics;
     QString sourceCode;

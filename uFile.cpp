@@ -125,7 +125,6 @@ if(QFile::exists(getBAK()))
         lyrics->parseCode(sourceCode);
 
         _hMax = lyrics->words().back()->getTime2() + 10;
-        qDebug()<<"Hmax"<<_hMax;
         extractHead();
         lyrics->setGap(_headGap);
         lyrics->setBpm(_headBpm);
@@ -327,16 +326,6 @@ void UFile::editHeader()
         edit->show();
 
         modified();
-}
-qreal UFile::timeToBeat(quint64 time)
-{
-    return (time/1000.0) * _headBpm/15.0f;
-}
-
-
-quint64 UFile::beatToMsc(int n,bool withGap)
-{
-    return (withGap?_headGap:0) + (n)*1000.0 * 15.0f/_headBpm;
 }
 
 void UFile::setFileName(QString f)

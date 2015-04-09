@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include "uSetting.h"
 #include "uCheckUpdate.h"
+#include <QPushButton>
 
 UDialogFeedback::UDialogFeedback(QWidget *parent) :
     QDialog(parent),
@@ -17,6 +18,7 @@ UDialogFeedback::UDialogFeedback(QWidget *parent) :
     connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(downloadFile()));
     connect(ui->pushButton_2,SIGNAL(clicked()),this,SLOT(accept()));
 
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(trUtf8("Envoyer"));
 }
 
 UDialogFeedback::~UDialogFeedback()
