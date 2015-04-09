@@ -31,6 +31,8 @@
 #include <math.h>
 #include <QDebug>
 #include <QScrollBar>
+#include <QMenu>
+#include <QAction>
 
 #define TAILLE_FENETRE 1000
 #define HAUTEUR_NOTE 20
@@ -84,6 +86,7 @@ _previousDisplayed=2;
    mousePitch=0;
    time.start();
 
+    this->setContextMenuPolicy(Qt::DefaultContextMenu);
 #ifdef UPDATE_BY_TIMER
    QTimer *timer = new QTimer(this);
      connect(timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -183,6 +186,7 @@ void ShowSentenceWidget::mousePressEvent(QMouseEvent *event)
     {
         emit emptyClik();
     }
+    QWidget::mousePressEvent(event);
 }
 
 void ShowSentenceWidget::wheelEvent(QWheelEvent * event)
@@ -280,6 +284,9 @@ void ShowSentenceWidget::mouseReleaseEvent(QMouseEvent *event)
 
 
     }
+
+    QWidget::mouseReleaseEvent(event);
+
 #ifndef UPDATE_BY_TIMER
     update();
 #endif
@@ -1326,3 +1333,12 @@ void ShowSentenceWidget::sortSelected()
 
 
 
+
+
+void ShowSentenceWidget::contextMenuEvent(QContextMenuEvent * event)
+{
+    event->accept();
+    QMenu menu(this);
+    menu.addAction("test");
+    menu.exec(event->globalPos());
+}

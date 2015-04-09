@@ -31,6 +31,7 @@
 #include "uRecorder.h"
 #include "uDialogAbout.h"
 #include "uWidgetSongData.h"
+#include "uShowSentenceWydget.h"
 #include <math.h>
 #include <QUrl>
 #include <QMimeData>

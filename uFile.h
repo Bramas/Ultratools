@@ -27,8 +27,8 @@
 #define UFILE_H
 
 #include <QFile>
+#include "uLyrics.h"
 class QMainWindow;
-#include "uShowSentenceWydget.h"
 
 class UFile : public QObject
 {

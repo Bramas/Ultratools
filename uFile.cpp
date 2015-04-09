@@ -28,7 +28,7 @@
 #include <QStatusBar>
 #include <QMessageBox>
 #include "editorwindow.h"
-
+#include "uShowSentenceWydget.h"
 #define DEFAULT_GAP 0
 #define DEFAULT_BPM 360
 

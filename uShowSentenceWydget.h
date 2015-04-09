@@ -128,6 +128,7 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent * event );
     void wheelEvent(QWheelEvent *);
     void paintEvent(QPaintEvent * event);
+    void contextMenuEvent(QContextMenuEvent * event);
 
     quint32 hScale;
     quint16 vScale;
