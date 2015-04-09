@@ -291,11 +291,7 @@ if(!QFile::exists(fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile-
 }
 else
 {
-    if(UAudioManager::Instance.setSource(fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3))
-    {
-        stateChanged(Phonon::StoppedState);
-    }
-    else
+    if(!UAudioManager::Instance.setSource(fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3))
     {
         QMessageBox::warning(this,tr("Attention"),tr("Il y a eu un problème lors de la lecture du fichier son")+" : "+fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3);
     }
@@ -549,31 +545,6 @@ void UEditorWindow::setupAudio()
 
 }
 
-void UEditorWindow::stateChanged(Phonon::State newState)
-{
-    switch (newState) {
-
-//![10]
-        case Phonon::PlayingState:
-                playAction->setEnabled(false);
-                pauseAction->setEnabled(true);
-                break;
-        case Phonon::StoppedState:
-                playAction->setEnabled(true);
-                pauseAction->setEnabled(false);
-                ui->lcd_music->display("00:00");
-                break;
-        case Phonon::PausedState:
-                pauseAction->setEnabled(false);
-                playAction->setEnabled(true);
-                break;
-//![10]
-        case Phonon::BufferingState:
-                break;
-        default:
-            ;
-    }
-}
 void UEditorWindow::tick(qint64 time)
 {
    UNoteManager::Instance.tick(time);

@@ -28,7 +28,6 @@
 #include <QMessageBox>
 
 #include "editorwindow.h"
-#include <QCleanlooksStyle>
 #include <QInputDialog>
 
 void setLang(QApplication& app, const QString& idl){
@@ -102,8 +101,6 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-
-    a.setStyle(new QCleanlooksStyle );
 
     manageLang(a);
     donate();

@@ -101,7 +101,7 @@
      <x>0</x>
      <y>0</y>
      <width>982</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFichier">
@@ -198,6 +198,7 @@
    <addaction name="actionVerrouiller_les_timings"/>
    <addaction name="actionDoublePrecision"/>
    <addaction name="actionCentrer"/>
+   <addaction name="actionD_caler_les_notes"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionNouveau">
@@ -465,6 +466,11 @@
    </property>
    <property name="text">
     <string>Envoyer une suggestion/remarque rapide</string>
+   </property>
+  </action>
+  <action name="actionD_caler_les_notes">
+   <property name="text">
+    <string>Décaler les notes</string>
    </property>
   </action>
  </widget>

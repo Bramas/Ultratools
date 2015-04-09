@@ -29,6 +29,7 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QDebug>
+#include <QtMath>
 
 Lyrics::Lyrics(QWidget * parent)
 {
@@ -312,7 +313,9 @@ void Lyrics::doublePresicion()
 
 bool Lyrics::setDelay(int delay, quint64 from)
 {
-    double temp = (((from-floor(this->getGap()))/1000.0) * this->getBpm()/15.0f);
+    /** FIXEME */
+    /*
+    double temp = (((from-qFloor(this->getGap()))/1000.0) * this->getBpm()/15.0f);
 
 
     Word * last=NULL;
@@ -352,6 +355,6 @@ bool Lyrics::setDelay(int delay, quint64 from)
         {
             s->getSepAfter()->setTime(s->getSepAfter()->getTime()+delay);
         }
-    }
+    }*/
     return true;
 }

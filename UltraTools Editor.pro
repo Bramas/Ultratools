@@ -24,7 +24,8 @@ SOURCES += main.cpp \
     uAudioManager.cpp \
     uDialogHelp.cpp \
     uDialogFeedback.cpp \
-    uRecorder.cpp
+    uRecorder.cpp \
+    uDialog_timing.cpp
 HEADERS += editorwindow.h \
     uWord.h \
     uLyrics.h \
@@ -44,14 +45,16 @@ HEADERS += editorwindow.h \
     uAudioManager.h \
     uDialogHelp.h \
     uDialogFeedback.h \
-    uRecorder.h
+    uRecorder.h \
+    uDialog_timing.h
 FORMS += editorwindow.ui \
     udialog_fileheader.ui \
     uNewSongForm_Browse.ui \
     uNewSongForm_Lyrics.ui \
     uSettingDialog.ui \
     uDialogHelp.ui \
-    uDialogFeedback.ui
+    uDialogFeedback.ui \
+    uDialog_timing.ui
 
 
 RESOURCES = data.qrc \

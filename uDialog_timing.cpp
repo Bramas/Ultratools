@@ -36,7 +36,7 @@ void UDialog_timing::accept()
 
 void UDialog_timing::valueChanged()
 {
-    quint64 time = _file->beatToMsc(ui->spinBox->value(),false);
+    quint64 time = _file->lyrics->beatToMsc(ui->spinBox->value());
     ui->lineEdit->setText(QString::number(time));
 }
 

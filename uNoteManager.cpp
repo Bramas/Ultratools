@@ -34,7 +34,6 @@ UNoteManager UNoteManager::Instance;
 
 UNoteManager::UNoteManager()
 {
-    _violonOutput=NULL;
     _lyrics = NULL;
 _maxPitch = 18;
 _isPlaying= false;

@@ -56,7 +56,6 @@ public:
 
     void setupAudio(QObject * parent);
 
-    Phonon::AudioOutput *_violonOutput;
 protected:
 
     bool checkPitch(int p);
@@ -69,7 +68,6 @@ protected:
     FMOD_SYSTEM *_system;
     QString _source;
 
-    Phonon::MediaObject *_violon;
 
 
     QMap<int,FMOD_SOUND *> _sounds;

@@ -15,8 +15,6 @@ UDialogFeedback::UDialogFeedback(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setLayout(ui->verticalLayout);
-    connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(downloadFile()));
-    connect(ui->pushButton_2,SIGNAL(clicked()),this,SLOT(accept()));
 
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(trUtf8("Envoyer"));
 }
@@ -54,8 +52,6 @@ void UDialogFeedback::startRequest(QUrl url)
 
 void UDialogFeedback::downloadFile()
 {
-    ui->pushButton->setEnabled(false);
-    ui->pushButton_2->setEnabled(false);
     QString type;
     if(ui->radioButton->isChecked())
     {
@@ -73,7 +69,7 @@ void UDialogFeedback::downloadFile()
             }
 
 
-        _url = QUrl::fromUserInput(URL_FEEDBACK+type+"&version="+QString(VERSION)+"&id="+USetting::Instance.getSoftId()+"&message="+ui->textEdit->toPlainText());
+        _url = QUrl::fromUserInput(URL_FEEDBACK+type+"&version="+QString(VERSION)+"&id="+USetting::Instance.getSoftId()+"&message="+ui->plainTextEdit->toPlainText());
 
     QFileInfo fileInfo(_url.path());
     QString fileName = fileInfo.fileName();

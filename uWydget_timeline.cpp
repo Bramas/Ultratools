@@ -24,6 +24,7 @@
 
 
 #include "uWydget_timeline.h"
+#include "uFile.h"
 #include <QDebug>
 #include <QMouseEvent>
 #include <QPainter>
@@ -97,7 +98,7 @@ void UWydget_Timeline::mouseMoveEvent(QMouseEvent *event)
         if(_gapLocked)
         {
             _gap = ((((event->x())*fTempsR)+fMin)*1000.0);// + _lastGap;
-            _file->setGap(_gap);
+           this->_file->setGap(_gap);
             emit gapModified();
         }
         else
@@ -158,7 +159,7 @@ void UWydget_Timeline::mouseReleaseEvent(QMouseEvent *event)
         _gapSelected = false;
 
         _gap = _gap<0?0:_gap;
-        emit gapModified(_gap);
+        emit gapModified();
      }
     if(_seekSelected)
     {
@@ -235,64 +236,64 @@ painter.drawRect(QRectF(((_gap/1000.0 - fMin)*fTempsR),20,0,20));
 if(_gapLocked)
 {
     QVector<QPoint> arrowPoints;
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+15,18));
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+15,30));
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+30,30));
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+30,18));
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+19,18));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+15,18));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+15,30));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+30,30));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+30,18));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+19,18));
 
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+19,7));
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+26,7));
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+26,18));
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+28,18));
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+28,5));
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+17,5));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+19,7));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+26,7));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+26,18));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+28,18));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+28,5));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+17,5));
 
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+17,18));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+17,18));
 
-    painter->drawPolygon(QPolygon::QPolygon(arrowPoints));
+    painter.drawPolygon(QPolygon(arrowPoints));
 }
 else
 {
     QVector<QPoint> arrowPoints;
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+15,18));
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+15,30));
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+30,30));
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+30,18));
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+19,18));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+15,18));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+15,30));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+30,30));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+30,18));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+19,18));
 
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+19,7));
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+12,7));
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+12,18));
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+10,18));
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+10,5));
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+17,5));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+19,7));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+12,7));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+12,18));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+10,18));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+10,5));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+17,5));
 
-    arrowPoints.push_back(QPoint::QPoint(((_gap/1000.0 - fMin)*fTempsR)+17,18));
+    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+17,18));
 
-    painter->drawPolygon(QPolygon::QPolygon(arrowPoints));
+    painter.drawPolygon(QPolygon(arrowPoints));
 }
 
 
 // seek Cursor
-painter->setPen(QPen::QPen(QColor::QColor(0,173,232,255)));
-painter->setBrush(QBrush::QBrush(QColor::QColor(0,173,232,255)));
+painter.setPen(QPen(QColor(0,173,232,255)));
+painter.setBrush(QBrush(QColor(0,173,232,255)));
 
-painter->drawRect(QRectF(((_seek/1000.0 - fMin)*fTempsR)-5,0,10,20));
-painter->drawRect(QRectF(((_seek/1000.0 - fMin)*fTempsR),20,0,20));
+painter.drawRect(QRectF(((_seek/1000.0 - fMin)*fTempsR)-5,0,10,20));
+painter.drawRect(QRectF(((_seek/1000.0 - fMin)*fTempsR),20,0,20));
 
 // seek over
 if(_seekOver)
 {
     QVector<QPoint> arrowPoints;
-    arrowPoints.push_back(QPoint::QPoint(((_seek/1000.0 - fMin)*fTempsR)+15,5));
-    arrowPoints.push_back(QPoint::QPoint(((_seek/1000.0 - fMin)*fTempsR)+20,5));
-    arrowPoints.push_back(QPoint::QPoint(((_seek/1000.0 - fMin)*fTempsR)+20,0));
-    arrowPoints.push_back(QPoint::QPoint(((_seek/1000.0 - fMin)*fTempsR)+25,10));
-    arrowPoints.push_back(QPoint::QPoint(((_seek/1000.0 - fMin)*fTempsR)+20,20));
-    arrowPoints.push_back(QPoint::QPoint(((_seek/1000.0 - fMin)*fTempsR)+20,15));
-    arrowPoints.push_back(QPoint::QPoint(((_seek/1000.0 - fMin)*fTempsR)+15,15));
-    painter->drawPolygon(QPolygon::QPolygon(arrowPoints));
+    arrowPoints.push_back(QPoint(((_seek/1000.0 - fMin)*fTempsR)+15,5));
+    arrowPoints.push_back(QPoint(((_seek/1000.0 - fMin)*fTempsR)+20,5));
+    arrowPoints.push_back(QPoint(((_seek/1000.0 - fMin)*fTempsR)+20,0));
+    arrowPoints.push_back(QPoint(((_seek/1000.0 - fMin)*fTempsR)+25,10));
+    arrowPoints.push_back(QPoint(((_seek/1000.0 - fMin)*fTempsR)+20,20));
+    arrowPoints.push_back(QPoint(((_seek/1000.0 - fMin)*fTempsR)+20,15));
+    arrowPoints.push_back(QPoint(((_seek/1000.0 - fMin)*fTempsR)+15,15));
+    painter.drawPolygon(QPolygon(arrowPoints));
 }
 
 

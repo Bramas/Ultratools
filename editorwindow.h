@@ -93,7 +93,6 @@ public slots:
 
 
 private slots:
-  void stateChanged(Phonon::State newState);
    void tick(qint64 time);
    void aboutToFinish();
 
