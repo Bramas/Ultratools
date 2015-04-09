@@ -56,9 +56,9 @@ FMOD_RESULT F_CALLBACK endCallback(FMOD_CHANNEL *channel, FMOD_CHANNEL_CALLBACKT
 
 typedef signed short pcm16;
 float pcm16ToFloat(const pcm16 in) {
-    uint32_t t1;
-    uint32_t t2;
-    uint32_t t3;
+    quint32 t1;
+    quint32 t2;
+    quint32 t3;
 
     float out;
 
@@ -75,7 +75,7 @@ float pcm16ToFloat(const pcm16 in) {
 
     t1 |= t2;                               // Re-insert sign bit
 
-    *((uint32_t*)(&out)) = t1;
+    *((quint32*)(&out)) = t1;
     return out;
 }
 

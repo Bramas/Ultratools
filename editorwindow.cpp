@@ -528,7 +528,8 @@ void UEditorWindow::setupAudio()
 
 
 }
-void UEditorWindow::tick(qint64 time)
+
+void UEditorWindow::tick(quint64 time)
 {
    UNoteManager::Instance.tick(time);
     QTime displayTime(0, (time / 60000) % 60, (time / 1000) % 60);

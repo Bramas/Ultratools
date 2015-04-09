@@ -50,26 +50,24 @@ UWydget_Timeline::UWydget_Timeline(UFile * file)
 
 void UWydget_Timeline::mouseMoveEvent(QMouseEvent *event)
 {
-    float duration = 15.0f/_bpm;
-     //float longueur=(max-min) * duration; // longueur en second
-     float fMin = min * duration;
-     float fMax = max * duration;
-    float fTempsR = ((float)(fMax-fMin))/((float)width());
 
 
-   if(((((event->x()+5)*fTempsR)+fMin)*1000.0)>_gap &&
-      ((((event->x()-5)*fTempsR)+fMin)*1000.0)<_gap
-      )
+    quint64 start = _showSentenceWidget->getLyrics()->beatToMsc(_showSentenceWidget->getHScroll()) - _showSentenceWidget->getLyrics()->getGap();
+    quint64 duration = _showSentenceWidget->getLyrics()->beatToMsc(_showSentenceWidget->getHScale()) - _showSentenceWidget->getLyrics()->getGap();
+
+    int seekXPos = width()*(_seek-start)/(qreal)duration;
+    int gapXPos = width()*(_gap-start)/(qreal)duration;
+
+
+   if( event->x() > gapXPos - 5 && event->x() < gapXPos + 5)
     {
        _gapOver=true;
     }
     else
-   {
+    {
         _gapOver=false;
     }
-    if(((((event->x()+5)*fTempsR)+fMin)*1000.0)>_seek &&
-       ((((event->x()-5)*fTempsR)+fMin)*1000.0)<_seek
-       )
+    if( event->x() > seekXPos - 5 && event->x() < seekXPos + 5)
     {
         _seekOver=true;
     }
@@ -82,9 +80,7 @@ void UWydget_Timeline::mouseMoveEvent(QMouseEvent *event)
         this->setCursor(Qt::SizeHorCursor);
     }
     else
-        if(((((event->x()-10)*fTempsR)+fMin)*1000.0)>_gap &&
-        ((((event->x()-35)*fTempsR)+fMin)*1000.0)<_gap
-        )
+        if( event->x() > gapXPos +10 && event->x() < gapXPos + 35)
         {
             this->setCursor(Qt::PointingHandCursor);
         }
@@ -95,24 +91,21 @@ void UWydget_Timeline::mouseMoveEvent(QMouseEvent *event)
 
     if(_gapSelected)
     {
-<<<<<<< HEAD
-
         if(_gapLocked)
         {
             _gap = event->x()*_showSentenceWidget->duration()/(qreal)width() + _showSentenceWidget->startTime();
            this->_file->setGap(_gap);
             emit gapModified(_gap);
-            emit click(_gap);
         }
         else
         {
-            float diff = _gap-(((event->x())*fTempsR)+fMin)*1000.0;
+            float diff = _gap-event->x()*_showSentenceWidget->duration()/(qreal)width() - _showSentenceWidget->startTime();
+
             diff = (diff/1000.0) * _bpm/15.0f;
             if(diff>=1 || diff<=-1)
             {
                 if(_file)
                 {
-
                     if(_file->lyrics->setDelay(diff>=1?floor(diff):ceil(diff)))
                     {
                         qDebug()<<_gap;
@@ -123,7 +116,7 @@ void UWydget_Timeline::mouseMoveEvent(QMouseEvent *event)
 
                         qDebug()<<"--";
                         _file->setGap(_gap);
-                        emit gapModified();
+                        emit gapModified(_gap);
                     }
                 }
                 // + _lastGap;
@@ -133,7 +126,7 @@ void UWydget_Timeline::mouseMoveEvent(QMouseEvent *event)
     }
     if(_seekSelected)
     {
-        float diff = (((event->x())*fTempsR)+fMin)*1000.0-_seek;
+        float diff = event->x()*_showSentenceWidget->duration()/(qreal)width() + _showSentenceWidget->startTime()-_seek;
         diff = (diff/1000.0) * _bpm/15.0f;
         if(diff>=1 || diff<=-1)
         {
@@ -162,7 +155,7 @@ void UWydget_Timeline::mouseReleaseEvent(QMouseEvent *event)
         _gapSelected = false;
 
         _gap = _gap<0?0:_gap;
-        emit gapModified();
+        emit gapModified(_gap);
      }
     if(_seekSelected)
     {
@@ -174,35 +167,31 @@ void UWydget_Timeline::mouseReleaseEvent(QMouseEvent *event)
 void UWydget_Timeline::mousePressEvent(QMouseEvent *event)
 {
 
-    float duration = 15.0f/_bpm;
-     float fMin = min * duration;
-     float fMax = max * duration;
-    float fTempsR = ((float)(fMax-fMin))/((float)width());
+    quint64 start = _showSentenceWidget->getLyrics()->beatToMsc(_showSentenceWidget->getHScroll()) - _showSentenceWidget->getLyrics()->getGap();
+    quint64 duration = _showSentenceWidget->getLyrics()->beatToMsc(_showSentenceWidget->getHScale()) - _showSentenceWidget->getLyrics()->getGap();
 
-    qreal gap = _showSentenceWidget->getLyrics()->getGap();
+    int seekXPos = width()*(_seek-start)/(qreal)duration;
+    int gapXPos = width()*(_gap-start)/(qreal)duration;
 
-    if(((((event->x()+5)*fTempsR)+fMin)*1000.0)>_seek &&
-      ((((event->x()-5)*fTempsR)+fMin)*1000.0)<_seek
-      )
+
+    if( event->x() > seekXPos - 5 && event->x() < seekXPos + 5)
     {
        _seekSelected = true;
     }
     else
-    if(width()*(gap-_showSentenceWidget->startTime())/_showSentenceWidget->duration() + 5 > event->x()
-            && width()*(gap-_showSentenceWidget->startTime())/_showSentenceWidget->duration() - 5 < event->x()
-      )
+    if( event->x() > gapXPos - 5 && event->x() < gapXPos + 5)
     {
        _gapSelected = true;
-       _lastGap = _gap = gap;
+       _lastGap = _gap;
        qDebug()<<"select "<<_gap;
     }
     else
-    if(((((event->x()-10)*fTempsR)+fMin)*1000.0)>_gap &&
-      ((((event->x()-35)*fTempsR)+fMin)*1000.0)<_gap
-      )
+    if( event->x() > gapXPos +10 && event->x() < gapXPos + 35)
     {
         _gapLocked=!_gapLocked;
     }
+
+    update();
 
 }
 
@@ -231,83 +220,82 @@ if(!_showSentenceWidget)
  painter.setBrush(QBrush(QColor(240,240,240,255)));
  painter.drawRect(0,0,width(),40);
 
-<<<<<<< HEAD
-
  painter.setPen(QPen(QColor(255,60,60,255)));
 
   painter.setBrush(QBrush(QColor(255,60,60,255)));
 
-
+int gapXPos = width()*(_gap-start)/(qreal)duration;
 // gap Cursor
-if(start < gap && gap < start + duration)
+if(start < _gap && _gap < start + duration)
 {
     painter.setPen(QPen(QColor(255,60,60,255)));
     painter.setBrush(QBrush(QColor(255,60,60,255)));
     // gap Cursor
-    painter.drawRect(QRectF(width()*(_gap-start)/(qreal)duration - 5,0,10,20));
-    painter.drawRect(QRectF(width()*(_gap-start)/(qreal)duration,20,0,20));
+    painter.drawRect(QRectF(gapXPos - 5,0,10,20));
+    painter.drawRect(QRectF(gapXPos,20,0,20));
 }
 // gap Lock
 if(_gapLocked)
 {
     QVector<QPoint> arrowPoints;
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+15,18));
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+15,30));
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+30,30));
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+30,18));
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+19,18));
+    arrowPoints.push_back(QPoint(gapXPos+15,18));
+    arrowPoints.push_back(QPoint(gapXPos+15,30));
+    arrowPoints.push_back(QPoint(gapXPos+30,30));
+    arrowPoints.push_back(QPoint(gapXPos+30,18));
+    arrowPoints.push_back(QPoint(gapXPos+19,18));
 
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+19,7));
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+26,7));
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+26,18));
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+28,18));
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+28,5));
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+17,5));
+    arrowPoints.push_back(QPoint(gapXPos+19,7));
+    arrowPoints.push_back(QPoint(gapXPos+26,7));
+    arrowPoints.push_back(QPoint(gapXPos+26,18));
+    arrowPoints.push_back(QPoint(gapXPos+28,18));
+    arrowPoints.push_back(QPoint(gapXPos+28,5));
+    arrowPoints.push_back(QPoint(gapXPos+17,5));
 
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+17,18));
+    arrowPoints.push_back(QPoint(gapXPos+17,18));
 
     painter.drawPolygon(QPolygon(arrowPoints));
 }
 else
 {
     QVector<QPoint> arrowPoints;
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+15,18));
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+15,30));
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+30,30));
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+30,18));
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+19,18));
+    arrowPoints.push_back(QPoint(gapXPos+15,18));
+    arrowPoints.push_back(QPoint(gapXPos+15,30));
+    arrowPoints.push_back(QPoint(gapXPos+30,30));
+    arrowPoints.push_back(QPoint(gapXPos+30,18));
+    arrowPoints.push_back(QPoint(gapXPos+19,18));
 
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+19,7));
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+12,7));
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+12,18));
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+10,18));
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+10,5));
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+17,5));
+    arrowPoints.push_back(QPoint(gapXPos+19,7));
+    arrowPoints.push_back(QPoint(gapXPos+12,7));
+    arrowPoints.push_back(QPoint(gapXPos+12,18));
+    arrowPoints.push_back(QPoint(gapXPos+10,18));
+    arrowPoints.push_back(QPoint(gapXPos+10,5));
+    arrowPoints.push_back(QPoint(gapXPos+17,5));
 
-    arrowPoints.push_back(QPoint(((_gap/1000.0 - fMin)*fTempsR)+17,18));
+    arrowPoints.push_back(QPoint(gapXPos+17,18));
 
     painter.drawPolygon(QPolygon(arrowPoints));
 }
 
+int seekXPos = width()*(_seek-start)/(qreal)duration;
 
 // seek Cursor
 painter.setPen(QPen(QColor(0,173,232,255)));
 painter.setBrush(QBrush(QColor(0,173,232,255)));
 
-painter.drawRect(QRectF(((_seek/1000.0 - fMin)*fTempsR)-5,0,10,20));
-painter.drawRect(QRectF(((_seek/1000.0 - fMin)*fTempsR),20,0,20));
+painter.drawRect(QRectF(seekXPos-5,0,10,20));
+painter.drawRect(QRectF(seekXPos,20,0,20));
 
 // seek over
 if(_seekOver)
 {
     QVector<QPoint> arrowPoints;
-    arrowPoints.push_back(QPoint(((_seek/1000.0 - fMin)*fTempsR)+15,5));
-    arrowPoints.push_back(QPoint(((_seek/1000.0 - fMin)*fTempsR)+20,5));
-    arrowPoints.push_back(QPoint(((_seek/1000.0 - fMin)*fTempsR)+20,0));
-    arrowPoints.push_back(QPoint(((_seek/1000.0 - fMin)*fTempsR)+25,10));
-    arrowPoints.push_back(QPoint(((_seek/1000.0 - fMin)*fTempsR)+20,20));
-    arrowPoints.push_back(QPoint(((_seek/1000.0 - fMin)*fTempsR)+20,15));
-    arrowPoints.push_back(QPoint(((_seek/1000.0 - fMin)*fTempsR)+15,15));
+    arrowPoints.push_back(QPoint(seekXPos+15,5));
+    arrowPoints.push_back(QPoint(seekXPos+20,5));
+    arrowPoints.push_back(QPoint(seekXPos+20,0));
+    arrowPoints.push_back(QPoint(seekXPos+25,10));
+    arrowPoints.push_back(QPoint(seekXPos+20,20));
+    arrowPoints.push_back(QPoint(seekXPos+20,15));
+    arrowPoints.push_back(QPoint(seekXPos+15,15));
     painter.drawPolygon(QPolygon(arrowPoints));
 }
 
