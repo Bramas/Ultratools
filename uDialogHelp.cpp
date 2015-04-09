@@ -34,7 +34,7 @@ void UDialogHelp::changeEvent(QEvent *e)
         break;
     }
 }
-void UDialogHelp::paintEvent(QPaintEvent * event)
+void UDialogHelp::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter * painter = new QPainter(this);
     //painter->drawImage(QRect(0,0,800,600),QImage::QImage(tr("images/Help.fr.jpg")));

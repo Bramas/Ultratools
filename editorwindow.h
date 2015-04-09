@@ -106,6 +106,7 @@ public:
 
     QScrollBar * verticalScrollBar();
     QScrollBar * horizontalScrollBar();
+    UFile * getFile() { return _currentFile; }
 
 private:
     void fileConnect(void);

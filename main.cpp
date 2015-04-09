@@ -42,7 +42,7 @@ void setLang(QApplication& app, const QString& idl){
 
 
 void manageLang(QApplication& app){
-        QSettings settings("Ultratools", "Editor");
+        QSettings settings;
         int lang = settings.value("lang", -1).toInt();
         if( lang == -1){
                 QStringList languages;
@@ -66,35 +66,6 @@ void manageLang(QApplication& app){
                                 break;
         }
 }
-
-
-void donate(){
-        QSettings settings("Ultratools", "Editor");
-        bool showDonate = settings.value("donate", true).toBool();
-        if( showDonate ){
-                QMessageBox msgDonate;
-                msgDonate.setText(QApplication::tr("<html>Ce logiciel est gratuit, mais il a fallut du temps pour le développer. "
-                                                  "Pour laisser ce logiciel gratuit et mis à jour, merci de faire un don paypal : <a href=\"http://ultratools.org\">http://ultratools.org</a></html>"));
-                msgDonate.setInformativeText(QApplication::tr("Will you donate?"));
-                QPushButton* already = msgDonate.addButton(QApplication::tr("I already have"),QMessageBox::YesRole);
-                QPushButton* will = msgDonate.addButton(QApplication::tr("I will, ask me later"),QMessageBox::YesRole);
-                QPushButton* donot = msgDonate.addButton(QApplication::tr("I don't want"),QMessageBox::NoRole);
-
-                msgDonate.setDefaultButton(will);
-                msgDonate.exec();
-
-                if(msgDonate.clickedButton() == (QAbstractButton*) already){
-                        settings.setValue("donate", false);
-                }
-                else if(msgDonate.clickedButton() == (QAbstractButton*) donot){
-                      //  QMessageBox::information(0, QApplication::tr("It is your choice"), QApplication::tr("Free Softwares exist thanks to donation.\n"
-                       //                                                                         "In the futur, if you are using Picmiz a lot, please change your opinion and donate."));
-                        settings.setValue("donate", false);
-                }
-        }
-}
-
-
 
 
 int main(int argc, char *argv[])
@@ -125,11 +96,12 @@ int main(int argc, char *argv[])
 #endif
 
     QApplication a(argc, argv);
-
+    a.setOrganizationName("Ultratools");
+    a.setOrganizationDomain("ultratools.org");
+    a.setApplicationName("Editor");
     qDebug()<<"Ultratools Editor "VERSION;
 
     manageLang(a);
-    donate();
 
     UEditorWindow w;
     w.show();

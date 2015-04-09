@@ -38,7 +38,7 @@
 #define UTF8_WORDS_SEPARATOR 0x02D2
 #define UTF8_SENTENCE_SEPARATOR 0x02FD //02C4
 
-UWydget_Lyrics::UWydget_Lyrics() : QPlainTextEdit(0)
+UWydget_Lyrics::UWydget_Lyrics() : QPlainTextEdit(0), _updateTimer(0)
 {
 _selectedTextFirstIndex=-1; _selectedTextLastIndex=-1;
 _wydgetWords = NULL;
@@ -57,7 +57,7 @@ connect(&UInputManager::Instance, SIGNAL(keyPressEvent(QKeyEvent*)),this, SLOT(o
 void UWydget_Lyrics::setWidgetWords(ShowSentenceWidget* wydgetWords)
 {
     _wydgetWords = wydgetWords;
-    connect(_wydgetWords->getLyrics(), SIGNAL(hasBeenModified()), this, SLOT(updateChange()));
+    connect(_wydgetWords->getLyrics(), SIGNAL(hasBeenModified()), this, SLOT(queueUpdate()));
     updateChange();
 }
 
@@ -112,7 +112,6 @@ void UWydget_Lyrics::onTextChanged()
     }
     else
     {
-        Word * last = (*it);
         while(it != _wydgetWords->getLyrics()->words().end())
         {
             if(!(*it)->isSeparator())
@@ -122,6 +121,11 @@ void UWydget_Lyrics::onTextChanged()
             ++it;
         }
     }
+    if (_updateTimer)
+    {
+        killTimer(_updateTimer);
+	_updateTimer = 0;
+    }
     _wydgetWords->update();
 }
 
@@ -130,6 +134,28 @@ void UWydget_Lyrics::saveChange()
 
     qDebug()<<"saveChange";
 
+}
+
+void UWydget_Lyrics::queueUpdate()
+{
+    if(!_updateTimer)
+    {
+        _updateTimer = startTimer(0);
+    }
+}
+
+void UWydget_Lyrics::timerEvent(QTimerEvent *event)
+{
+    if(event->timerId() == _updateTimer)
+    {
+        killTimer(_updateTimer);
+	_updateTimer = 0;
+        updateChange();
+    }
+    else
+    {
+        QPlainTextEdit::timerEvent(event);
+    }
 }
 
 void UWydget_Lyrics::updateChange()
@@ -164,7 +190,7 @@ void UWydget_Lyrics::onScroll()
 
 }
 
-void UWydget_Lyrics::ondoubleClick(int s)
+void UWydget_Lyrics::ondoubleClick(int /*s*/)
 {
 
 }
@@ -174,7 +200,7 @@ void UWydget_Lyrics::separeOnSelect()
 
 }
 
-void UWydget_Lyrics::cursorPositionChanged(int old,int pos){
+void UWydget_Lyrics::cursorPositionChanged(int /*old*/,int /*pos*/){
 
 }
 void UWydget_Lyrics::onSelectionChange(int s, int f)

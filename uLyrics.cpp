@@ -68,9 +68,9 @@ void Lyrics::parseLine(QString &line)
     {
         int time1, time2 = 0;
         in >> time1;
-        if(!in.atEnd())
+        in >> time2;
+        if (in.status() == QTextStream::Ok)
         {
-            in >> time2;
             time2 -= time1;
         }
         //qDebug()<<line<<" sep : "<<time1<<" "<<time2;
@@ -105,9 +105,9 @@ void Lyrics::parseCode(QString &code)
     QString line;
     while(!(line = in.readLine()).isNull())
     {
-        line = line.trimmed();
         parseLine(line);
     }
+    sortAll();
 }
 
 int Lyrics::getPitchMax()
@@ -155,7 +155,7 @@ Word * Lyrics::moveRight(Word *from, int indexIWant)
 
     Word * ret = from;
     bool trouve = false;
-    Word * w;
+    Word * w = 0;
     Word * wBefore=NULL;
 
     QString temp="", temp2="";
@@ -198,7 +198,7 @@ Word * Lyrics::moveRight(Word *from, int indexIWant)
         wBefore=w;
     }
 
-    if(temp.compare("")) // !=""
+    if(w && temp.compare("")) // !=""
     {
         w->setText(w->getText()+temp);
     }
@@ -211,6 +211,7 @@ Word * Lyrics::moveRight(Word *from, int indexIWant)
 
 QList<Word*> * Lyrics::separatorsOfWords(QList<Word *> * list) const
 {
+    Q_UNUSED(list);
     QList<Word*> * sep= new QList<Word*>();
     return sep;
     /** FIXME */
@@ -234,6 +235,7 @@ QList<Word*> * Lyrics::separatorsOfWords(QList<Word *> * list) const
 }
 QList<Word*> * Lyrics::sentencesOfWords(QList<Word *> * list) const
 {
+    Q_UNUSED(list);
     QList<Word*> * sen= new QList<Word*>();
 
     return sen;
@@ -281,7 +283,8 @@ void Lyrics::addWord(Word *ws)
 
     while(it != _words.end())
     {
-        if((*it)->getTime() > ws->getTime())
+        if((*it)->getTime() > ws->getTime() ||
+	   ((*it)->getTime() == ws->getTime() && ws->isSeparator()))
         {
             if((*it)->isSeparator() && ws->isSeparator())
             {

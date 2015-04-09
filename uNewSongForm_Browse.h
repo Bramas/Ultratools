@@ -45,7 +45,7 @@ public:
 public slots:
 
     void updateFolder(QString s="");
-    void edited(QString s=""){ _edited = true; }
+    void edited(QString s=""){ Q_UNUSED(s); _edited = true; }
     void browse(void);
     void browseMp3(void);
     void goNext(void);

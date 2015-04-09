@@ -103,7 +103,7 @@ void UCheckUpdate::httpFinished()
     checkVersion();
 }
 
-void UCheckUpdate::updateDataReadProgress(qint64 bytesRead, qint64 totalBytes)
+void UCheckUpdate::updateDataReadProgress(qint64 /*bytesRead*/, qint64 /*totalBytes*/)
 {
     if (httpRequestAborted)
         return;

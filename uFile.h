@@ -27,8 +27,8 @@
 #define UFILE_H
 
 #include <QFile>
+#include "uLyrics.h"
 class QMainWindow;
-#include "uShowSentenceWydget.h"
 
 class UFile : public QObject
 {
@@ -43,8 +43,8 @@ void hasBeenModified(bool);
 public slots:
 
 bool saveInFile(QString fileName="",bool autoSave=false);
-void autoSave(QString fileName="");
-void modified() { emit hasBeenModified(true); _modified=true; }
+void autoSave();
+void modified() {  emit hasBeenModified(true); _modified=true; }
 void doublePrecision(void) { lyrics->doublePresicion(); setBpm(getBpm()*2); }
 
 public:

@@ -43,6 +43,7 @@ public slots:
 
     void onKeyPress(QKeyEvent * e);
     void updateChange();
+    void queueUpdate();
     void onScroll();
     void ondoubleClick(int s);
     void separeOnSelect(void);
@@ -57,6 +58,7 @@ public:
 protected:
 
     void insertFromMimeData(const QMimeData * source);
+    virtual void timerEvent(QTimerEvent * event);
 
     int _cursorPosition;
     void saveChange();
@@ -68,6 +70,7 @@ protected:
     int _fontSizeEdit;
     bool _isEditing;
     int _selectedTextFirstIndex, _selectedTextLastIndex;
+    int _updateTimer;
 
 };
 

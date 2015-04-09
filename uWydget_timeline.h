@@ -29,7 +29,7 @@
 #include "uDialog_fileheader.h"
 
 class ShowSentenceWidget;
-
+class UEditorWindow;
 class UWydget_Timeline : public QWidget
 {
     Q_OBJECT
@@ -40,13 +40,15 @@ signals:
     void click(quint64);
 
 public:
-    UWydget_Timeline(UFile * file);
-    void setFile(UFile * file) { _file=file; }
-    void setMin(int in) { min = in; update(); };
-    void setMax(int in) { max = in; update(); };
-    void setBpm(int n) { _bpm = n; };
-    void setGap(int n) { _lastGap = _gap = n; update(); };
-    void setWidgetSentence(ShowSentenceWidget* showSentenceWidget) { _showSentenceWidget = showSentenceWidget; }
+    UWydget_Timeline(UEditorWindow * parent);
+    void setMin(int in) { min = in; update(); }
+    void setMax(int in) { max = in; update(); }
+    void setBpm(int n) { _bpm = n; }
+    void setGap(int n) { _lastGap = _gap = n; }
+    void setWidgetSentence(ShowSentenceWidget* showSentenceWidget);
+
+public slots:
+    void setSeekPosition(quint64 seek);
 
     void setSeek(quint64 time);
     bool isGapLocked() { return _gapLocked; };
@@ -55,7 +57,6 @@ protected:
     float _bpm;
     float _gap;
     quint64 _seek;
-    UFile * _file;
      void paintEvent(QPaintEvent * event);
      void mousePressEvent(QMouseEvent * event);
      void mouseReleaseEvent(QMouseEvent * event);
@@ -63,6 +64,7 @@ protected:
      bool _gapSelected, _gapOver, _seekSelected, _seekOver, _gapLocked;
      ShowSentenceWidget* _showSentenceWidget;
      float _lastGap;
+     UEditorWindow * _parent;
 
 };
 

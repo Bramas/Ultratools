@@ -51,7 +51,7 @@ void Recorder::onKeyPressEvent(QKeyEvent * event)
     _currentWord->setText("");
 
 }
-void Recorder::onKeyReleaseEvent(QKeyEvent * event)
+void Recorder::onKeyReleaseEvent(QKeyEvent * /*event*/)
 {
     if(!_currentWord) return;
 

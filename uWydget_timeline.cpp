@@ -26,15 +26,17 @@
 #include "uWydget_timeline.h"
 #include "uFile.h"
 #include "uShowSentenceWydget.h"
+#include "editorwindow.h"
 #include <QDebug>
 #include <QMouseEvent>
+#include "uNoteManager.h"
 #include <QPainter>
 #include <math.h>
 
-UWydget_Timeline::UWydget_Timeline(UFile * file)
+UWydget_Timeline::UWydget_Timeline(UEditorWindow *parent)
 {
-    _file=file;
     this->setGeometry(0,0,400,50);
+    _parent = parent;
     min=max=0;
     _bpm = 272;
     _gapSelected = _seekSelected = false;
@@ -94,7 +96,7 @@ void UWydget_Timeline::mouseMoveEvent(QMouseEvent *event)
         if(_gapLocked)
         {
             _gap = event->x()*_showSentenceWidget->duration()/(qreal)width() + _showSentenceWidget->startTime();
-           this->_file->setGap(_gap);
+           this->_parent->getFile()->setGap(_gap);
             emit gapModified(_gap);
         }
         else
@@ -104,12 +106,12 @@ void UWydget_Timeline::mouseMoveEvent(QMouseEvent *event)
             diff = (diff/1000.0) * _bpm/15.0f;
             if(diff>=1 || diff<=-1)
             {
-                if(_file)
+                if(_parent->getFile())
                 {
-                    if(_file->lyrics->setDelay(diff>=1?floor(diff):ceil(diff)))
+                    if(_parent->getFile()->lyrics->setDelay(diff>=1?floor(diff):ceil(diff)))
                     {
                         _gap -= ((diff>=1?floor(diff):ceil(diff))*1000.0 * 15.0f/_bpm);
-                        _file->setGap(_gap);
+                        _parent->getFile()->setGap(_gap);
                         emit gapModified(_gap);
                     }
                 }
@@ -122,24 +124,22 @@ void UWydget_Timeline::mouseMoveEvent(QMouseEvent *event)
         diff = (diff/1000.0) * _bpm/15.0f;
         if(diff>=1 || diff<=-1)
         {
-            if(_file)
+            if(_parent->getFile())
             {
                // qDebug()<<floor(diff)<<" - "<<ceil(diff)<<" - "<<(diff>=1?floor(diff):ceil(diff));
-                if(_file->lyrics->setDelay(diff>=1?floor(diff):ceil(diff),_seek))
+                if(_parent->getFile()->lyrics->setDelay(diff>=1?floor(diff):ceil(diff),_seek))
                 {
                     _seek+=(diff>=1?floor(diff):ceil(diff))*1000.0 * 15.0f/_bpm;
                 }
             }
             //QMessageBox::information(NULL,"lol",QString::number(diff));
         }
-        //_gap = ((((event->x())*fTempsR)+fMin)*1000.0);// + _lastGap;
-        //emit gapModified(_gap);
     }
 
     update();
 }
 
-void UWydget_Timeline::mouseReleaseEvent(QMouseEvent *event)
+void UWydget_Timeline::mouseReleaseEvent(QMouseEvent * /*event*/)
 {
     if(_gapSelected)
     {
@@ -187,7 +187,7 @@ void UWydget_Timeline::mousePressEvent(QMouseEvent *event)
 
 }
 
-void UWydget_Timeline::paintEvent(QPaintEvent * event)
+void UWydget_Timeline::paintEvent(QPaintEvent * /*event*/)
 {
  QPainter painter(this);
 if(!_showSentenceWidget)
@@ -200,11 +200,7 @@ if(!_showSentenceWidget)
 
 //painter.drawText(QRect(0,0,50,50),QString::number(255));
 
- qreal tempsR = ((qreal)width())/((qreal)(max-min));
  qreal longueur = duration/1000.0; // longueur en second
- qreal fMin = min * duration;
- qreal fMax = max * duration;
- qreal fTempsR = ((float)width())/((float)(fMax-fMin));
 
 
 
@@ -212,92 +208,13 @@ if(!_showSentenceWidget)
  painter.setBrush(QBrush(QColor(240,240,240,255)));
  painter.drawRect(0,0,width(),40);
 
- painter.setPen(QPen(QColor(255,60,60,255)));
-
-  painter.setBrush(QBrush(QColor(255,60,60,255)));
-
-int gapXPos = width()*(_gap-start)/(qreal)duration;
-// gap Cursor
-if(start < _gap && _gap < start + duration)
-{
-    painter.setPen(QPen(QColor(255,60,60,255)));
-    painter.setBrush(QBrush(QColor(255,60,60,255)));
-    // gap Cursor
-    painter.drawRect(QRectF(gapXPos - 5,0,10,20));
-    painter.drawRect(QRectF(gapXPos,20,0,20));
-}
-// gap Lock
-if(_gapLocked)
-{
-    QVector<QPoint> arrowPoints;
-    arrowPoints.push_back(QPoint(gapXPos+15,18));
-    arrowPoints.push_back(QPoint(gapXPos+15,30));
-    arrowPoints.push_back(QPoint(gapXPos+30,30));
-    arrowPoints.push_back(QPoint(gapXPos+30,18));
-    arrowPoints.push_back(QPoint(gapXPos+19,18));
-
-    arrowPoints.push_back(QPoint(gapXPos+19,7));
-    arrowPoints.push_back(QPoint(gapXPos+26,7));
-    arrowPoints.push_back(QPoint(gapXPos+26,18));
-    arrowPoints.push_back(QPoint(gapXPos+28,18));
-    arrowPoints.push_back(QPoint(gapXPos+28,5));
-    arrowPoints.push_back(QPoint(gapXPos+17,5));
-
-    arrowPoints.push_back(QPoint(gapXPos+17,18));
-
-    painter.drawPolygon(QPolygon(arrowPoints));
-}
-else
-{
-    QVector<QPoint> arrowPoints;
-    arrowPoints.push_back(QPoint(gapXPos+15,18));
-    arrowPoints.push_back(QPoint(gapXPos+15,30));
-    arrowPoints.push_back(QPoint(gapXPos+30,30));
-    arrowPoints.push_back(QPoint(gapXPos+30,18));
-    arrowPoints.push_back(QPoint(gapXPos+19,18));
-
-    arrowPoints.push_back(QPoint(gapXPos+19,7));
-    arrowPoints.push_back(QPoint(gapXPos+12,7));
-    arrowPoints.push_back(QPoint(gapXPos+12,18));
-    arrowPoints.push_back(QPoint(gapXPos+10,18));
-    arrowPoints.push_back(QPoint(gapXPos+10,5));
-    arrowPoints.push_back(QPoint(gapXPos+17,5));
-
-    arrowPoints.push_back(QPoint(gapXPos+17,18));
-
-    painter.drawPolygon(QPolygon(arrowPoints));
-}
-
-int seekXPos = width()*(_seek-start)/(qreal)duration;
-
-// seek Cursor
-painter.setPen(QPen(QColor(0,173,232,255)));
-painter.setBrush(QBrush(QColor(0,173,232,255)));
-
-painter.drawRect(QRectF(seekXPos-5,0,10,20));
-painter.drawRect(QRectF(seekXPos,20,0,20));
-
-// seek over
-if(_seekOver)
-{
-    QVector<QPoint> arrowPoints;
-    arrowPoints.push_back(QPoint(seekXPos+15,5));
-    arrowPoints.push_back(QPoint(seekXPos+20,5));
-    arrowPoints.push_back(QPoint(seekXPos+20,0));
-    arrowPoints.push_back(QPoint(seekXPos+25,10));
-    arrowPoints.push_back(QPoint(seekXPos+20,20));
-    arrowPoints.push_back(QPoint(seekXPos+20,15));
-    arrowPoints.push_back(QPoint(seekXPos+15,15));
-    painter.drawPolygon(QPolygon(arrowPoints));
-}
-
 
 painter.setPen(QPen(QColor(0,173,232,255)));
 
  painter.setBrush(QBrush(QColor(255,255,255,255)));
  painter.translate(-width()*(start/1000.0-floor(start/1000.0))/(duration/1000.0), 0);
 
- int pas;
+ int pas = 120;
  if(longueur<20)
  {
      pas = 1;
@@ -342,42 +259,105 @@ for(int i = 0; i < duration/1000.0; ++i)
 
  }
 
+//reset the painter translation
+painter.setTransform(QTransform());
 
-     //SECONDS
-/*if(longueur<200)
-for(int i=min-min%10;i<=max;i+=10)
+
+
+
+painter.setPen(QPen(QColor(255,60,60,255)));
+
+ painter.setBrush(QBrush(QColor(255,60,60,255)));
+
+int gapXPos = width()*(_gap-start)/(qreal)duration;
+// gap Cursor
+painter.setPen(QPen(QColor(0,0,0,150)));
+painter.setBrush(QBrush(QColor(0,0,0,150)));
+if(start < _gap + 5 && _gap < start + duration - 50)
 {
-   if(!(i%60)) continue;
+    // gap Cursor
+    painter.drawRect(QRectF(gapXPos - 5,0,10,20));
+    painter.drawRect(QRectF(gapXPos,20,0,20));
+    // gap Lock
+    if(_gapLocked)
+    {
+       QVector<QPoint> arrowPoints;
+       arrowPoints.push_back(QPoint(gapXPos+15,18));
+       arrowPoints.push_back(QPoint(gapXPos+15,30));
+       arrowPoints.push_back(QPoint(gapXPos+30,30));
+       arrowPoints.push_back(QPoint(gapXPos+30,18));
+       arrowPoints.push_back(QPoint(gapXPos+19,18));
 
-    painter.drawText(QRect(((float)(i-min))*tempsR+2,0,50,50),QString::number((i-i%60)/60)+":"+QString::number(i%60));
-//  //qDebug()<<(max-i);
-  painter.drawLine(((float)(i-min))*tempsR,0,((float)(i-min))*tempsR,25);
+       arrowPoints.push_back(QPoint(gapXPos+19,7));
+       arrowPoints.push_back(QPoint(gapXPos+26,7));
+       arrowPoints.push_back(QPoint(gapXPos+26,18));
+       arrowPoints.push_back(QPoint(gapXPos+28,18));
+       arrowPoints.push_back(QPoint(gapXPos+28,5));
+       arrowPoints.push_back(QPoint(gapXPos+17,5));
+
+       arrowPoints.push_back(QPoint(gapXPos+17,18));
+
+       painter.drawPolygon(QPolygon(arrowPoints));
+    }
+    else
+    {
+       QVector<QPoint> arrowPoints;
+       arrowPoints.push_back(QPoint(gapXPos+15,18));
+       arrowPoints.push_back(QPoint(gapXPos+15,30));
+       arrowPoints.push_back(QPoint(gapXPos+30,30));
+       arrowPoints.push_back(QPoint(gapXPos+30,18));
+       arrowPoints.push_back(QPoint(gapXPos+19,18));
+
+       arrowPoints.push_back(QPoint(gapXPos+19,7));
+       arrowPoints.push_back(QPoint(gapXPos+12,7));
+       arrowPoints.push_back(QPoint(gapXPos+12,18));
+       arrowPoints.push_back(QPoint(gapXPos+10,18));
+       arrowPoints.push_back(QPoint(gapXPos+10,5));
+       arrowPoints.push_back(QPoint(gapXPos+17,5));
+
+       arrowPoints.push_back(QPoint(gapXPos+17,18));
+
+       painter.drawPolygon(QPolygon(arrowPoints));
+    }
+}
+
+int seekXPos = width()*(_seek-start)/(qreal)duration;
+
+// seek Cursor
+painter.setPen(QPen(QColor(255,60,60,180)));
+painter.setBrush(QBrush(QColor(255,60,60,180)));
+
+painter.drawRect(QRectF(seekXPos-5,0,10,20));
+painter.drawRect(QRectF(seekXPos,20,0,20));
+
+// seek over
+if(_seekOver)
+{
+   QVector<QPoint> arrowPoints;
+   arrowPoints.push_back(QPoint(seekXPos+15,5));
+   arrowPoints.push_back(QPoint(seekXPos+20,5));
+   arrowPoints.push_back(QPoint(seekXPos+20,0));
+   arrowPoints.push_back(QPoint(seekXPos+25,10));
+   arrowPoints.push_back(QPoint(seekXPos+20,20));
+   arrowPoints.push_back(QPoint(seekXPos+20,15));
+   arrowPoints.push_back(QPoint(seekXPos+15,15));
+   painter.drawPolygon(QPolygon(arrowPoints));
+}
+
+
 
 }
-else
-if(longueur<1000)
-for(int i=min-min%30;i<=max;i+=30)
+
+void UWydget_Timeline::setWidgetSentence(ShowSentenceWidget *showSentenceWidget)
 {
-    if(!(i%60)) continue;
-
-
-     painter.drawText(QRect(((float)(i-min))*tempsR+2,0,50,50),QString::number((i-i%60)/60)+":"+QString::number(i%60));
-//  //qDebug()<<(max-i);
-  painter.drawLine(((float)(i-min))*tempsR,0,((float)(i-min))*tempsR,25);
-
+   _showSentenceWidget = showSentenceWidget;
+   connect(_showSentenceWidget, SIGNAL(click(quint64)), this, SLOT(setSeekPosition(quint64)));
 }
 
-//MINUTES
-for(int i=min-min%60;i<=max;i+=60)
+void UWydget_Timeline::setSeekPosition(quint64 seek)
 {
-    painter.drawText(QRect(((float)(i-min))*tempsR+2,0,50,50),QString::number((i-i%60)/60)+":00");
-//  //qDebug()<<(max-i);
-  painter.drawLine(((float)(i-min))*tempsR,0,((float)(i-min))*tempsR,25);
-
-}
-
-*/
-
+    _seek = seek;
+    update();
 }
 
 void UWydget_Timeline::setSeek(quint64 time)

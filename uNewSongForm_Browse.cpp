@@ -27,8 +27,8 @@
 #include <QDir>
 #include "uFile.h"
 #include "uSetting.h"
-#include "UNewSongForm_Browse.h"
-#include "ui_UNewSongForm_Browse.h"
+#include "uNewSongForm_Browse.h"
+#include "ui_uNewSongForm_Browse.h"
 
 UNewSongForm_Browse::UNewSongForm_Browse(QWidget *parent,UFile * file) :
     QDialog(parent),
@@ -88,7 +88,7 @@ void UNewSongForm_Browse::browseMp3(void)
 
 }
 
-void UNewSongForm_Browse::updateFolder(QString no)
+void UNewSongForm_Browse::updateFolder(QString /*no*/)
 {
     if(_edited) return;
 

@@ -118,7 +118,7 @@ void WidgetSongData::paintEvent(QPaintEvent * /*event*/)
         painter.drawRect(QRectF(width()*(_floatSelection[0]-start)/(qreal)duration, 0,width()*(_floatSelection[1] - _floatSelection[0])/(qreal)duration, height()));
     }
     else
-    if(start < _seek && _seek < start + duration)
+    if(((quint64)start) < _seek && _seek < (quint64)(start + duration))
     {
         painter.setPen(QPen(QColor(255,60,60,255)));
         painter.setBrush(QBrush(QColor(255,60,60,255)));

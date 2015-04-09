@@ -40,7 +40,7 @@ void USetting::init()
 {
 
 _windowEditorTitleSet = false;
-     _settings = new QSettings("Ultratools", "Editor");
+     _settings = new QSettings();
 
     _settings->beginGroup("USetting");
 

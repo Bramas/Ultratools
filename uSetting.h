@@ -30,7 +30,7 @@
 
 #include <QSettings>
 #include <QStringList>
-#include "USettingDialog.h"
+#include "uSettingDialog.h"
 
 class USetting : public QObject
 {

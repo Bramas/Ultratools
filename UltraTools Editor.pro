@@ -69,13 +69,37 @@ FORMS += editorwindow.ui \
 RESOURCES = data.qrc \
     Lang.qrc
 
-OS_STRING = \\\"'Linux'\\\"
+linux{
+    TARGET = ultratools-editor
+    release:LIBS += -lfmodex
+    debug:LIBS += -lfmodexL
+    OS_STRING = \\\"'Linux'\\\"
 
+    isEmpty(PREFIX):PREFIX = "/usr/local"
+    target.path = $$PREFIX/bin
+    notes.path = $$PREFIX/share/Ultratools/Editor
+    notes.files = violon
+    INSTALLS += target notes
+}
 
 # CODECFORSRC     = UTF-8
 TRANSLATIONS = UltraTools_Editor_fr.ts \
     UltraTools_Editor_en.ts \
     UltraTools_Editor_es.ts
+
+for(ts, TRANSLATIONS) {
+    qm = $$ts
+    qm ~= s/\.ts$/.qm/
+    !exists($$qm) {
+        system($$[QT_INSTALL_BINS]/lrelease $$ts)
+    }
+}
+
+QMAKE_EXTRA_COMPILERS += lrelease
+lrelease.input = TRANSLATIONS
+lrelease.output = ${QMAKE_FILE_BASE}.qm
+lrelease.commands = $$[QT_INSTALL_BINS]/lrelease ${QMAKE_FILE_IN} -qm ${QMAKE_FILE_BASE}.qm
+lrelease.CONFIG += no_link target_predeps
 
 
 mac{

@@ -27,6 +27,7 @@
 #include <math.h>
 #include <QDebug>
 #include <QMessageBox>
+#include <QStandardPaths>
 #include "uWord.h"
 #include "uLyrics.h"
 #include "uNoteManager.h"
@@ -53,6 +54,14 @@ QString UNoteManager::violonFile(int i)
 #else
 #ifdef _WIN32
     QFileInfo f(QApplication::applicationDirPath()+"/violon/"+QString::number(i)+".mp3");
+#else
+    QStringList dirs(QStandardPaths::standardLocations(QStandardPaths::AppDataLocation));
+    QFileInfo f;
+    foreach(const QString &d, dirs) {
+        f.setFile(d+"/violon/"+QString::number(i)+".mp3");
+        if (f.exists())
+            break;
+    }
 #endif
 #endif
     if(!f.exists())
@@ -63,7 +72,7 @@ QString UNoteManager::violonFile(int i)
     return f.absoluteFilePath();
 }
 
-void UNoteManager::setupAudio(QObject *parent)
+void UNoteManager::setupAudio(QObject * /*parent*/)
 {
     _system = UAudioManager::Instance.getSystem();
 
@@ -101,7 +110,7 @@ void UNoteManager::setupAudio(QObject *parent)
    FMOD_Channel_SetPaused(_channels[-15],false);
    FMOD_Channel_GetPaused(_channels[-15], &rep);
    qDebug()<<(bool)rep;
-/* */
+ */
 
 }
 

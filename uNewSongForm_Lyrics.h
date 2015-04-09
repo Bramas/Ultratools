@@ -27,7 +27,7 @@
 #define UNEWSONGFORM_LYRICS_H
 
 
-#include "UNewSongForm_Browse.h"
+#include "uNewSongForm_Browse.h"
 
 namespace Ui {
     class UNewSongForm_Lyrics;

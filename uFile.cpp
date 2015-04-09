@@ -28,7 +28,7 @@
 #include <QStatusBar>
 #include <QMessageBox>
 #include "editorwindow.h"
-
+#include "uShowSentenceWydget.h"
 #define DEFAULT_GAP 0
 #define DEFAULT_BPM 360
 
@@ -85,7 +85,6 @@ UFile::UFile(QMainWindow * parent, QString fileName)
 
     connect(lyrics,SIGNAL(hasBeenModified()),this,SLOT(modified()));
 
-    int * range;
 
 _fileName=fileName;
 
@@ -331,7 +330,7 @@ void UFile::setFileName(QString f)
 {
     _fileName = f;
 }
-void UFile::autoSave(QString fileName)
+void UFile::autoSave()
 {
 
     saveInFile(getBAK(),true);

@@ -32,6 +32,7 @@
 #include "uRecorder.h"
 #include "uDialogAbout.h"
 #include "uWidgetSongData.h"
+#include "uShowSentenceWydget.h"
 #include <math.h>
 #include <QUrl>
 #include <QMimeData>
@@ -50,8 +51,6 @@ UEditorWindow::UEditorWindow(QWidget *parent)
     : QMainWindow(parent), _spaceNoteGeneration(false), ui(new Ui::EditWindowClass)
 {
 
-//    QMessageBox::information(NULL,"",QDesktopServices::storageLocation(QDesktopServices::DataLocation));
-
     this->setFocusPolicy(Qt::StrongFocus);
 _startTime=0;
     _playViolon = false;
@@ -62,12 +61,9 @@ USetting::Instance.init();
 UCheckUpdate * check = new UCheckUpdate(QUrl(URL_VERSION));
 connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
 
-//connect(check,SIGNAL(readVersion(QString)),&USetting::Instance,SLOT(checkVersion(QString)));
-
 
     setupAudio();
     setupUi();
-        ////qDebug()<<exp(t/1)
 
             _currentFile = new UFile(this);// "songs/arkol - vingt ans/Arkol - vingt ans.txt");
 
@@ -420,7 +416,7 @@ void UEditorWindow::setupUi()
 
         showLines = new  ShowLines();
         showSentenceWidget = new ShowSentenceWidget(this);
-        _wydget_timeline = new UWydget_Timeline(_currentFile);
+        _wydget_timeline = new UWydget_Timeline(this);
         _wydget_timeline->setWidgetSentence(this->showSentenceWidget);
         _wydget_lyrics = new UWydget_Lyrics();
 
@@ -540,6 +536,7 @@ void UEditorWindow::tick(quint64 time)
     showSentenceWidget->setSeekPosition(_currentFile->lyrics->timeToBeat(time));
     _wydget_timeline->setSeek(time);
     _widgetSongData->setSeekPosition(time);
+    _wydget_timeline->setSeekPosition(time);
 
 
 if(_currentFile->lyrics->words().empty()) return;
@@ -576,7 +573,7 @@ void UEditorWindow::aboutToFinish()
 
 void UEditorWindow::writeSettings()
 {
-    QSettings settings("Ultratools", "Editor");
+    QSettings settings;
 
     settings.beginGroup("EditorWindow");
     settings.setValue("size", size());
@@ -588,7 +585,7 @@ void UEditorWindow::readSettings()
 {
     //this->setWindowTitle(WINDOW_TITLE);
 
-    QSettings settings("Ultratools", "Editor");
+    QSettings settings;
 
     settings.beginGroup("EditorWindow");
     resize(settings.value("size", QSize(400, 400)).toSize());
@@ -741,7 +738,6 @@ void UEditorWindow::fileConnect()
 {
     if(!_currentFile) return;
 
-    _wydget_timeline->setFile(_currentFile);
 
     connect(_currentFile,SIGNAL(bpmChanged(int)),this,SLOT(bpmChanged(int)));
     connect(_currentFile,SIGNAL(gapChanged(float)),this,SLOT(gapChanged(float)));

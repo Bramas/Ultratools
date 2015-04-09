@@ -44,7 +44,7 @@ UAudioManager::UAudioManager() : _sound(NULL), _channel(NULL), _widgetSongData(0
       connect(_tickTimer, SIGNAL(timeout()), this, SLOT(timerOut()));
 }
 
-FMOD_RESULT F_CALLBACK endCallback(FMOD_CHANNEL *channel, FMOD_CHANNEL_CALLBACKTYPE type, void * /*commanddata1*/, void * /*commanddata2*/)
+FMOD_RESULT F_CALLBACK endCallback(FMOD_CHANNEL */*channel*/, FMOD_CHANNEL_CALLBACKTYPE type, void * /*commanddata1*/, void * /*commanddata2*/)
 {
     qDebug()<<(int)type;
     if(type != FMOD_CHANNEL_CALLBACKTYPE_END)
@@ -52,32 +52,10 @@ FMOD_RESULT F_CALLBACK endCallback(FMOD_CHANNEL *channel, FMOD_CHANNEL_CALLBACKT
         return FMOD_OK;
     }
     QTimer::singleShot(0,&UAudioManager::Instance, SLOT(emitEndOfSong()));
+    return FMOD_OK;
 }
 
 typedef signed short pcm16;
-float pcm16ToFloat(const pcm16 in) {
-    quint32 t1;
-    quint32 t2;
-    quint32 t3;
-
-    float out;
-
-    t1 = in & 0x7fff;                       // Non-sign bits
-    t2 = in & 0x8000;                       // Sign bit
-    t3 = in & 0x7c00;                       // Exponent
-
-    t1 <<= 13;                              // Align mantissa on MSB
-    t2 <<= 16;                              // Shift sign bit into position
-
-    t1 += 0x38000000;                       // Adjust bias
-
-    t1 = (t3 == 0 ? 0 : t1);                // Denormals-as-zero
-
-    t1 |= t2;                               // Re-insert sign bit
-
-    *((quint32*)(&out)) = t1;
-    return out;
-}
 
 bool UAudioManager::setSource(QString source)
 {
@@ -115,14 +93,12 @@ bool UAudioManager::setSource(QString source)
 
     FMOD_Sound_GetLength(sound, &totalLength, FMOD_TIMEUNIT_PCMBYTES);
     FMOD_Sound_GetLength(sound, &totalMscLength, FMOD_TIMEUNIT_MS);
-    quint64 t = (quint64)totalMscLength;
     qDebug()<<"totalLength? "<<totalLength<<" bytes "<<totalMscLength<<" Ms";
 
     // lock the buffer
     FMOD_Sound_Lock(sound, 0, totalLength, (void**)&pointer1, (void**)&pointer2, &length1, &length2);
 
     totalLength/=2;
-    double sum = 0;
     int sizeOfBin = 100;
     _widgetSongData->clearData();
     for(unsigned int i = 0; i < totalLength; i += 2*sizeOfBin)
@@ -172,7 +148,6 @@ void UAudioManager::timerOut()
     for (int i = 0; i < sampleSize; i++)
         spec[i] = (specLeft[i] + specRight[i]) / 2.0;
 
-    int i = 0;
     //qDebug()<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10);
 
 
