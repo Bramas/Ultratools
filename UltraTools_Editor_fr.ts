@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="fr_FR">
+<TS version="2.1" language="fr_FR">
+<context>
+    <name>DialogAbout</name>
+    <message>
+        <location filename="uDialogAbout.ui" line="14"/>
+        <source>Dialog</source>
+        <translation>A propos</translation>
+    </message>
+    <message>
+        <location filename="uDialogAbout.cpp" line="10"/>
+        <source>About</source>
+        <translation>A propos</translation>
+    </message>
+</context>
 <context>
     <name>EditWindowClass</name>
     <message>
@@ -9,383 +22,373 @@
         <translation>UltraTools - Editeur</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="35"/>
         <source>Editeur</source>
-        <translation>Editeur</translation>
+        <translation type="vanished">Editeur</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="71"/>
+        <location filename="editorwindow.ui" line="32"/>
         <source>Musique :</source>
         <translation>Musique :</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="85"/>
+        <location filename="editorwindow.ui" line="46"/>
         <source>Note :</source>
         <translation>Note :</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="99"/>
         <source>affichage de la phrase avec un retard de :</source>
-        <translation type="unfinished">affichage de la phrase avec un retard de :</translation>
+        <translation type="obsolete">affichage de la phrase avec un retard de :</translation>
     </message>
-    <message utf8="true">
-        <location filename="editorwindow.ui" line="164"/>
+    <message>
         <source>Séparer (˒)</source>
-        <translation type="unfinished">Séparer (˒)</translation>
+        <translation type="obsolete">Séparer (˒)</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="175"/>
         <source>Fichier brute</source>
-        <translation>Fichier brute</translation>
+        <translation type="vanished">Fichier brute</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="229"/>
-        <source>Actualiser</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="editorwindow.ui" line="249"/>
+        <location filename="editorwindow.ui" line="115"/>
         <source>Fichier</source>
         <translation>Fichier</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="264"/>
-        <location filename="editorwindow.ui" line="406"/>
+        <location filename="editorwindow.ui" line="130"/>
+        <location filename="editorwindow.ui" line="273"/>
         <source>Aide</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="270"/>
+        <location filename="editorwindow.ui" line="137"/>
         <source>Edition</source>
         <translation>Edition</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="307"/>
+        <location filename="editorwindow.ui" line="174"/>
         <source>toolBar</source>
         <translation>Barre d&apos;outils</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="350"/>
-        <location filename="editorwindow.ui" line="353"/>
+        <location filename="editorwindow.ui" line="217"/>
+        <location filename="editorwindow.ui" line="220"/>
         <source>Nouveau</source>
         <translation>Nouveau</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="365"/>
-        <location filename="editorwindow.ui" line="368"/>
+        <location filename="editorwindow.ui" line="232"/>
+        <location filename="editorwindow.ui" line="235"/>
         <source>Ouvrir</source>
         <translation>Ouvrir</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="371"/>
+        <location filename="editorwindow.ui" line="238"/>
         <source>Ctrl+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="380"/>
-        <location filename="editorwindow.ui" line="383"/>
+        <location filename="editorwindow.ui" line="247"/>
+        <location filename="editorwindow.ui" line="250"/>
         <source>Enregistrer</source>
         <translation>Enregistrer</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="386"/>
+        <location filename="editorwindow.ui" line="253"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="395"/>
-        <location filename="editorwindow.ui" line="398"/>
+        <location filename="editorwindow.ui" line="262"/>
+        <location filename="editorwindow.ui" line="265"/>
         <source>Quitter</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="401"/>
+        <location filename="editorwindow.ui" line="268"/>
         <source>Ctrl+Q</source>
         <translation>Ctrl+Q</translation>
     </message>
-    <message utf8="true">
-        <location filename="editorwindow.ui" line="411"/>
+    <message>
+        <location filename="editorwindow.ui" line="278"/>
         <source>Editer les entêtes</source>
         <translation>Editer les entêtes</translation>
     </message>
-    <message utf8="true">
-        <location filename="editorwindow.ui" line="414"/>
+    <message>
+        <location filename="editorwindow.ui" line="281"/>
         <source>Editer les entêtes (Titre, Auteur, Background...)</source>
         <comment>Edition</comment>
         <translation>Editer les entêtes (Titre, Auteur, Background...)</translation>
     </message>
-    <message utf8="true">
-        <location filename="editorwindow.ui" line="419"/>
+    <message>
+        <location filename="editorwindow.ui" line="286"/>
         <source>Fichiers récents</source>
         <translation>Fichiers récents</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="428"/>
+        <location filename="editorwindow.ui" line="295"/>
         <source>Scinder une note</source>
         <translation>Scinder une note</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="431"/>
+        <location filename="editorwindow.ui" line="298"/>
         <source>Scinder la note en 2</source>
         <translation>Scinder la note en 2</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="440"/>
+        <location filename="editorwindow.ui" line="307"/>
         <source>Fusionner deux notes</source>
         <translation>Fusionner deux notes</translation>
     </message>
-    <message utf8="true">
-        <location filename="editorwindow.ui" line="443"/>
+    <message>
+        <location filename="editorwindow.ui" line="310"/>
         <source>Fusionner les notes sélectionnées</source>
         <translation>Fusionner les notes sélectionnées</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="452"/>
+        <location filename="editorwindow.ui" line="319"/>
         <source>Node normale</source>
         <translation>Note normal</translation>
     </message>
-    <message utf8="true">
-        <location filename="editorwindow.ui" line="455"/>
+    <message>
+        <location filename="editorwindow.ui" line="322"/>
         <source>Transformer les notes sélectionnées en notes Normales</source>
-        <translation type="unfinished">Transformer les notes sélectionnées en notes Normales</translation>
+        <translation>Transformer les notes sélectionnées en notes Normales</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="458"/>
+        <location filename="editorwindow.ui" line="325"/>
         <source>N</source>
         <translation>N</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="467"/>
+        <location filename="editorwindow.ui" line="334"/>
         <source>Note freestyle</source>
         <translation>Note Freestyle</translation>
     </message>
-    <message utf8="true">
-        <location filename="editorwindow.ui" line="470"/>
+    <message>
+        <location filename="editorwindow.ui" line="337"/>
         <source>Transformer les notes sélectionnées en notes libres</source>
-        <translation type="unfinished">Transformer les notes sélectionnées en notes libres</translation>
+        <translation>Transformer les notes sélectionnées en notes libres</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="473"/>
+        <location filename="editorwindow.ui" line="340"/>
         <source>F</source>
         <translation>F</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="482"/>
+        <location filename="editorwindow.ui" line="349"/>
         <source>Note Gold</source>
         <translation>Note gold</translation>
     </message>
-    <message utf8="true">
-        <location filename="editorwindow.ui" line="485"/>
+    <message>
+        <location filename="editorwindow.ui" line="352"/>
         <source>Transformer les notes sélectionnées en notes Gold</source>
-        <translation type="unfinished">Transformer les notes sélectionnées en notes Gold</translation>
+        <translation>Transformer les notes sélectionnées en notes Gold</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="488"/>
+        <location filename="editorwindow.ui" line="355"/>
         <source>G</source>
         <translation>G</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="497"/>
-        <location filename="editorwindow.ui" line="500"/>
+        <location filename="editorwindow.ui" line="364"/>
+        <location filename="editorwindow.ui" line="367"/>
         <source>Ajouter une note</source>
         <translation>Ajouter une note</translation>
     </message>
-    <message utf8="true">
-        <location filename="editorwindow.ui" line="509"/>
+    <message>
+        <location filename="editorwindow.ui" line="376"/>
         <source>Ajouter un séparateur</source>
         <translation>Ajouter un séparateu</translation>
     </message>
-    <message utf8="true">
-        <location filename="editorwindow.ui" line="512"/>
+    <message>
+        <location filename="editorwindow.ui" line="379"/>
         <source>Ajouter un séparateur (pour coupé une phrase en 2)</source>
-        <translation type="unfinished">Ajouter un séparateur (pour coupé une phrase en 2)</translation>
+        <translation>Ajouter un séparateur (pour coupé une phrase en 2)</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="521"/>
+        <location filename="editorwindow.ui" line="388"/>
         <source>Enregistrer sous...</source>
         <translation>Enregistrer sous...</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="524"/>
+        <location filename="editorwindow.ui" line="391"/>
         <source>Enregistrer sous</source>
-        <translation type="unfinished">Enregistrer sous</translation>
+        <translation>Enregistrer sous</translation>
     </message>
-    <message utf8="true">
-        <location filename="editorwindow.ui" line="533"/>
-        <location filename="editorwindow.ui" line="536"/>
+    <message>
+        <location filename="editorwindow.ui" line="400"/>
+        <location filename="editorwindow.ui" line="403"/>
         <source>Supprimer les notes sélectionnées</source>
-        <translation type="unfinished">Supprimer les notes sélectionnées</translation>
+        <translation>Supprimer les notes sélectionnées</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="539"/>
+        <location filename="editorwindow.ui" line="406"/>
         <source>Del</source>
-        <translation type="unfinished">Del</translation>
+        <translation>Del</translation>
     </message>
-    <message utf8="true">
-        <location filename="editorwindow.ui" line="544"/>
+    <message>
+        <location filename="editorwindow.ui" line="411"/>
         <source>Préférences</source>
-        <translation type="unfinished">Préférences</translation>
+        <translation>Préférences</translation>
     </message>
-    <message utf8="true">
-        <location filename="editorwindow.ui" line="547"/>
+    <message>
+        <location filename="editorwindow.ui" line="414"/>
         <source>Préférences du logiciel</source>
-        <translation type="unfinished">Préférences du logiciel</translation>
+        <translation>Préférences du logiciel</translation>
     </message>
-    <message utf8="true">
-        <location filename="editorwindow.ui" line="556"/>
+    <message>
+        <location filename="editorwindow.ui" line="426"/>
         <source>Calquer les notes sélectionnées</source>
-        <translation type="unfinished">Calquer les notes sélectionnée</translation>
+        <translation>Calquer les notes sélectionnée</translation>
     </message>
-    <message utf8="true">
-        <location filename="editorwindow.ui" line="559"/>
-        <location filename="editorwindow.ui" line="562"/>
+    <message>
+        <location filename="editorwindow.ui" line="429"/>
+        <location filename="editorwindow.ui" line="432"/>
         <source>Calquer les notes sélectionnées sur les notes des phrases d&apos;avant (qui sont affiché en gris)</source>
-        <translation type="unfinished">Calquer les notes sélectionnées sur les notes des phrases d&apos;avant (qui sont affiché en gris)</translation>
+        <translation>Calquer les notes sélectionnées sur les notes des phrases d&apos;avant (qui sont affiché en gris)</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="567"/>
+        <location filename="editorwindow.ui" line="483"/>
+        <source>Décaler les notes</source>
+        <translation>Décaler les notes</translation>
+    </message>
+    <message>
+        <location filename="editorwindow.ui" line="488"/>
+        <source>About</source>
+        <translation>A propos</translation>
+    </message>
+    <message>
         <source>debug</source>
-        <translation type="unfinished">debug</translation>
+        <translation type="obsolete">debug</translation>
     </message>
-    <message utf8="true">
-        <location filename="editorwindow.ui" line="570"/>
+    <message>
         <source>trie toutes les notes et les phrase ( a utiliser si les notes réagisse bizarement ou si certaine note ne joue pas de son)</source>
-        <translation type="unfinished">trie toutes les notes et les phrase ( a utiliser si les notes réagisse bizarement ou si certaine note ne joue pas de son)</translation>
+        <translation type="obsolete">trie toutes les notes et les phrase ( a utiliser si les notes réagisse bizarement ou si certaine note ne joue pas de son)</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="582"/>
+        <location filename="editorwindow.ui" line="444"/>
         <source>Verrouiller les timings</source>
-        <translation type="unfinished">Verrouiller les timings</translation>
+        <translation>Verrouiller les timings</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="585"/>
+        <location filename="editorwindow.ui" line="447"/>
         <source>Verrouiller les timings (les notes ne bougerons que de bas en haut)</source>
-        <translation type="unfinished">Verrouiller les timings (les notes ne bougerons que de bas en haut)</translation>
+        <translation>Verrouiller les timings (les notes ne bougerons que de bas en haut)</translation>
     </message>
-    <message utf8="true">
-        <location filename="editorwindow.ui" line="594"/>
-        <location filename="editorwindow.ui" line="597"/>
+    <message>
+        <location filename="editorwindow.ui" line="456"/>
+        <location filename="editorwindow.ui" line="459"/>
         <source>Doubler la précision</source>
-        <translation type="unfinished">Doubler la précision</translation>
+        <translation>Doubler la précision</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="602"/>
+        <location filename="editorwindow.ui" line="464"/>
         <source>Centrer</source>
-        <translation type="unfinished">Centrer la vue</translation>
+        <translation>Centrer la vue</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="605"/>
+        <location filename="editorwindow.ui" line="467"/>
         <source>Centrer la vue sur le curseur</source>
-        <translation type="unfinished">Centrer la vue sur le curseur</translation>
+        <translation>Centrer la vue sur le curseur</translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="608"/>
+        <location filename="editorwindow.ui" line="470"/>
         <source>C</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="editorwindow.ui" line="616"/>
+        <location filename="editorwindow.ui" line="478"/>
         <source>Envoyer une suggestion/remarque rapide</source>
-        <translation type="unfinished">Envoyer une suggestion/remarque rapide</translation>
+        <translation>Envoyer une suggestion/remarque rapide</translation>
     </message>
 </context>
 <context>
     <name>Lyrics</name>
     <message>
-        <location filename="uLyrics.cpp" line="691"/>
+        <location filename="uLyrics.cpp" line="316"/>
         <source>impossible</source>
-        <translation type="unfinished">impossible</translation>
+        <translation>Impossible</translation>
     </message>
     <message>
-        <location filename="uLyrics.cpp" line="691"/>
+        <location filename="uLyrics.cpp" line="316"/>
         <source>le BPM est déjà bien assez grand</source>
-        <translation type="unfinished">le BPM est déjà bien assez grand</translation>
+        <translation>le BPM est déjà bien assez grand</translation>
     </message>
 </context>
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="main.cpp" line="73"/>
         <source>&lt;html&gt;Ce logiciel est gratuit, mais il a fallut du temps pour le développer. Pour laisser ce logiciel gratuit et mis à jour, merci de faire un don paypal : &lt;a href=&quot;http://ultratools.org&quot;&gt;http://ultratools.org&lt;/a&gt;&lt;/html&gt;</source>
         <oldsource>&lt;html&gt;This software is free, but it&apos;s hard to develep.
 To let this software free and alive, thanks to donate using paypal : &lt;a href=&quot;http://ultratools.org&quot;&gt;http://ultratools.org&lt;/a&gt;&lt;/html&gt;</oldsource>
-        <translation type="unfinished">&lt;html&gt;Ce logiciel est gratuit, mais il a fallut du temps pour le développer.
+        <translation type="obsolete">&lt;html&gt;Ce logiciel est gratuit, mais il a fallut du temps pour le développer.
 Pour laisser ce logiciel gratuit et mis à jour, merci de faire un don paypal : &lt;a href=&quot;http://ultratools.org&quot;&gt;http://ultratools.org&lt;/a&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="main.cpp" line="75"/>
         <source>Will you donate?</source>
-        <translation type="unfinished">Donnerais-vous?</translation>
+        <translation type="obsolete">Donnerais-vous?</translation>
     </message>
     <message>
-        <location filename="main.cpp" line="76"/>
         <source>I already have</source>
-        <translation type="unfinished">Déjà fait</translation>
+        <translation type="obsolete">Déjà fait</translation>
     </message>
     <message>
-        <location filename="main.cpp" line="77"/>
         <source>I will, ask me later</source>
-        <translation>Rappelez-moi!!</translation>
+        <translation type="vanished">Rappelez-moi!!</translation>
     </message>
     <message>
-        <location filename="main.cpp" line="78"/>
         <source>I don&apos;t want</source>
-        <translation type="unfinished">Non merci</translation>
+        <translation type="obsolete">Non merci</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="uLyrics.cpp" line="119"/>
-        <location filename="uLyrics.cpp" line="145"/>
         <source>Erreur</source>
-        <translation>Erreur</translation>
+        <translation type="vanished">Erreur</translation>
     </message>
     <message>
-        <location filename="uLyrics.cpp" line="119"/>
         <source>Problème pour parser le fichier .txt
  Lors de la lecture des ligne commençant par - : 
 </source>
-        <translation>Problème pour parser le fichier .txt
+        <translation type="vanished">Problème pour parser le fichier .txt
  Lors de la lecture des ligne commençant par - :
 </translation>
     </message>
     <message>
-        <location filename="uLyrics.cpp" line="145"/>
         <source>Problème pour parser le fichier .txt
  Lors de la lecture de la derniere phrase - : 
 </source>
-        <translation>Problème pour parser le fichier .txt
+        <translation type="vanished">Problème pour parser le fichier .txt
  Lors de la lecture de la derniere phrase - : 
 </translation>
     </message>
     <message>
-        <location filename="uSetting.cpp" line="49"/>
+        <location filename="uSetting.cpp" line="50"/>
         <source>Choisir le dossier d&apos;installation d&apos;Ultrastar</source>
-        <translation type="unfinished">Choisir le dossier d&apos;installation d&apos;Ultrastar</translation>
+        <translation>Choisir le dossier d&apos;installation d&apos;Ultrastar</translation>
     </message>
 </context>
 <context>
     <name>ShowSentenceWidget</name>
     <message>
-        <location filename="uShowSentenceWydget.cpp" line="1071"/>
-        <location filename="uShowSentenceWydget.cpp" line="1112"/>
-        <location filename="uShowSentenceWydget.cpp" line="1120"/>
+        <location filename="uShowSentenceWydget.cpp" line="1114"/>
+        <location filename="uShowSentenceWydget.cpp" line="1155"/>
+        <location filename="uShowSentenceWydget.cpp" line="1163"/>
         <source>Attention</source>
         <translation>Attention</translation>
     </message>
     <message>
-        <location filename="uShowSentenceWydget.cpp" line="1071"/>
+        <location filename="uShowSentenceWydget.cpp" line="1114"/>
         <source>Il faut selectionner au moin deux notes</source>
         <translation>Il faut selectionner au moin deux notes</translation>
     </message>
     <message>
-        <location filename="uShowSentenceWydget.cpp" line="1112"/>
+        <location filename="uShowSentenceWydget.cpp" line="1155"/>
         <source>Il faut selectionner une seule note</source>
         <translation>Il faut selectionner une seule note</translation>
     </message>
     <message>
-        <location filename="uShowSentenceWydget.cpp" line="1120"/>
+        <location filename="uShowSentenceWydget.cpp" line="1163"/>
         <source>La note doit avoir une longueur d&apos;au moin 2</source>
         <translation>La note doit avoir une longueur d&apos;au moin 2</translation>
     </message>
@@ -393,24 +396,24 @@ Pour laisser ce logiciel gratuit et mis à jour, merci de faire un don paypal : 
 <context>
     <name>UCheckUpdate</name>
     <message>
-        <location filename="uCheckUpdate.cpp" line="65"/>
+        <location filename="uCheckUpdate.cpp" line="67"/>
         <source>HTTP</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="uCheckUpdate.cpp" line="66"/>
+        <location filename="uCheckUpdate.cpp" line="68"/>
         <source>Unable to save the file %1: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de sauvegarder %1: %2</translation>
     </message>
     <message>
-        <location filename="uCheckUpdate.cpp" line="175"/>
+        <location filename="uCheckUpdate.cpp" line="119"/>
         <source>Nouvelle Version</source>
-        <translation type="unfinished">Nouvelle Version</translation>
+        <translation>Nouvelle Version</translation>
     </message>
     <message>
-        <location filename="uCheckUpdate.cpp" line="175"/>
+        <location filename="uCheckUpdate.cpp" line="119"/>
         <source>Une nouvelle version est disponnible. Elle est disponible sur le site officiel</source>
-        <translation type="unfinished">Une nouvelle version est disponnible. Elle est disponible sur le site officiel</translation>
+        <translation>Une nouvelle version est disponnible. Elle est disponible sur le site officiel</translation>
     </message>
 </context>
 <context>
@@ -418,55 +421,58 @@ Pour laisser ce logiciel gratuit et mis à jour, merci de faire un don paypal : 
     <message>
         <location filename="uDialogFeedback.ui" line="14"/>
         <source>Dialog</source>
-        <translation type="unfinished">Envoye de remarque et d&apos;avis</translation>
+        <translation>Envoye de remarque et d&apos;avis</translation>
     </message>
     <message>
-        <location filename="uDialogFeedback.ui" line="29"/>
+        <location filename="uDialogFeedback.ui" line="35"/>
+        <source>Type</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="uDialogFeedback.ui" line="47"/>
+        <source>Bug</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="uDialogFeedback.ui" line="60"/>
         <source>Suggestion</source>
-        <translation type="unfinished">Suggestion</translation>
+        <translation>Suggestion</translation>
     </message>
-    <message utf8="true">
-        <location filename="uDialogFeedback.ui" line="39"/>
+    <message>
+        <location filename="uDialogFeedback.ui" line="73"/>
+        <source>Avis</source>
+        <translation></translation>
+    </message>
+    <message>
         <source>Point Négatif</source>
-        <translation type="unfinished">Point Négatif</translation>
+        <translation type="obsolete">Point Négatif</translation>
     </message>
     <message>
-        <location filename="uDialogFeedback.ui" line="46"/>
         <source>Point Positif</source>
-        <translation type="unfinished">Point Positif</translation>
+        <translation type="obsolete">Point Positif</translation>
     </message>
     <message>
-        <location filename="uDialogFeedback.ui" line="53"/>
         <source>Message :</source>
-        <translation type="unfinished">Message :</translation>
+        <translation type="obsolete">Message :</translation>
     </message>
     <message>
-        <location filename="uDialogFeedback.ui" line="65"/>
+        <location filename="uDialogFeedback.cpp" line="23"/>
         <source>Envoyer</source>
-        <translation type="unfinished">Envoyer</translation>
+        <translation>Envoyer</translation>
     </message>
     <message>
-        <location filename="uDialogFeedback.ui" line="72"/>
+        <location filename="uDialogFeedback.cpp" line="74"/>
+        <source>Réponse</source>
+        <translation></translation>
+    </message>
+    <message>
         <source>Annuler</source>
-        <translation type="unfinished">Annuler</translation>
+        <translation type="obsolete">Annuler</translation>
     </message>
     <message>
-        <location filename="uDialogFeedback.cpp" line="94"/>
-        <location filename="uDialogFeedback.cpp" line="137"/>
-        <location filename="uDialogFeedback.cpp" line="154"/>
+        <location filename="uDialogFeedback.cpp" line="80"/>
         <source>Erreur</source>
-        <translation type="unfinished">Erreur</translation>
-    </message>
-    <message>
-        <location filename="uDialogFeedback.cpp" line="94"/>
-        <source>Un problème est survenu lors de l&apos;écriture du fichier temporaire</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="uDialogFeedback.cpp" line="137"/>
-        <location filename="uDialogFeedback.cpp" line="154"/>
-        <source>Un problème est survenu lors de de la connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur</translation>
     </message>
 </context>
 <context>
@@ -477,7 +483,7 @@ Pour laisser ce logiciel gratuit et mis à jour, merci de faire un don paypal : 
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="uDialogHelp.cpp" line="43"/>
+        <location filename="uDialogHelp.cpp" line="42"/>
         <source>:/Images/images/Help.fr.jpg</source>
         <translation>:/Images/images/Help.fr.jpg</translation>
     </message>
@@ -524,12 +530,12 @@ Pour laisser ce logiciel gratuit et mis à jour, merci de faire un don paypal : 
         <source>Background</source>
         <translation>Arrière plan</translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="udialog_fileheader.ui" line="109"/>
         <source>Vidéo</source>
         <translation>Vidéo</translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="udialog_fileheader.ui" line="119"/>
         <source>Vidéo gap</source>
         <translation>Vidéo gap</translation>
@@ -588,7 +594,7 @@ Pour laisser ce logiciel gratuit et mis à jour, merci de faire un don paypal : 
         <translation type="obsolete">le mp3 n&apos;est pas pris en charge par votre système</translation>
     </message>
     <message>
-        <location filename="editorwindow.cpp" line="220"/>
+        <location filename="editorwindow.cpp" line="231"/>
         <source>Voulez-vous continuer ?</source>
         <translation>Voulez-vous continuer ?</translation>
     </message>
@@ -597,70 +603,88 @@ Pour laisser ce logiciel gratuit et mis à jour, merci de faire un don paypal : 
         <translation type="obsolete">Les éventuels changement ne seront pas enregistrer</translation>
     </message>
     <message>
-        <location filename="editorwindow.cpp" line="221"/>
         <source>Les changements ne seront pas enregistrer</source>
-        <translation type="unfinished">Les changements ne seront pas enregistrer</translation>
+        <translation type="obsolete">Les changements ne seront pas enregistrer</translation>
     </message>
     <message>
-        <location filename="editorwindow.cpp" line="240"/>
+        <location filename="editorwindow.cpp" line="250"/>
         <source>Choisir un fichier song</source>
-        <translation type="unfinished">Choisir un fichier song</translation>
+        <translation>Choisir un fichier song</translation>
     </message>
     <message>
-        <location filename="editorwindow.cpp" line="240"/>
+        <location filename="editorwindow.cpp" line="250"/>
         <source>texte (*.txt)</source>
-        <translation type="unfinished">texte (*.txt)</translation>
+        <translation>texte (*.txt)</translation>
     </message>
     <message>
-        <location filename="editorwindow.cpp" line="279"/>
-        <location filename="editorwindow.cpp" line="284"/>
-        <location filename="editorwindow.cpp" line="294"/>
-        <location filename="editorwindow.cpp" line="746"/>
-        <location filename="editorwindow.cpp" line="752"/>
+        <location filename="editorwindow.cpp" line="282"/>
+        <location filename="editorwindow.cpp" line="287"/>
+        <location filename="editorwindow.cpp" line="293"/>
+        <location filename="editorwindow.cpp" line="707"/>
+        <location filename="editorwindow.cpp" line="713"/>
         <source>Attention</source>
         <translation>Attention</translation>
     </message>
     <message>
-        <location filename="editorwindow.cpp" line="279"/>
-        <location filename="editorwindow.cpp" line="746"/>
+        <location filename="editorwindow.cpp" line="707"/>
         <source>Pensez à indiquer où ce trouve le fichier mp3 (menu Edition &gt;&gt; Edtiter les Entêtes)</source>
         <translation>Pensez à indiquer où ce trouve le fichier mp3 (menu Edition &gt;&gt; Edtiter les Entêtes)</translation>
     </message>
     <message>
-        <location filename="editorwindow.cpp" line="284"/>
-        <location filename="editorwindow.cpp" line="752"/>
+        <location filename="editorwindow.cpp" line="287"/>
+        <location filename="editorwindow.cpp" line="713"/>
         <source>Le fichier mp3 n&apos;a pas été trouvé.</source>
         <translation>Le fichier mp3 n&apos;a pas été trouvé.</translation>
     </message>
     <message>
-        <location filename="editorwindow.cpp" line="294"/>
-        <source>Il y a eu un problème lors de la lecture du fichier son</source>
-        <translation type="unfinished"></translation>
+        <location filename="editorwindow.cpp" line="232"/>
+        <source>Les changements ne seront pas enregistré</source>
+        <translation></translation>
     </message>
     <message>
-        <location filename="editorwindow.cpp" line="445"/>
+        <location filename="editorwindow.cpp" line="282"/>
+        <source>Pensez à indiquer où se trouve le fichier mp3 (menu Edition &gt;&gt; Edtiter les Entêtes)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="editorwindow.cpp" line="293"/>
+        <source>Il y a eu un problème lors de la lecture du fichier son</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="editorwindow.cpp" line="458"/>
         <source>Play</source>
         <translation>Play</translation>
     </message>
     <message>
-        <location filename="editorwindow.cpp" line="446"/>
+        <location filename="editorwindow.cpp" line="459"/>
         <source>Crl+P</source>
         <translation>Crl+P</translation>
     </message>
     <message>
-        <location filename="editorwindow.cpp" line="448"/>
+        <location filename="editorwindow.cpp" line="460"/>
         <source>Pause</source>
         <translation>Pause</translation>
     </message>
     <message>
-        <location filename="editorwindow.cpp" line="449"/>
+        <location filename="editorwindow.cpp" line="461"/>
         <source>Ctrl+A</source>
         <translation>Ctrl+A</translation>
     </message>
     <message>
-        <location filename="editorwindow.cpp" line="859"/>
+        <location filename="editorwindow.cpp" line="463"/>
+        <source>Record</source>
+        <translation>Enregistrer</translation>
+    </message>
+    <message>
+        <location filename="editorwindow.cpp" line="464"/>
+        <source>Ctrl+R</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="editorwindow.cpp" line="810"/>
         <source>Envoyer une suggestion/remarque rapide</source>
-        <translation type="unfinished">Envoyer une suggestion/remarque rapide</translation>
+        <translation>Envoyer une suggestion/remarque rapide</translation>
     </message>
     <message>
         <source>Fatal Error</source>
@@ -675,17 +699,17 @@ Pour laisser ce logiciel gratuit et mis à jour, merci de faire un don paypal : 
         <translation type="obsolete">Voulez-vous Quitter ?</translation>
     </message>
     <message>
-        <location filename="editorwindow.cpp" line="673"/>
+        <location filename="editorwindow.cpp" line="618"/>
         <source>Sauvegarder</source>
         <translation>Sauvegarder</translation>
     </message>
     <message>
-        <location filename="editorwindow.cpp" line="759"/>
+        <location filename="editorwindow.cpp" line="718"/>
         <source>Prochaine étape</source>
         <translation>Prochaine étape</translation>
     </message>
     <message>
-        <location filename="editorwindow.cpp" line="761"/>
+        <location filename="editorwindow.cpp" line="720"/>
         <source>Maintenant Votre musique va se lancez et vous devrez appuyer la barre d&apos;espace a chaque nouvelle note. Nous vous conseillons de regarder un exemple sur le site http://www.ultratools.org pour bien comprendre comment cela fonctionne.
 
 
@@ -701,37 +725,35 @@ Utilisez votre feeling et appuyer sur la bar d&apos;espace un peu comme si vous 
 <context>
     <name>UFile</name>
     <message>
-        <location filename="uFile.cpp" line="95"/>
-        <source>Une version Backup du fichier est disponnible (probablement du a un plantage ou a une mauvaise fermeture)</source>
-        <translation type="unfinished">Une version Backup du fichier est disponnible (probablement du a un plantage ou a une mauvaise fermeture)</translation>
-    </message>
-    <message>
         <location filename="uFile.cpp" line="96"/>
-        <source>Voullez-vous récupéré la version Backup?</source>
-        <translation type="unfinished">Voullez-vous récupéré la version Backup?</translation>
+        <source>Une version Backup du fichier est disponnible (probablement du a un plantage ou a une mauvaise fermeture)</source>
+        <translation>Une version Backup du fichier est disponnible (probablement du a un plantage ou a une mauvaise fermeture)</translation>
     </message>
     <message>
-        <location filename="uFile.cpp" line="112"/>
-        <location filename="uFile.cpp" line="156"/>
-        <location filename="uFile.cpp" line="238"/>
+        <location filename="uFile.cpp" line="97"/>
+        <source>Voullez-vous récupéré la version Backup?</source>
+        <translation>Voullez-vous récupéré la version Backup?</translation>
+    </message>
+    <message>
+        <location filename="uFile.cpp" line="113"/>
+        <location filename="uFile.cpp" line="155"/>
         <source>Erreur</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="uFile.cpp" line="112"/>
-        <location filename="uFile.cpp" line="156"/>
+        <location filename="uFile.cpp" line="113"/>
+        <location filename="uFile.cpp" line="155"/>
         <source>Impossible d&apos;ouvrir le fichier : </source>
         <translation>Impossible d&apos;ouvrir le fichier : </translation>
     </message>
     <message>
-        <location filename="uFile.cpp" line="223"/>
+        <location filename="uFile.cpp" line="217"/>
         <source>Musique sauvegardée avec succés</source>
-        <translation type="unfinished">transform the selected notes in free notes</translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="uFile.cpp" line="238"/>
         <source>Problème pour parser le fichier</source>
-        <translation>Problème pour parser le fichier</translation>
+        <translation type="vanished">Problème pour parser le fichier</translation>
     </message>
 </context>
 <context>
@@ -761,7 +783,7 @@ Utilisez votre feeling et appuyer sur la bar d&apos;espace un peu comme si vous 
         <source>nom du fichier :</source>
         <translation>Nom du fichier :</translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="uNewSongForm_Browse.ui" line="97"/>
         <source>Dossier de création :</source>
         <translation>Dossier de création :</translation>
@@ -783,7 +805,7 @@ Utilisez votre feeling et appuyer sur la bar d&apos;espace un peu comme si vous 
         <translation>Fichier mp3 :</translation>
     </message>
     <message>
-        <location filename="uNewSongForm_Browse.cpp" line="84"/>
+        <location filename="uNewSongForm_Browse.cpp" line="86"/>
         <source>Le fichier mp3</source>
         <translation>Le fichier mp3</translation>
     </message>
@@ -793,9 +815,9 @@ Utilisez votre feeling et appuyer sur la bar d&apos;espace un peu comme si vous 
     <message>
         <location filename="uNewSongForm_Lyrics.ui" line="14"/>
         <source>Dialog</source>
-        <translation>Lyrics</translation>
+        <translation>Paroles</translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="uNewSongForm_Lyrics.ui" line="36"/>
         <source>Veuillez copier les paroles de la musique en mettant bien : une phrase karaoké = une ligne</source>
         <translation>Veuillez copier les paroles de la musique en mettant bien : une phrase karaoké = une ligne</translation>
@@ -807,31 +829,72 @@ Utilisez votre feeling et appuyer sur la bar d&apos;espace un peu comme si vous 
     </message>
 </context>
 <context>
+    <name>UNoteManager</name>
+    <message>
+        <location filename="uNoteManager.cpp" line="69"/>
+        <source>Fichier introuvable</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="uNoteManager.cpp" line="69"/>
+        <source>Les fichiers des notes de musiques sont introuvalbes:</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
     <name>USettingDialog</name>
     <message>
         <location filename="uSettingDialog.ui" line="14"/>
         <source>Dialog</source>
-        <translation type="unfinished">Paroles</translation>
+        <translation>Paroles</translation>
     </message>
     <message>
         <location filename="uSettingDialog.ui" line="31"/>
         <source>Dossier Ultrastar</source>
-        <translation type="unfinished">Dossier Ultrastar</translation>
+        <translation>Dossier Ultrastar</translation>
     </message>
     <message>
         <location filename="uSettingDialog.ui" line="41"/>
         <source>Interval entre 2 autoSave  (minutes)</source>
-        <translation type="unfinished">Interval entre 2 autoSave  (minutes)</translation>
+        <translation>Interval entre 2 autoSave  (minutes)</translation>
     </message>
     <message>
         <location filename="uSettingDialog.ui" line="81"/>
         <source>Ok</source>
-        <translation type="unfinished">Ok</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="uSettingDialog.ui" line="88"/>
         <source>Annuler</source>
-        <translation type="unfinished">Annuler</translation>
+        <translation>Annuler</translation>
+    </message>
+</context>
+<context>
+    <name>uDialog_timing</name>
+    <message>
+        <location filename="uDialog_timing.ui" line="14"/>
+        <source>Dialog</source>
+        <translation>Décaller les notes</translation>
+    </message>
+    <message>
+        <location filename="uDialog_timing.ui" line="55"/>
+        <source>Appliquer un décallage de</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="uDialog_timing.ui" line="68"/>
+        <source>à toute les notes</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="uDialog_timing.ui" line="81"/>
+        <source>ce qui correspond à</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="uDialog_timing.ui" line="107"/>
+        <source>milisecondes</source>
+        <translation></translation>
     </message>
 </context>
 </TS>

@@ -1,0 +1,1 @@
+"C:\Qt\5.4\mingw491_32\bin\lupdate.exe" "UltraTools Editor.pro"
