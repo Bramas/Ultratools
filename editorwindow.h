@@ -79,7 +79,7 @@ public slots:
    void bpmChanged(int);
    void gapChanged(float);
    void changeSeek(quint64);
-   void gapModified();
+   void gapModified(double d);
    void saveAs(void);
    void save(void);
    void newFile(void);
@@ -136,9 +136,6 @@ private:
 
     UNewSongForm_Browse * _newSongBrowse;
     Recorder * _spaceNote;
-
-    int _lastHSlideValue;
-    float _lastHScrollValue;
 
     QTimer * _autoSaveTimer;
 

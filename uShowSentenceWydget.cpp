@@ -836,9 +836,7 @@ void ShowSentenceWidget::renderPreviousSentence(QPainter * painter)
 void ShowSentenceWidget::setHScale(int s)
 {
 
-        quint32 temp=(quint32) s;
-
-        this->hScale=s;//exp(temp/100.0);
+        this->hScale=exp(s/100.0);
 
 
     updateRangeView();

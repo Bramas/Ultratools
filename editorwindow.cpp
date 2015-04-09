@@ -55,10 +55,8 @@ UEditorWindow::UEditorWindow(QWidget *parent)
 _startTime=0;
     _playViolon = false;
     _currentFile = NULL;
-_lastHSlideValue=0;
     _isPlaying=false;
 setAcceptDrops(true);
-_lastHScrollValue=0;
 USetting::Instance.init();
 UCheckUpdate * check = new UCheckUpdate(QUrl(URL_VERSION));
 connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
@@ -126,7 +124,7 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
 
         connect(&UInputManager::Instance,SIGNAL(spacePressEvent(void)),this,SLOT(tooglePlay()));
 
-        connect(_wydget_timeline, SIGNAL(gapModified()),this, SLOT(gapModified()));
+        connect(_wydget_timeline, SIGNAL(gapModified(double)),this, SLOT(gapModified(double)));
 
          connect(ui->actionSupprimer_une_note,SIGNAL(triggered()),showSentenceWidget,SLOT(deleteNotes()));
 
@@ -218,8 +216,9 @@ void UEditorWindow::openLastFile()
     }
     openFile(filename);
 }
-void UEditorWindow::gapModified()
+void UEditorWindow::gapModified(double d)
 {
+    _currentFile->setGap(d);
     showSentenceWidget->updateGap();
 }
 
@@ -351,31 +350,15 @@ this->showLines->setMax(s*2+ui->vScroll->value());
 }
 void UEditorWindow::changeHSlider(int s)
 {
-    double diff = _lastHSlideValue - exp(s/100.0);
-    diff/=2.0;
-    diff=floor(diff);
-    if(diff>1 || diff<-1)
-    {
+    ui->hScroll->setPageStep(exp(((double)ui->hSlider->value())/100.0));
+    //  this->hScroll->setMaximum(*range/10-hSlider->value());
+    this->showSentenceWidget->setHScale(s);
 
-        ui->hScroll->setValue(ui->hScroll->value()+diff);
+    _wydget_timeline->setMin(ui->hScroll->value());
+    // _wydget_timeline->setMax(exp(((double)_lastHSlideValue)/100.0) + ui->hScroll->value());
+    _wydget_timeline->setMax(exp(((double)ui->hSlider->value())/100.0) + ui->hScroll->value());
 
-
-        _lastHSlideValue=_lastHSlideValue-diff*2;
-
-
-        qDebug()<<diff;
-        qDebug()<<" ----------";
-
-        ui->hScroll->setPageStep(exp(((double)ui->hSlider->value())/100.0));
-     //  this->hScroll->setMaximum(*range/10-hSlider->value());
-       this->showSentenceWidget->setHScale(_lastHSlideValue);
-
-       _wydget_timeline->setMin(ui->hScroll->value());
-      // _wydget_timeline->setMax(exp(((double)_lastHSlideValue)/100.0) + ui->hScroll->value());
-       _wydget_timeline->setMax(_lastHSlideValue + ui->hScroll->value());
-
-       _wydget_lyrics->onScroll();
-   }
+    _wydget_lyrics->onScroll();
 }
 
 QScrollBar * UEditorWindow::verticalScrollBar()
@@ -469,7 +452,6 @@ ui->tabEditeurLayMain->addWidget(_wydget_timeline,0,1);
 
         playAction = new QAction(QIcon(":/images/player_play.png"), tr("Play"), this);
         playAction->setShortcut(tr("Crl+P"));
-        playAction->setDisabled(true);
         pauseAction = new QAction(QIcon(":/images/player_pause.png"), tr("Pause"), this);
         pauseAction->setShortcut(tr("Ctrl+A"));
         pauseAction->setVisible(false);
@@ -522,23 +504,6 @@ void UEditorWindow::changeSeek(quint64 time)
 
 void UEditorWindow::setupAudio()
 {
-  /*  audioOutput = new Phonon::AudioOutput(Phonon::MusicCategory, this);
-    mediaObject = new Phonon::MediaObject(this);
-    //metaInformationResolver = new Phonon::MediaObject(this);
-
-
-    mediaObject->setTickInterval(50);
-
-    connect(mediaObject, SIGNAL(tick(qint64)), this, SLOT(tick(qint64)));
-    connect(mediaObject, SIGNAL(stateChanged(Phonon::State,Phonon::State)),
-            this, SLOT(stateChanged(Phonon::State,Phonon::State)));
-    connect(mediaObject, SIGNAL(currentSourceChanged(Phonon::MediaSource)),
-            this, SLOT(sourceChanged(Phonon::MediaSource)));
-    connect(mediaObject, SIGNAL(aboutToFinish()), this, SLOT(aboutToFinish()));
-
-    Phonon::createPath(mediaObject, audioOutput);
-
-*/
     //UMidiManager  * mgr = new UMidiManager();
 
 
