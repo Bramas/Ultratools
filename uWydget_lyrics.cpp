@@ -34,7 +34,7 @@ UWydget_Lyrics::UWydget_Lyrics()
 _selectedTextFirstIndex=-1; _selectedTextLastIndex=-1;
     QTimer *timer = new QTimer(this);
       connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-_brutText="ouéé";
+_brutText="ouÃ©Ã©";
 _listWords = NULL;
  _lay = new QHBoxLayout();
 
@@ -276,8 +276,8 @@ void UWydget_Lyrics::paintEvent(QPaintEvent * event)
 
      QPainter * painter = new QPainter(this);
 
-     painter->setPen(QPen::QPen(QColor::QColor(0,0,0,170)));
-      painter->setBrush(QBrush::QBrush(QColor::QColor(0,173,232,170)));
+     painter->setPen(QPen(QColor(0,0,0,170)));
+      painter->setBrush(QBrush(QColor(0,173,232,170)));
         QFont font;
 
 
@@ -336,8 +336,8 @@ _fontSize = _fontSizeEdit = 6;
     painter->drawText(0,0,width(),height(),Qt::TextSingleLine,_brutText);
 
 
-    painter->setPen(QPen::QPen(QColor::QColor(0,0,255,255)));
-     painter->setBrush(QBrush::QBrush(QColor::QColor(0,0,255,255)));
+    painter->setPen(QPen(QColor(0,0,255,255)));
+     painter->setBrush(QBrush(QColor(0,0,255,255)));
 
 
 

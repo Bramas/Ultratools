@@ -76,5 +76,10 @@ CONFIG( debug, debug|release ):
 else:
 
 # release
-win32:RC_FILE = icone/icone.rc
-LIBS += -L/usr/local/lib -lfmodex
+win32:{
+    RC_FILE = icone/icone.rc
+    LIBS += -LC:\FMODEx\api\lib -lfmodex
+}
+else{
+    LIBS += -L/usr/local/lib -lfmodex
+}
