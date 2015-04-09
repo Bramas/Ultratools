@@ -31,6 +31,7 @@
 #include "uNoteManager.h"
 #include "uRecorder.h"
 #include "uDialogAbout.h"
+#include "uWidgetSongData.h"
 #include <math.h>
 #include <QUrl>
 #include <QMimeData>
@@ -351,8 +352,9 @@ this->showLines->setMax(s*2+ui->vScroll->value());
 void UEditorWindow::changeHSlider(int s)
 {
     ui->hScroll->setPageStep(exp(((double)ui->hSlider->value())/100.0));
-    //  this->hScroll->setMaximum(*range/10-hSlider->value());
-    this->showSentenceWidget->setHScale(s);
+ //  this->hScroll->setMaximum(*range/10-hSlider->value());
+   this->showSentenceWidget->setHScale(s);
+   _widgetSongData->setHScale(s);
 
     _wydget_timeline->setMin(ui->hScroll->value());
     // _wydget_timeline->setMax(exp(((double)_lastHSlideValue)/100.0) + ui->hScroll->value());
@@ -387,11 +389,13 @@ if(s!=ui->hScroll->value()) //it's mean that something else that the scroll want
     ui->hScroll->setValue(s);//so update the scrollBar
 }
 
+
+_widgetSongData->setHScroll(s);
 this->showSentenceWidget->setHScroll(s);
 
-_wydget_timeline->setMin(s);
-_wydget_timeline->setMax(exp(((double)ui->hSlider->value())/100.0) + s);
-
+//_wydget_timeline->setMin(s);
+//_wydget_timeline->setMax(exp(((double)ui->hSlider->value())/100.0) + s);
+_wydget_timeline->update();
 _wydget_lyrics->onScroll();
 
 }
@@ -417,6 +421,7 @@ void UEditorWindow::setupUi()
         showLines = new  ShowLines();
         showSentenceWidget = new ShowSentenceWidget(this);
         _wydget_timeline = new UWydget_Timeline(_currentFile);
+        _wydget_timeline->setWidgetSentence(this->showSentenceWidget);
         _wydget_lyrics = new UWydget_Lyrics();
 
 
@@ -428,17 +433,21 @@ void UEditorWindow::setupUi()
     ui->vSlider->setRange(6,20);
 
 
+    _widgetSongData = new WidgetSongData(this);
+    _widgetSongData->setWidgetSentence(this->showSentenceWidget);
+    UAudioManager::Instance.setWidgetSongData(_widgetSongData);
 
     //ui->hScroll = new QScrollBar(Qt::Horizontal);
     //ui->vScroll = new QScrollBar(Qt::Vertical);
     ui->hScroll->setRange(0,999);
     ui->vScroll->setRange(185,235);
 
-ui->tabEditeurLayMain->setColumnMinimumWidth(0,70);// the minimal width to display the showline wydget
-ui->tabEditeurLayMain->setRowMinimumHeight(0,30);// the minimal height to display the timeline wydget
-ui->tabEditeurLayMain->addWidget(_wydget_timeline,0,1);
-   ui->tabEditeurLayMain->addWidget(showLines,1,0);
-        ui->tabEditeurLayMain->addWidget(showSentenceWidget,1,1);
+        ui->tabEditeurLayMain->setColumnMinimumWidth(0,70);// the minimal width to display the showline wydget
+        ui->tabEditeurLayMain->setRowMinimumHeight(1,30);// the minimal height to display the timeline wydget
+        ui->tabEditeurLayMain->addWidget(_wydget_timeline,1,1);
+        ui->tabEditeurLayMain->addWidget(showLines,2,0);
+        ui->tabEditeurLayMain->addWidget(showSentenceWidget,2,1);
+        ui->tabEditeurLayMain->addWidget(_widgetSongData,0,1);
         ui->mainHorizontalLayout->addWidget(_wydget_lyrics);
         //ui->tabEditeurLayMain->setRowMinimumHeight(2,40);
         //ui->tabEditeurLayMain->setColumnMinimumWidth(4,100);
@@ -481,6 +490,7 @@ ui->tabEditeurLayMain->addWidget(_wydget_timeline,0,1);
 
 
         connect(showSentenceWidget, SIGNAL(click(quint64)), this, SLOT(changeSeek(quint64)));
+        connect(_wydget_timeline, SIGNAL(click(quint64)), this, SLOT(tick(quint64)));
         connect(showSentenceWidget, SIGNAL(modified()), _wydget_lyrics, SLOT(onScroll()));
         connect(showSentenceWidget, SIGNAL(emptyClik()), _wydget_lyrics, SLOT(onScroll()));
         connect(showSentenceWidget, SIGNAL(selection(int,int)), _wydget_lyrics, SLOT(onSelectionChange(int,int)));
@@ -512,13 +522,12 @@ void UEditorWindow::setupAudio()
 
     UNoteManager::Instance.setupAudio(this);
 
-    connect( &UAudioManager::Instance, SIGNAL(tick(qint64)), this, SLOT(tick(qint64)));
+    connect( &UAudioManager::Instance, SIGNAL(tick(quint64)), this, SLOT(tick(quint64)));
     connect( &UAudioManager::Instance, SIGNAL(endOfSong()), this, SLOT(pause()));
 
 
 
 }
-
 void UEditorWindow::tick(qint64 time)
 {
    UNoteManager::Instance.tick(time);
@@ -529,6 +538,7 @@ void UEditorWindow::tick(qint64 time)
 
     showSentenceWidget->setSeekPosition(_currentFile->lyrics->timeToBeat(time));
     _wydget_timeline->setSeek(time);
+    _widgetSongData->setSeekPosition(time);
 
 
 if(_currentFile->lyrics->words().empty()) return;
@@ -707,8 +717,6 @@ void UEditorWindow::newSong(void)
     }
 
     UAudioManager::Instance.setSource(_currentFile->getMp3Location());
-
-
       QMessageBox::information(this,tr("Prochaine étape"),
 
 tr("Maintenant Votre musique va se lancez et vous devrez appuyer la barre "

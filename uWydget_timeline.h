@@ -28,6 +28,7 @@
 
 #include "uDialog_fileheader.h"
 
+class ShowSentenceWidget;
 
 class UWydget_Timeline : public QWidget
 {
@@ -35,7 +36,8 @@ class UWydget_Timeline : public QWidget
 
 signals:
 
-    void gapModified();
+    void gapModified(double);
+    void click(quint64);
 
 public:
     UWydget_Timeline(UFile * file);
@@ -44,6 +46,7 @@ public:
     void setMax(int in) { max = in; update(); };
     void setBpm(int n) { _bpm = n; };
     void setGap(int n) { _lastGap = _gap = n; update(); };
+    void setWidgetSentence(ShowSentenceWidget* showSentenceWidget) { _showSentenceWidget = showSentenceWidget; }
 
     void setSeek(quint64 time);
     bool isGapLocked() { return _gapLocked; };
@@ -58,6 +61,7 @@ protected:
      void mouseReleaseEvent(QMouseEvent * event);
      void mouseMoveEvent(QMouseEvent * event);
      bool _gapSelected, _gapOver, _seekSelected, _seekOver, _gapLocked;
+     ShowSentenceWidget* _showSentenceWidget;
      float _lastGap;
 
 };

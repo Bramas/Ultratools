@@ -29,6 +29,7 @@
 
 #include "inc/fmod.h"
 #include "inc/fmod_errors.h"
+class WidgetSongData;
 
 class UAudioManager : public QObject
 {
@@ -36,14 +37,14 @@ class UAudioManager : public QObject
 
 signals:
 
-    void tick(qint64);
+    void tick(quint64);
     void endOfSong();
 
 public slots:
 
     void play();
     void pause();
-    void seek(qint64 startTime);
+    void seek(quint64 startTime);
     void timerOut();
     void changeVolume(int);
     void emitEndOfSong() { emit endOfSong(); }
@@ -51,7 +52,8 @@ public slots:
 public:
     void init();
     bool setSource(QString);
-    qint64 currentTime();
+    quint64 currentTime();
+    void setWidgetSongData(WidgetSongData * widgetSongData) { _widgetSongData = widgetSongData; }
     void lol();
     FMOD_SYSTEM * getSystem() { return _system; }
 
@@ -69,6 +71,7 @@ public:
 private:
 
     UAudioManager();
+    WidgetSongData * _widgetSongData;
 };
 
 #endif // UAUDIOMANAGER_H

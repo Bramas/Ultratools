@@ -115,7 +115,7 @@ private:
 
 
 public:
-    static int  ** rangeTime(QList<Word*> * wlist);
+    static QPair<int,int> rangeTime(QList<Word*> * wlist);
     static int minIndexOfWords(QList<Word*>,QList<Word*>);
     static int maxIndexOfWords(QList<Word*>,QList<Word*>);
     static int indexOfWord(const QList<Word*> & list, Word * word);

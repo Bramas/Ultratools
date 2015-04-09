@@ -119,27 +119,24 @@ void Word::setParent(Lyrics *par)
     _parent = par;
 }
 
-int ** Word::rangeTime(QList<Word *> *wlist)
+QPair<int, int> Word::rangeTime(QList<Word *> *wlist)
 {
-    if(wlist->empty()) return NULL;
+    QPair<int, int> range(0,0);
+    if(wlist->empty()) return range;
 
-    int * range[2];
 
-        range[0] = new int;
-        range[1] = new int;
-
-        *range[0] = wlist->first()->getTime();
-        *range[1] = wlist->first()->getTime()+wlist->first()->getLength();
+        range.first = wlist->first()->getTime();
+        range.second = wlist->first()->getTime()+wlist->first()->getLength();
 
     foreach(Word *w , *wlist)
     {
-        if(w->getTime()<*range[0])
+        if(w->getTime()<range.first)
         {
-            *range[0] = w->getTime();
+            range.first = w->getTime();
         }
-        if(w->getTime() + w->getLength()>*range[1])
+        if(w->getTime() + w->getLength()>range.second)
         {
-            *range[1] = w->getTime() + w->getLength();
+            range.second = w->getTime() + w->getLength();
         }
     }
     return range;

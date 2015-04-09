@@ -30,7 +30,8 @@ SOURCES += main.cpp \
     uDialogFeedback.cpp \
     uRecorder.cpp \
     uDialog_timing.cpp \
-    uDialogAbout.cpp
+    uDialogAbout.cpp \
+    uWidgetSongData.cpp
 HEADERS += editorwindow.h \
     uWord.h \
     uLyrics.h \
@@ -52,7 +53,8 @@ HEADERS += editorwindow.h \
     uDialogFeedback.h \
     uRecorder.h \
     uDialog_timing.h \
-    uDialogAbout.h
+    uDialogAbout.h \
+    uWidgetSongData.h
 FORMS += editorwindow.ui \
     udialog_fileheader.ui \
     uNewSongForm_Browse.ui \

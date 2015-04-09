@@ -25,6 +25,7 @@
 
 #include "uWydget_timeline.h"
 #include "uFile.h"
+#include "uShowSentenceWydget.h"
 #include <QDebug>
 #include <QMouseEvent>
 #include <QPainter>
@@ -42,7 +43,7 @@ UWydget_Timeline::UWydget_Timeline(UFile * file)
     _lastGap = _gap = 0;
     _seek = 0;
     setMouseTracking(true);
-
+    _showSentenceWidget = 0;
     update();
 }
 
@@ -94,12 +95,14 @@ void UWydget_Timeline::mouseMoveEvent(QMouseEvent *event)
 
     if(_gapSelected)
     {
+<<<<<<< HEAD
 
         if(_gapLocked)
         {
-            _gap = ((((event->x())*fTempsR)+fMin)*1000.0);// + _lastGap;
+            _gap = event->x()*_showSentenceWidget->duration()/(qreal)width() + _showSentenceWidget->startTime();
            this->_file->setGap(_gap);
-            emit gapModified();
+            emit gapModified(_gap);
+            emit click(_gap);
         }
         else
         {
@@ -176,6 +179,7 @@ void UWydget_Timeline::mousePressEvent(QMouseEvent *event)
      float fMax = max * duration;
     float fTempsR = ((float)(fMax-fMin))/((float)width());
 
+    qreal gap = _showSentenceWidget->getLyrics()->getGap();
 
     if(((((event->x()+5)*fTempsR)+fMin)*1000.0)>_seek &&
       ((((event->x()-5)*fTempsR)+fMin)*1000.0)<_seek
@@ -184,12 +188,13 @@ void UWydget_Timeline::mousePressEvent(QMouseEvent *event)
        _seekSelected = true;
     }
     else
-    if(((((event->x()+5)*fTempsR)+fMin)*1000.0)>_gap &&
-      ((((event->x()-5)*fTempsR)+fMin)*1000.0)<_gap
+    if(width()*(gap-_showSentenceWidget->startTime())/_showSentenceWidget->duration() + 5 > event->x()
+            && width()*(gap-_showSentenceWidget->startTime())/_showSentenceWidget->duration() - 5 < event->x()
       )
     {
        _gapSelected = true;
-       _lastGap = _gap;
+       _lastGap = _gap = gap;
+       qDebug()<<"select "<<_gap;
     }
     else
     if(((((event->x()-10)*fTempsR)+fMin)*1000.0)>_gap &&
@@ -204,18 +209,21 @@ void UWydget_Timeline::mousePressEvent(QMouseEvent *event)
 void UWydget_Timeline::paintEvent(QPaintEvent * event)
 {
  QPainter painter(this);
+if(!_showSentenceWidget)
+{
+    return;
+}
 
-
-float duration = 15.0f/_bpm;
-
+ quint64 start = _showSentenceWidget->getLyrics()->beatToMsc(_showSentenceWidget->getHScroll()) - _showSentenceWidget->getLyrics()->getGap();
+ quint64 duration = _showSentenceWidget->getLyrics()->beatToMsc(_showSentenceWidget->getHScale()) - _showSentenceWidget->getLyrics()->getGap();
 
 //painter.drawText(QRect(0,0,50,50),QString::number(255));
 
- float tempsR = ((float)width())/((float)(max-min));
- float longueur=(max-min) * duration; // longueur en second
- float fMin = min * duration;
- float fMax = max * duration;
- float fTempsR = ((float)width())/((float)(fMax-fMin));
+ qreal tempsR = ((qreal)width())/((qreal)(max-min));
+ qreal longueur = duration/1000.0; // longueur en second
+ qreal fMin = min * duration;
+ qreal fMax = max * duration;
+ qreal fTempsR = ((float)width())/((float)(fMax-fMin));
 
 
 
@@ -223,6 +231,7 @@ float duration = 15.0f/_bpm;
  painter.setBrush(QBrush(QColor(240,240,240,255)));
  painter.drawRect(0,0,width(),40);
 
+<<<<<<< HEAD
 
  painter.setPen(QPen(QColor(255,60,60,255)));
 
@@ -230,8 +239,14 @@ float duration = 15.0f/_bpm;
 
 
 // gap Cursor
-painter.drawRect(QRectF(((_gap/1000.0 - fMin)*fTempsR)-5,0,10,20));
-painter.drawRect(QRectF(((_gap/1000.0 - fMin)*fTempsR),20,0,20));
+if(start < gap && gap < start + duration)
+{
+    painter.setPen(QPen(QColor(255,60,60,255)));
+    painter.setBrush(QBrush(QColor(255,60,60,255)));
+    // gap Cursor
+    painter.drawRect(QRectF(width()*(_gap-start)/(qreal)duration - 5,0,10,20));
+    painter.drawRect(QRectF(width()*(_gap-start)/(qreal)duration,20,0,20));
+}
 // gap Lock
 if(_gapLocked)
 {
@@ -300,7 +315,7 @@ if(_seekOver)
 painter.setPen(QPen(QColor(0,173,232,255)));
 
  painter.setBrush(QBrush(QColor(255,255,255,255)));
-
+ painter.translate(-width()*(start/1000.0-floor(start/1000.0))/(duration/1000.0), 0);
 
  int pas;
  if(longueur<20)
@@ -327,9 +342,12 @@ painter.setPen(QPen(QColor(0,173,232,255)));
  {
      pas = 60;
  }
-for(int i=((int)ceil(fMin))-((int)ceil(fMin))%pas;i<fMax;i+=pas)
+for(int i = 0; i < duration/1000.0; ++i)
  {
-    if(i%30)
+    int s = floor(start/1000.0) + i;
+    if(pas > 1 && s%pas) continue;
+
+    if(s%30)
     {
         painter.setFont(QFont("Arial",10,QFont::Light,false));
     }
@@ -337,9 +355,10 @@ for(int i=((int)ceil(fMin))-((int)ceil(fMin))%pas;i<fMax;i+=pas)
     {
         painter.setFont(QFont("Arial",11,QFont::Bold,false));
     }
-    painter.drawText(QRect(((float)(i/duration-min))*tempsR+2,0,50,50),QString::number((i-i%60)/60)+":"+QString::number(i%60));
-
-          painter.drawLine(((float)(i/duration-min))*tempsR,0,((float)(i/duration-min))*tempsR,40);
+    QString num = (s%60 < 10 ? "0": "");
+    num+=QString::number(s%60);
+    painter.drawText(QRect(width()*i/(duration/1000.0),0,50,50),QString::number((s-s%60)/60)+":"+num);
+    painter.drawLine(width()*i/(duration/1000.0),0,width()*i/(duration/1000.0),40);
 
  }
 

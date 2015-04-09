@@ -42,6 +42,7 @@ class UWydget_Timeline;
 class UWydget_Lyrics;
 class Recorder;
 class QScrollBar;
+class WidgetSongData;
 namespace Ui
 {
     class EditWindowClass;
@@ -93,7 +94,7 @@ public slots:
 
 
 private slots:
-   void tick(qint64 time);
+   void tick(quint64 time);
    void aboutToFinish();
    void about();
 
@@ -117,6 +118,7 @@ private:
 
     bool _isPlaying;
     bool _spaceNoteGeneration;
+    WidgetSongData * _widgetSongData;
 
     qint64 _startTime;
     QAction *playAction;
