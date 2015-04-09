@@ -229,7 +229,7 @@ int UEditorWindow::discardChange()
     {
             QMessageBox msgBox;
             msgBox.setText(tr("Voulez-vous continuer ?"));
-            msgBox.setInformativeText(tr("Les changements ne seront pas enregistrer"));
+            msgBox.setInformativeText(tr("Les changements ne seront pas enregistrÃ©"));
             msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
             msgBox.setDefaultButton(QMessageBox::Yes);
             return msgBox.exec();
@@ -279,18 +279,18 @@ void UEditorWindow::openFile(QString fileName)
 adaptNewFile();
 if(!_currentFile->_headMp3.compare(""))
 {
-    QMessageBox::warning(this,tr("Attention"),tr("Pensez à indiquer où ce trouve le fichier mp3 (menu Edition >> Edtiter les Entêtes)"));
+    QMessageBox::warning(this,tr("Attention"),tr("Pensez Ã  indiquer oÃ¹ se trouve le fichier mp3 (menu Edition >> Edtiter les EntÃªtes)"));
 }
 else
 if(!QFile::exists(fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3))
 {
-    QMessageBox::warning(this,tr("Attention"),tr("Le fichier mp3 n'a pas été trouvé."));
+    QMessageBox::warning(this,tr("Attention"),tr("Le fichier mp3 n'a pas Ã©tÃ© trouvÃ©."));
 }
 else
 {
     if(!UAudioManager::Instance.setSource(fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3))
     {
-        QMessageBox::warning(this,tr("Attention"),tr("Il y a eu un problème lors de la lecture du fichier son")+" : "+fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3);
+        QMessageBox::warning(this,tr("Attention"),tr("Il y a eu un problÃ¨me lors de la lecture du fichier son")+" : "+fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3);
     }
 }
 
@@ -544,7 +544,7 @@ if(_currentFile->lyrics->words().empty()) return;
 
   Word * w = NULL;
 
-  //qDebug()<<time<<" : s :"<<_currentFile->beatToMsc(_currentFile->lyrics->getSentences()->first()->getSepAfter()->getTime2())<< "Sentence commençant par "<<s->getWords()->first()->getWord();
+  //qDebug()<<time<<" : s :"<<_currentFile->beatToMsc(_currentFile->lyrics->getSentences()->first()->getSepAfter()->getTime2())<< "Sentence commenÃ§ant par "<<s->getWords()->first()->getWord();
 
   if(UNoteManager::Instance.isPlaying())
   foreach(w,_currentFile->lyrics->words())
@@ -704,26 +704,26 @@ void UEditorWindow::newSong(void)
 
     if(!_currentFile->_headMp3.compare(""))
     {
-        QMessageBox::warning(this,tr("Attention"),tr("Pensez à indiquer où ce trouve le fichier mp3 (menu Edition >> Edtiter les Entêtes)"));
+        QMessageBox::warning(this,tr("Attention"),tr("Pensez Ã  indiquer oÃ¹ ce trouve le fichier mp3 (menu Edition >> Edtiter les EntÃªtes)"));
         return;
     }
 
     if(!QFile::exists(_currentFile->getMp3Location()))
     {
-        QMessageBox::warning(this,tr("Attention"),tr("Le fichier mp3 n'a pas été trouvé."));
+        QMessageBox::warning(this,tr("Attention"),tr("Le fichier mp3 n'a pas Ã©tÃ© trouvÃ©."));
         return;
     }
 
     UAudioManager::Instance.setSource(_currentFile->getMp3Location());
-      QMessageBox::information(this,tr("Prochaine étape"),
+      QMessageBox::information(this,tr("Prochaine Ã©tape"),
 
 tr("Maintenant Votre musique va se lancez et vous devrez appuyer la barre "
    "d'espace a chaque nouvelle note. Nous vous conseillons de regarder un exemple"
    " sur le site http://www.ultratools.org pour bien comprendre comment cela "
    "fonctionne.\n\n\nUtilisez votre feeling et appuyer sur la bar d'espace un peu "
    "comme si vous chantiez. Si vous avez l'impression d'avoir ratez une partie ne "
-   "vous arretez pas et essayer de rester calé, cela vous fera gagner beaucoup de "
-   "temps lors de l'édition.\n c'est partie."));
+   "vous arretez pas et essayer de rester calÃ©, cela vous fera gagner beaucoup de "
+   "temps lors de l'Ã©dition.\n c'est partie."));
 
 
      play();
