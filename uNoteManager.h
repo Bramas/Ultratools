@@ -57,7 +57,7 @@ public:
     void setupAudio(QObject * parent);
 
 protected:
-
+    QString violonFile(int i);
     bool checkPitch(int p);
     bool _isPlaying;
     int _maxPitch;
