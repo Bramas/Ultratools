@@ -23,7 +23,9 @@
 ****************************************************************************/
 
 
-#include <QtGui/QApplication>
+#include <QApplication>
+#include <QTranslator>
+#include <QMessageBox>
 
 #include "editorwindow.h"
 #include <QCleanlooksStyle>
@@ -70,8 +72,8 @@ void donate(){
         bool showDonate = settings.value("donate", true).toBool();
         if( showDonate ){
                 QMessageBox msgDonate;
-                msgDonate.setText(QApplication::tr("<html>Ce logiciel est gratuit, mais il a fallut du temps pour le développer. "
-                                                  "Pour laisser ce logiciel gratuit et mis à jour, merci de faire un don paypal : <a href=\"http://ultratools.org\">http://ultratools.org</a></html>"));
+                msgDonate.setText(QApplication::tr("<html>Ce logiciel est gratuit, mais il a fallut du temps pour le dÃ©velopper. "
+                                                  "Pour laisser ce logiciel gratuit et mis Ã  jour, merci de faire un don paypal : <a href=\"http://ultratools.org\">http://ultratools.org</a></html>"));
                 msgDonate.setInformativeText(QApplication::tr("Will you donate?"));
                 QPushButton* already = msgDonate.addButton(QApplication::tr("I already have"),QMessageBox::YesRole);
                 QPushButton* will = msgDonate.addButton(QApplication::tr("I will, ask me later"),QMessageBox::YesRole);

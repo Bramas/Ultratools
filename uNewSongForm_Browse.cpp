@@ -23,8 +23,10 @@
 ****************************************************************************/
 
 
-
-
+#include <QFileDialog>
+#include <QDir>
+#include "uFile.h"
+#include "uSetting.h"
 #include "UNewSongForm_Browse.h"
 #include "ui_UNewSongForm_Browse.h"
 
@@ -73,7 +75,7 @@ void UNewSongForm_Browse::changeEvent(QEvent *e)
 
 void UNewSongForm_Browse::browse(void)
 {
-    _baseLocation = QFileDialog::getExistingDirectory(this,"Dossier de création",USetting::Instance.getSongsLocation());
+    _baseLocation = QFileDialog::getExistingDirectory(this,"Dossier de crÃ©ation",USetting::Instance.getSongsLocation());
     ui->lineEdit_folder->setText(_baseLocation);
     _edited = false;
 

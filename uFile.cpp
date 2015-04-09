@@ -26,6 +26,8 @@
 #include "uFile.h"
 #include "uDialog_fileheader.h"
 #include <QStatusBar>
+#include <QMessageBox>
+#include "editorwindow.h"
 
 #define DEFAULT_GAP 0
 #define DEFAULT_BPM 360
@@ -93,7 +95,7 @@ if(QFile::exists(getBAK()))
     QMessageBox msgBox(parent);
 
     msgBox.setInformativeText(tr("Une version Backup du fichier est disponnible (probablement du a un plantage ou a une mauvaise fermeture)"));
-    msgBox.setText(tr("Voullez-vous récupéré la version Backup?"));
+    msgBox.setText(tr("Voullez-vous rÃ©cupÃ©rÃ© la version Backup?"));
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::Yes);
     int ret = msgBox.exec();
@@ -120,12 +122,11 @@ if(QFile::exists(getBAK()))
             sourceCode += line;
         }
 
-        range = lyrics->parseCode(sourceCode);
+        lyrics->parseCode(sourceCode);
 
-        _hMax = *range;
-
+        _hMax = lyrics->words().back()->getTime2() + 10;
+        qDebug()<<"Hmax"<<_hMax;
         extractHead();
-
         lyrics->setGap(_headGap);
         lyrics->setBpm(_headBpm);
 
@@ -176,34 +177,29 @@ bool UFile::saveInFile(QString fileName, bool autoSave)
     out<<"#GAP:"<<_headGap<< "\n";
    // out<<"#END:"<<_headEnd<< "\n";
 
-    Word * w;
-
-foreach(Sentence * s, *lyrics->getSentences())
+foreach(Word * w,lyrics->words())
 {
-
-    if(s->getSepBefore())
+    if(w->isSeparator())
     {
-        out<<"- "<<s->getSepBefore()->getTime1();
-        if(s->getSepBefore()->getLength())
+        out<<"- "<<w->getTime1();
+        if(w->getLength())
         {
-            out<<" "<<s->getSepBefore()->getTime2();
+            out<<" "<<w->getTime2();
         }
         out<<"\n";
+        continue;
     }
+    if(w->isFree())
+        out<<"F ";
+    else
+    if(w->isGold())
+        out<<"* ";
+    else
+        out<<": ";
 
-    foreach(w,*s->getWords())
-    {
-        if(w->isFree())
-            out<<"F ";
-        else
-        if(w->isGold())
-            out<<"* ";
-        else
-            out<<": ";
-
-        out<<w->getTime()<<" "<<w->getLength()<<" "<<w->getPitch()<<" "<<w->getWord()<<"\n";
-    }
+    out<<w->getTime()<<" "<<w->getLength()<<" "<<w->getPitch()<<" "<<w->getText()<<"\n";
 }
+
 out<<"E\n";
 
 file.close();
@@ -220,7 +216,7 @@ if(!autoSave)
 }
 
 
-_parent->statusBar()->showMessage(tr("Musique sauvegardée avec succés"),20000);
+_parent->statusBar()->showMessage(tr("Musique sauvegardÃ©e avec succÃ©s"),20000);
 
 return true;
 }
@@ -235,7 +231,7 @@ void UFile::extractHead()
 
     QStringList sl = sourceCode.split("\n#");
 
-    if(sl.count() == 0)  QMessageBox::warning(NULL,tr("Erreur"),tr("Problème pour parser le fichier"));
+    if(sl.count() == 0)  QMessageBox::warning(NULL,tr("Erreur"),tr("ProblÃ¨me pour parser le fichier"));
 
     QString str;
     foreach(str,sl)
@@ -373,34 +369,30 @@ QString UFile::plainText()
     plainString+="#GAP:"+QString::number(_headGap)+ "\n";
    // plainString+="#END:"+_headEnd+ "\n";
 
-    Word * w;
 
-foreach(Sentence * s, *lyrics->getSentences())
+foreach(Word * w, lyrics->words())
 {
-
-    if(s->getSepBefore())
+    if(w->isSeparator())
     {
-        plainString+="- "+QString::number(s->getSepBefore()->getTime1());
-        if(s->getSepBefore()->getLength())
+        plainString+="- "+QString::number(w->getTime1());
+        if(w->getLength())
         {
-            plainString+=" "+QString::number(s->getSepBefore()->getTime2());
+            plainString+=" "+QString::number(w->getTime2());
         }
         plainString+="\n";
+        continue;
     }
+    if(w->isFree())
+        plainString+="F ";
+    else
+    if(w->isGold())
+        plainString+="* ";
+    else
+        plainString+=": ";
 
-    foreach(w,*s->getWords())
-    {
-        if(w->isFree())
-            plainString+="F ";
-        else
-        if(w->isGold())
-            plainString+="* ";
-        else
-            plainString+=": ";
-
-        plainString+=QString::number(w->getTime())+" "+QString::number(w->getLength())+" "+QString::number(w->getPitch())+" "+w->getWord()+"\n";
-    }
+    plainString+=QString::number(w->getTime())+" "+QString::number(w->getLength())+" "+QString::number(w->getPitch())+" "+w->getText()+"\n";
 }
+
 plainString+="E\n";
 
 return plainString;

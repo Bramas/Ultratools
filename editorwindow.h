@@ -29,10 +29,15 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-
+#include <QMainWindow>
 #include "uCheckUpdate.h"
 #include "uDialogHelp.h"
 #include "uDialogFeedback.h"
+#include "uInputManager.h"
+#include "uFile.h"
+
+class ShowSentenceWidget;
+class ShowLines;
 
 namespace Ui
 {
@@ -43,8 +48,8 @@ class UEditorWindow : public QMainWindow
 {
     Q_OBJECT
 protected:
-    void keyPressEvent(QKeyEvent * event) { UInputManager::Instance.keyPressed(event);   };
-   void keyReleaseEvent(QKeyEvent * event) { UInputManager::Instance.keyReleased(event);   };
+   void keyPressEvent(QKeyEvent * event) { QMainWindow::keyPressEvent(event); UInputManager::Instance.keyPressed(event);   }
+   void keyReleaseEvent(QKeyEvent * event) {QMainWindow::keyReleaseEvent(event); UInputManager::Instance.keyReleased(event);   }
    void readSettings();
    void closeEvent(QCloseEvent *event);
    void dropEvent(QDropEvent *);
@@ -77,7 +82,6 @@ public slots:
    void newFile(void);
    void tooglePlay(void);
    void newSong(void);
-   void updatePlainText(void);
    void centerView(void);
    void onFileModified(bool k);
 

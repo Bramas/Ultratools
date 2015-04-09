@@ -87,6 +87,7 @@ public:
     void renderPreviousSentence(QPainter * painter);
     bool renderWord(QPainter * painter,Word * w);
     void setLyrics(Lyrics * lyrics);
+    Lyrics * getLyrics() { return lyrics; }
     void updateGap(void);
 
     int getMaximumHScroll();
@@ -108,7 +109,7 @@ protected:
 
     quint8 _previousDisplayed;
 
-    QRectF * separatorLines(USeparateur * s,QRectF * points);
+    void renderSeparator(QPainter * painter, Word * w);
     bool _mousePressed, _isPlaying;
     float _gap;
     qreal _seekPosition;
@@ -127,7 +128,7 @@ protected:
     QList<Word*> _selected;
 
     Word * _overed;
-    USeparateur * _overSep;
+    Word * _overSep;
 
     QPointF _fPointPress;
     QPointF _fMousePosition;
@@ -135,6 +136,14 @@ protected:
 
 
     private:
+
+    QRectF scaleRect(qreal x, qreal y, qreal w, qreal h);
+    qreal scaleWidth(qreal w);
+    qreal scaleHeight(qreal h);
+    QPointF scaledCoordinates(qreal x, qreal y);
+    QPointF scaledCoordinates(const QPointF &);
+    QPointF scaledCoordinates(const QPoint &);
+
 
     enum{
       OVER_LEFT=1<<1,OVER_RIGHT=1<<2

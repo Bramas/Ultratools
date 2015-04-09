@@ -30,6 +30,7 @@
 
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QFile>
 
 
 #define VERSION "1.0.beta"

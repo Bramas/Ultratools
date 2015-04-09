@@ -26,7 +26,7 @@
 #ifndef LYRICS_H
 #define LYRICS_H
 
-#include "uSentence.h"
+#include "uWord.h"
 
 #include <Phonon/MediaObject>
 #include <Phonon/AudioOutput>
@@ -46,39 +46,33 @@ public slots:
 public:
 
 
-    void modified(QString sender="") { _modified=true; emit hasBeenModified(); };
-    bool isModified() { return _modified; };
+    Lyrics(QWidget * parent=0);
+    void parseLine(QString &line);
+    void parseCode(QString &code);
+
+    void modified(QString sender="") { _modified=true; emit hasBeenModified(); }
+    bool isModified() { return _modified; }
     void setModified(bool b=true) { if(b==true) modified(); else _modified=false; }
 
 
-    Lyrics(QWidget * parent=0);
-    int * parseCode(QString code);
-    int * fromLines(QList<UAbstractLine*>* lines);
-
-     QList<Sentence*> * getSentences(void);
-
-    QList<Word*> * getAllWords(void) { return &words; }
+    const QList<Word*>& words(void) const { return _words; }
+    QList<Word*>& words(void) { return _words; }
 
     int getPitchMax(void);
     int getPitchMin(void);
-    void setGap(float in) { _gap = in; };
-    float getGap(void) { return _gap; };
-    void setBpm(float in) { _bpm = in; };
-    float getBpm(void) { return _bpm; };
+    void setGap(qreal in) { _gap = (in < 0 ? 0 : in); }
+    qreal getGap(void) { return _gap; }
+    void setBpm(float in) { _bpm = in; }
+    qreal getBpm(void) { return _bpm; }
 
-    void sortThisWord(Word * w);
-    void sortThisSeparator(USeparateur * s);
-
-    void addWord(Word * w);
-    void addSentence(Sentence * sent);
-    USeparateur * addSeparator(int time, int length);
-
+    void resortWord(Word * w);
+    Word* addSeparator(int time);
     void removeWord(Word * w);
     void removeSentence(Sentence * sent);
     void deleteSeparator(USeparateur *s);
 
-     QList<USeparateur*> *  separatorsOfWords(QList<Word*> * list);
-     QList<Sentence*> *  sentencesOfWords(QList<Word*> * list);
+     QList<Word*> *  separatorsOfWords(QList<Word*> * list);
+     QList<Word*> *  sentencesOfWords(QList<Word*> * list);
 
      bool setDelay(int delay, quint64 from=0);
 
@@ -86,21 +80,16 @@ public:
     void moveLeft(Word * from);
     Word * moveRight(Word *from, int indexIWant=0);
 
-   // int pitchMax(void);
 
 private:
     QWidget * parent;
-    QList<Sentence*> sentences;
-
-    QList<Word*> words;
-
-    QList<UAbstractLine*> _lines;
+    QList<Word*> _words;
 
     bool _modified;
 
     int  pitchMax, pitchMin;
-    float _gap;
-    float _bpm;
+    qreal _gap;
+    qreal _bpm;
 };
 
 #endif // LYRICS_H

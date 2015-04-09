@@ -26,7 +26,12 @@
 #include "editorwindow.h"
 #include "ui_editorwindow.h"
 #include "uDialog_timing.h"
+#include <math.h>
 #include <QUrl>
+#include <QMimeData>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QCloseEvent>
 
 #define USEMEMLOAD
 #define USEFMOD TRUE
@@ -41,7 +46,7 @@ UEditorWindow::UEditorWindow(QWidget *parent)
 
 //    QMessageBox::information(NULL,"",QDesktopServices::storageLocation(QDesktopServices::DataLocation));
 
-
+    this->setFocusPolicy(Qt::StrongFocus);
 _startTime=0;
     _playViolon = false;
     _currentFile = NULL;
@@ -118,18 +123,12 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
 
         connect(_wydget_timeline, SIGNAL(gapModified()),this, SLOT(gapModified()));
 
-        connect(ui->pushButton_separe,SIGNAL(clicked()),_wydget_lyrics,SLOT(separeOnSelect()));
-        connect(ui->pushButton_separe,SIGNAL(clicked()),showSentenceWidget,SLOT(setFocus()));
          connect(ui->actionSupprimer_une_note,SIGNAL(triggered()),showSentenceWidget,SLOT(deleteNotes()));
 
         connect(ui->actionPr_f_rences,SIGNAL(triggered()),&USetting::Instance,SLOT(showDialog()));
 
-        connect(ui->spinBox_previous,SIGNAL(valueChanged(int)),showSentenceWidget,SLOT(setPreviousDisplayed(int)));
-        connect(ui->spinBox_previous,SIGNAL(valueChanged(int)),showSentenceWidget,SLOT(setFocus()));
-
         connect(ui->actionMorphe,SIGNAL(triggered()),showSentenceWidget,SLOT(calquer()));
 
-        connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(updatePlainText()));
 
         connect(ui->actionVerrouiller_les_timings,SIGNAL(toggled(bool)),showSentenceWidget,SLOT(lockTime(bool)));
 
@@ -150,7 +149,7 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
 
        // _currentFile = new UFile(this);
         this->showSentenceWidget->setLyrics(_currentFile->lyrics);
-        _wydget_lyrics->setWords(showSentenceWidget->getWordsDisplayedPtr());
+        _wydget_lyrics->setWidgetWords(showSentenceWidget);
 
         readLastFile();
 
@@ -270,7 +269,7 @@ void UEditorWindow::openFile(QString fileName)
     _wydget_timeline->setBpm(_currentFile->lyrics->getBpm());
     _wydget_timeline->setGap(_currentFile->lyrics->getGap());
 
-    _wydget_lyrics->setWords(showSentenceWidget->getWordsDisplayedPtr());
+    _wydget_lyrics->setWidgetWords(showSentenceWidget);
 
     _autoSaveTimer->start(USetting::Instance.getAutoSaveInterval()*60000);
 
@@ -301,15 +300,17 @@ else
 
 void UEditorWindow::adaptNewFile()
 {
-    ui->textFichierSource->setPlainText(_currentFile->sourceCode);
 
-    showSentenceWidget->setVScroll((255-_currentFile->lyrics->getSentences()->at(0)->getWords()->at(0)->getPitch())*2);
+    if(_currentFile->lyrics->words().isEmpty())
+    {
+        return;
+    }
+    showSentenceWidget->setVScroll((255-_currentFile->lyrics->words().at(0)->getPitch())*2);
 
     //qDebug()<<*range;
     ui->hScroll->setMaximum(_currentFile->getMax()+_currentFile->timeToBeat(_currentFile->lyrics->getGap()));
 
-    ui->vScroll->setValue((255-_currentFile->lyrics->getSentences()->at(0)->getWords()->at(0)->getPitch()));
-
+    ui->vScroll->setValue((255-_currentFile->lyrics->words().at(0)->getPitch()));
 
     UNoteManager::Instance.setMaxPitch(_currentFile->lyrics->getPitchMax());
 
@@ -319,15 +320,15 @@ void UEditorWindow::adaptNewFile()
 
 
 
-    if((_currentFile->lyrics->getSentences()->at(0)->getPitchMin()+_currentFile->lyrics->getSentences()->at(0)->getPitchMax())/2+20>_currentFile->lyrics->getPitchMax())
+    if((_currentFile->lyrics->getPitchMin()+_currentFile->lyrics->getPitchMax())/2+20>_currentFile->lyrics->getPitchMax())
     {
          this->changeVScroll(255-_currentFile->lyrics->getPitchMax());
          ui->vScroll->setValue(255-_currentFile->lyrics->getPitchMax());
     }
     else
     {
-         this->changeVScroll((235-(_currentFile->lyrics->getSentences()->at(0)->getPitchMin()+_currentFile->lyrics->getSentences()->at(0)->getPitchMax())/2));
-         ui->vScroll->setValue((235-(_currentFile->lyrics->getSentences()->at(0)->getPitchMin()+_currentFile->lyrics->getSentences()->at(0)->getPitchMax())/2));
+         this->changeVScroll((235-(_currentFile->lyrics->getPitchMin()+_currentFile->lyrics->getPitchMax())/2));
+         ui->vScroll->setValue((235-(_currentFile->lyrics->getPitchMin()+_currentFile->lyrics->getPitchMax())/2));
      }
 
 
@@ -335,8 +336,6 @@ void UEditorWindow::adaptNewFile()
       ui->hScroll->setValue((_currentFile->lyrics->getGap()>2000?_currentFile->lyrics->getGap()-2000:0)*_currentFile->lyrics->getBpm()/15000.0);
 
       onFileModified(false);
-
-
 }
 
 void UEditorWindow::changeVSlider(int s)
@@ -419,10 +418,6 @@ void UEditorWindow::setupUi()
 {
 
     ui->setupUi(this);
-       this->setCentralWidget(ui->tab);
-      // ui->tabEditeur->setLayout(ui->lay_main);
-        ui->tabFichier->setLayout(ui->tabFichierLayMain);
-
        // QScrollArea *sa = new QScrollArea( ui->tab );
 
         showLines = new  ShowLines();
@@ -450,15 +445,15 @@ ui->tabEditeurLayMain->setRowMinimumHeight(0,30);// the minimal height to displa
 ui->tabEditeurLayMain->addWidget(_wydget_timeline,0,1);
    ui->tabEditeurLayMain->addWidget(showLines,1,0);
         ui->tabEditeurLayMain->addWidget(showSentenceWidget,1,1);
-        ui->tabEditeurLayMain->addWidget(_wydget_lyrics,2,1);
-        ui->tabEditeurLayMain->setRowMinimumHeight(2,40);
+        ui->mainHorizontalLayout->addWidget(_wydget_lyrics);
+        //ui->tabEditeurLayMain->setRowMinimumHeight(2,40);
+        //ui->tabEditeurLayMain->setColumnMinimumWidth(4,100);
 
      //ui->tabEditeurLayMain->addWidget(ui->hScroll,1,1);
     // ui->tabEditeurLayMain->addWidget(ui->vScroll,0,2);
 
      //ui->tabEditeurLayMain->addWidget(ui->vSlider,0,3);
      //ui->tabEditeurLayMain->addWidget(ui->hSlider,2,1);
-        ui->tabEditeur->setLayout(ui->tabEditVLayContener);
 
 
         playAction = new QAction(style()->standardIcon(QStyle::SP_MediaPlay), tr("Play"), this);
@@ -581,26 +576,17 @@ void UEditorWindow::tick(qint64 time)
     _wydget_timeline->setSeek(time);
 
 
-if(_currentFile->lyrics->getSentences()->empty()) return;
+if(_currentFile->lyrics->words().empty()) return;
 
-
-  Sentence * s;
-  foreach(s,*_currentFile->lyrics->getSentences())
-  {
-        if(s->getSepAfter() && _currentFile->beatToMsc(s->getSepAfter()->getTime2())-20>time)
-        {
-            break;
-        }
-  }
 
   Word * w = NULL;
 
   //qDebug()<<time<<" : s :"<<_currentFile->beatToMsc(_currentFile->lyrics->getSentences()->first()->getSepAfter()->getTime2())<< "Sentence commençant par "<<s->getWords()->first()->getWord();
 
   if(UNoteManager::Instance.isPlaying())
-  foreach(w,*s->getWords())
+  foreach(w,_currentFile->lyrics->words())
   {
-        if(_currentFile->beatToMsc(w->getTime())-20<=time
+        if(!w->isSeparator() && _currentFile->beatToMsc(w->getTime())-20<=time
            && _currentFile->beatToMsc(w->getTime()+w->getLength())>time
            )
         {
@@ -811,7 +797,6 @@ void UEditorWindow::fileConnect()
     connect(_currentFile,SIGNAL(bpmChanged(int)),this,SLOT(bpmChanged(int)));
     connect(_currentFile,SIGNAL(gapChanged(float)),this,SLOT(gapChanged(float)));
     connect(_currentFile,SIGNAL(hasBeenModified(bool)),this,SLOT(onFileModified(bool)));
-    connect(ui->actionDebug,SIGNAL(triggered()),_currentFile->lyrics,SLOT(sortAll()));
     connect(ui->actionDoublePrecision,SIGNAL(triggered()),_currentFile,SLOT(doublePrecision()));
 }
 void UEditorWindow::fileDisconnect()
@@ -821,14 +806,9 @@ void UEditorWindow::fileDisconnect()
     disconnect(_currentFile,SIGNAL(bpmChanged(int)),this,SLOT(bpmChanged(int)));
     disconnect(_currentFile,SIGNAL(gapChanged(float)),this,SLOT(gapChanged(float)));
     disconnect(_currentFile,SIGNAL(hasBeenModified(bool)),this,SLOT(onFileModified(bool)));
-    disconnect(ui->actionDebug,SIGNAL(triggered()),_currentFile->lyrics,SLOT(sortAll()));
     disconnect(ui->actionDoublePrecision,SIGNAL(triggered()),_currentFile,SLOT(doublePrecision()));
 }
 
-void UEditorWindow::updatePlainText()
-{
-    ui->textFichierSource->setPlainText(_currentFile->plainText());
-}
 void UEditorWindow::hoverAction(QAction *a)
 {
     //QMessageBox::information(NULL,"lol",a->statusTip());

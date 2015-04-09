@@ -28,36 +28,49 @@
 
 #include "uSetting.h"
 
-class Sentence;
 
+class Lyrics;
 
-
-
-class Word : public UAbstractLine
+class Word
 {
 public:
-    Word(Sentence * parent,int time,int length, int pitch, bool gold=false);
+    typedef enum Type { Default = 7, Normal = 1, Free = 2, Gold = 4, Separator = 8 } Type;
+
+    Word(Lyrics * parent,int time,int length, int pitch, Word::Type type = Word::Normal);
+
 
     int setTime(int newTime, bool definitly = true);
+    int getTime(void) const  { return getTime1(); }
+    int getTime1(void) const { return _time; }
+    int getTime2(void) const { return _time + _length; }
+
     int setLength(int newlength, bool definitly = true);
-    int setPitch(int newPitch, bool definitly = true);
-    bool setGold(bool newGold=true);
-    void setWord(QString word);
-
-    bool isGold(void) const;
-    int getTime(void) const;
     int getLength(void) const;
+    int setPitch(int newPitch, bool definitly = true);
     int getPitch(void) const;
-    QString getWord(void) const;
-    bool _selected;
+
+    void setGold(bool newGold=true) { _type = newGold ? Word::Gold : Word::Normal; }
+    bool isGold(void) const { return _type & Word::Gold; }
+    bool isFree(void) const { return _type & Word::Free; }
+    void setFree(bool in) { _type = in ? Word::Free : Word::Normal; }
+    bool isSeparator() const { return _type & Word::Separator; }
+    Lyrics * getParent() { return _parent; }
+    void setParent(Lyrics * par);
+
+    void setText(QString text);
+    QString getText(void) const { return _text; }
+    void setSelected(bool selected = true) { _selected = selected; }
+    bool isSelected(void) const { return _selected; }
+
+    bool hasBeenModified(void) { return _oTime!=_time || _oPitch!=_pitch || _oLength!=_length; }
 
 
 
-    int getOTime() const { return _oTime; };
-    int getOPitch() const { return _oPitch; };
-    int getOLength() const { return _oLength; };
+    int getOTime() const { return _oTime; }
+    int getOPitch() const { return _oPitch; }
+    int getOLength() const { return _oLength; }
 
-    void hold(void) { _oTime=time; _oPitch=pitch; _oLength=length; }
+    void hold(void) { _oTime=_time; _oPitch=_pitch; _oLength=_length; }
 
     void setOver(quint8 n) { _over = n; }
     quint8 getOver(void) const { return _over; }
@@ -68,7 +81,7 @@ public:
         return (this->getLength()  ==t2.getLength()
                 && this->getPitch()==t2.getPitch()
                 && this->getTime() ==t2.getTime()
-                && this->getWord() ==t2.getWord());
+                && this->getText() ==t2.getText());
     }
     bool operator==(const Word& t2) const
     {
@@ -79,31 +92,25 @@ public:
         return !this->equal(t2);
     }
 
-    bool hasBeenModified(void) { return _oTime!=time || _oPitch!=pitch || _oLength!=length; }
-
-    Sentence * getParent() { return _parent; };
-    void setParent(Sentence * par);
-
-    bool isFree(void) { return free; }
-    void setFree(bool in);
 
     static bool wordLessThanPtr(const Word * a,const Word * b);
 
 private:
 
-    Sentence * _parent;
+    bool _selected;
+    Lyrics * _parent;
 
     quint8 _over;
     int _oTime;
     int _oPitch;
     int _oLength;
 
-    bool gold;
-    bool free;
-    int time;
-    int length;
-    int pitch;
-    QString word;
+    Word::Type _type;
+    int _time;
+    int _length;
+    int _pitch;
+    QString _text;
+
 
 
 
@@ -111,6 +118,7 @@ public:
     static int  ** rangeTime(QList<Word*> * wlist);
     static int minIndexOfWords(QList<Word*>,QList<Word*>);
     static int maxIndexOfWords(QList<Word*>,QList<Word*>);
+    static int indexOfWord(const QList<Word*> & list, Word * word);
 
 
 };

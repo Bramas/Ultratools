@@ -28,6 +28,7 @@
 #include "uSetting.h"
 #include "uCheckUpdate.h"
 #include <QUuid>
+#include <QFileDialog>
 
 USetting USetting::Instance;
 

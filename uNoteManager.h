@@ -27,6 +27,7 @@
 #define UMIDIMANAGER_H
 
 #include "uAudioManager.h"
+class Lyrics;
 
 class UNoteManager : public QObject
 {
