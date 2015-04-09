@@ -2,8 +2,12 @@
 # Project created by QtCreator 2009-09-10T14:23:16
 # -------------------------------------------------
 QT += core widgets network
-TARGET = UltraTools_Editor
+TARGET = "UltraTools Editor"
 TEMPLATE = app
+
+VERSION = \\\"'1.1.beta'\\\"
+DEFINES += "VERSION=$${VERSION}"
+
 SOURCES += main.cpp \
     editorwindow.cpp \
     uWord.cpp \
@@ -25,7 +29,8 @@ SOURCES += main.cpp \
     uDialogHelp.cpp \
     uDialogFeedback.cpp \
     uRecorder.cpp \
-    uDialog_timing.cpp
+    uDialog_timing.cpp \
+    uDialogAbout.cpp
 HEADERS += editorwindow.h \
     uWord.h \
     uLyrics.h \
@@ -46,7 +51,8 @@ HEADERS += editorwindow.h \
     uDialogHelp.h \
     uDialogFeedback.h \
     uRecorder.h \
-    uDialog_timing.h
+    uDialog_timing.h \
+    uDialogAbout.h
 FORMS += editorwindow.ui \
     udialog_fileheader.ui \
     uNewSongForm_Browse.ui \
@@ -54,31 +60,33 @@ FORMS += editorwindow.ui \
     uSettingDialog.ui \
     uDialogHelp.ui \
     uDialogFeedback.ui \
-    uDialog_timing.ui
+    uDialog_timing.ui \
+    uDialogAbout.ui
 
 
 RESOURCES = data.qrc \
     Lang.qrc
 
+OS_STRING = \\\"'Linux'\\\"
+
+
 # CODECFORSRC     = UTF-8
 TRANSLATIONS = UltraTools_Editor_fr.ts \
     UltraTools_Editor_en.ts \
     UltraTools_Editor_es.ts
-mac { 
+
+
+mac{
+    ICON = ultratools.icns
     CONFIG += ppc \
         x86
-    ICON = icone/icone.icns
+    LIBS += -L/usr/local/lib -lfmodex
+    OS_STRING = \\\"'Mac'\\\"
 }
-CONFIG( debug, debug|release ):
 
-# debug
-else:
-
-# release
-win32:{
+win32{
     RC_FILE = icone/icone.rc
     LIBS += -LC:\FMODEx\api\lib -lfmodex
+    OS_STRING = \\\"'Windows'\\\"
 }
-else{
-    LIBS += -L/usr/local/lib -lfmodex
-}
+DEFINES += "OS_STRING=$${OS_STRING}"

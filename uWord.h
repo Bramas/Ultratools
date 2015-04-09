@@ -49,10 +49,10 @@ public:
     int setPitch(int newPitch, bool definitly = true);
     int getPitch(void) const;
 
-    void setGold(bool newGold=true) { _type = newGold ? Word::Gold : Word::Normal; }
+    void setGold(bool newGold=true);
     bool isGold(void) const { return _type & Word::Gold; }
     bool isFree(void) const { return _type & Word::Free; }
-    void setFree(bool in) { _type = in ? Word::Free : Word::Normal; }
+    void setFree(bool in=true);
     bool isSeparator() const { return _type & Word::Separator; }
     Lyrics * getParent() { return _parent; }
     void setParent(Lyrics * par);
@@ -70,7 +70,7 @@ public:
     int getOPitch() const { return _oPitch; }
     int getOLength() const { return _oLength; }
 
-    void hold(void) { _oTime=_time; _oPitch=_pitch; _oLength=_length; }
+    void hold(void);
 
     void setOver(quint8 n) { _over = n; }
     quint8 getOver(void) const { return _over; }

@@ -57,7 +57,7 @@ public:
 
     int getPitchMax(void);
     int getPitchMin(void);
-    void setGap(qreal in) { _gap = (in < 0 ? 0 : in); }
+    void setGap(qreal in) { modified("setGap"); _gap = (in < 0 ? 0 : in); }
     qreal getGap(void) { return _gap; }
     void setBpm(float in) { _bpm = in; }
     qreal getBpm(void) { return _bpm; }
@@ -67,8 +67,8 @@ public:
     void removeWord(Word * w);
     void addWord(Word *ws);
 
-     QList<Word*> *  separatorsOfWords(QList<Word*> * list);
-     QList<Word*> *  sentencesOfWords(QList<Word*> * list);
+     QList<Word*> *  separatorsOfWords(QList<Word*> * list) const;
+     QList<Word*> *  sentencesOfWords(QList<Word*> * list) const;
 
      bool setDelay(int delay, quint64 from=0);
      qreal timeToBeat(quint64 time)

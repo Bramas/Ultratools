@@ -96,7 +96,7 @@ void Lyrics::parseLine(QString &line)
     _words.push_back(word);
     if(_words.back()->getPitch() < pitchMin) pitchMin=_words.back()->getPitch();
     if(_words.back()->getPitch() > pitchMax) pitchMax=_words.back()->getPitch();
-
+    this->setModified(false);
 }
 
 void Lyrics::parseCode(QString &code)
@@ -143,6 +143,7 @@ void Lyrics::moveLeft(Word *from)
 
         wBefore=w;
     }
+    modified("moveLeft");
 
 
 }
@@ -202,12 +203,13 @@ Word * Lyrics::moveRight(Word *from, int indexIWant)
         w->setText(w->getText()+temp);
     }
 
+    modified("moveRight");
     return ret;
 
 
 }
 
-QList<Word*> * Lyrics::separatorsOfWords(QList<Word *> * list)
+QList<Word*> * Lyrics::separatorsOfWords(QList<Word *> * list) const
 {
     QList<Word*> * sep= new QList<Word*>();
     return sep;
@@ -230,7 +232,7 @@ QList<Word*> * Lyrics::separatorsOfWords(QList<Word *> * list)
     return sep;
 
 }
-QList<Word*> * Lyrics::sentencesOfWords(QList<Word *> * list)
+QList<Word*> * Lyrics::sentencesOfWords(QList<Word *> * list) const
 {
     QList<Word*> * sen= new QList<Word*>();
 
@@ -271,21 +273,30 @@ Word *  Lyrics::addSeparator(int time)
 void Lyrics::removeWord(Word *w)
 {
     _words.removeOne(w);
+    modified("removeWord");
 }
 void Lyrics::addWord(Word *ws)
 {
-    Word  * w;
-    int k =0;
-    foreach(w,_words)
+    QList<Word*>::iterator it = _words.begin();
+
+    while(it != _words.end())
     {
-        if(w->getTime() > ws->getTime())
+        if((*it)->getTime() > ws->getTime())
         {
-            _words.insert(k,ws);
-            return;
+            if((*it)->isSeparator() && ws->isSeparator())
+            {
+                return;
+            }
+            if(it != _words.begin() && (*(it - 1))->isSeparator() && ws->isSeparator())
+            {
+                return;
+            }
+            break;
         }
-        ++k;
+        ++it;
     }
-    _words.push_back(ws);
+    _words.insert(it, ws);
+    modified("addWord");
 }
 
 void Lyrics::sortAll()
@@ -293,6 +304,7 @@ void Lyrics::sortAll()
     if(_words.empty()) return;
 
     qSort(_words.begin(),_words.end(),Word::wordLessThanPtr);
+    modified("sortAll");
 }
 
 void Lyrics::doublePresicion()
@@ -308,6 +320,7 @@ void Lyrics::doublePresicion()
         w->setLength(w->getLength()*2);
     }
 
+    modified("doublePresicion");
 }
 
 

@@ -229,83 +229,82 @@ void UFile::extractHead()
 {
 
     QStringList sl = sourceCode.split("\n#");
-
-    if(sl.count() == 0)  QMessageBox::warning(NULL,tr("Erreur"),tr("Problème pour parser le fichier"));
-
-    QString str;
-    foreach(str,sl)
+    QTextStream in(&sourceCode);
+    QString line;
+    while(!(line = in.readLine()).isNull())
     {
-        QString temp = str.section(':',0,0);
-        temp.remove('#');
+        QString key = line.section(':',0,0);
+        key.remove('#');
+        key = key.trimmed();
 
-            if(!temp.compare("TITLE"))
+            if(!key.compare("TITLE"))
             {
-                _headTitle = str.section(':',1,1);
+                _headTitle = line.section(':',1,1);
                 continue;
             }
-           if(!temp.compare("ARTIST"))
+           if(!key.compare("ARTIST"))
             {
-                _headArtist = str.section(':',1,1);
+                _headArtist = line.section(':',1,1);
                   continue;
             }
-            if(!temp.compare("VIDEO"))
+            if(!key.compare("VIDEO"))
            {
-                _headVideo = str.section(':',1,1);
+                _headVideo = line.section(':',1,1);
                 continue;
             }
-           if(!temp.compare("MP3"))
+           if(!key.compare("MP3"))
             {
-                _headMp3 = str.section(':',1,1);
+                _headMp3 = line.section(':',1,1);
                 continue;
             }
-            if(!temp.compare("COVER"))
+            if(!key.compare("COVER"))
             {
-                _headCover = str.section(':',1,1);
+                _headCover = line.section(':',1,1);
                 continue;
             }
-            if(!temp.compare("BACKGROUND"))
+            if(!key.compare("BACKGROUND"))
             {
-                _headBackground = str.section(':',1,1);
+                _headBackground = line.section(':',1,1);
                 continue;
             }
-            if(!temp.compare("GAP"))
+            if(!key.compare("GAP"))
             {
-                _headGap = str.section(':',1,1).replace(',','.').toFloat();
+                _headGap = line.section(':',1,1).replace(',','.').toFloat();
                 continue;
             }
-            if(!temp.compare("VIDEOGAP"))
+            if(!key.compare("VIDEOGAP"))
             {
-                _headVideogap = str.section(':',1,1).replace(',','.').toFloat();
+                _headVideogap = line.section(':',1,1).replace(',','.').toFloat();
                 continue;
             }
-            if(!temp.compare("BPM"))
+            if(!key.compare("BPM"))
             {
-                _headBpm = str.section(':',1,1).replace(',','.').toFloat();
+                _headBpm = line.section(':',1,1).replace(',','.').toFloat();
                 continue;
             }
-            if(!temp.compare("AUTHOR") || !temp.compare("CREATOR"))
+            if(!key.compare("AUTHOR") || !key.compare("CREATOR"))
             {
-                _headAuthor = str.section(':',1,1);
+                _headAuthor = line.section(':',1,1);
                 continue;
             }
-            if(!temp.compare("COVER"))
+            if(!key.compare("COVER"))
             {
-                _headCover = str.section(':',1,1);
+                _headCover = line.section(':',1,1);
                 continue;
             }
-            if(!temp.compare("GENRE"))
+            if(!key.compare("GENRE"))
             {
-                _headGenre = str.section(':',1,1);
+                _headGenre = line.section(':',1,1);
                 continue;
             }
-            if(!temp.compare("LANGUAGE"))
+            if(!key.compare("LANGUAGE"))
             {
-                _headLanguage = str.section(':',1,1);
+                _headLanguage = line.section(':',1,1);
                 continue;
             }
-            if(!temp.compare("YEAR"))
+            if(!key.compare("YEAR"))
             {
-                _headYear = str.section(':',1,1);
+                _headYear = line.section(':',1,1);
                 continue;
             }
 

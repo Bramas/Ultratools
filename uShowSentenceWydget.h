@@ -34,6 +34,7 @@
 
 double min(double a,double b);
 double max(double a,double b);
+class UEditorWindow;
 
 class ShowSentenceWidget : public QWidget
 {
@@ -51,6 +52,7 @@ signals:
      void emptyClik(void);
 
 public slots:
+     void onKeyPressEvent(QKeyEvent*);
      void setGold(void);
      void setFree(void);
      void setNormal(void);
@@ -79,7 +81,7 @@ public:
 
     quint16 getHScale(void) { return hScale; }
     void emitSeek();
-    ShowSentenceWidget(QWidget * parent);
+    ShowSentenceWidget(UEditorWindow * parent);
 
 
     ~ShowSentenceWidget();
@@ -120,7 +122,9 @@ protected:
     void mousePressEvent ( QMouseEvent * event );
     void mouseReleaseEvent ( QMouseEvent * event );
     void mouseDoubleClickEvent(QMouseEvent * event );
+    void wheelEvent(QWheelEvent *);
     void paintEvent(QPaintEvent * event);
+
     quint32 hScale;
     quint16 vScale;
     quint16 hScroll;
@@ -169,7 +173,7 @@ protected:
     quint16 realHEndView;
     float mouseTime;
     float mousePitch;
-    QWidget * parent;
+    UEditorWindow * parent;
     void updateRangeView(void);
 
     float _floatSelection[2];

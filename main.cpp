@@ -29,6 +29,8 @@
 
 #include "editorwindow.h"
 #include <QInputDialog>
+#include <QDir>
+#include <QFileInfo>
 
 void setLang(QApplication& app, const QString& idl){
         qWarning(QString("Lang is %1 (lang_%1)").arg(idl).toLatin1());
@@ -98,9 +100,33 @@ void donate(){
 int main(int argc, char *argv[])
 {
 
+#ifdef __APPLE__
+     QDir dir(QFileInfo(argv[0]).path());  // e.g. appdir/Contents/MacOS
+     dir.cdUp();
+     if(dir.cd("PlugIns"))// e.g. appdir/Contents/PlugIns
+     {
+        QApplication::setLibraryPaths( QStringList(dir.absolutePath()));
+     }
+     else
+     {
+         qDebug()<<"undeployed";
+     }
+#endif
+#ifdef _WIN32
+     QDir dir(QFileInfo(argv[0]).path());  // e.g. appdir/Contents/MacOS
+     if(dir.cd("PlugIns"))// e.g. appdir/PlugIns
+     {
+        QApplication::setLibraryPaths( QStringList(dir.absolutePath()));
+     }
+     else
+     {
+         qDebug()<<"undeployed";
+     }
+#endif
 
     QApplication a(argc, argv);
 
+    qDebug()<<"Ultratools Editor "VERSION;
 
     manageLang(a);
     donate();

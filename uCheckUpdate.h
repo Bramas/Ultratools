@@ -33,8 +33,6 @@
 #include <QFile>
 
 
-#define VERSION "1.0.beta"
-
 class UCheckUpdate : public QObject
 {
     Q_OBJECT
@@ -50,9 +48,9 @@ private slots:
     void downloadFile();
     void cancelDownload();
     void httpFinished();
-    void httpReadyRead();
     void updateDataReadProgress(qint64 bytesRead, qint64 totalBytes);
     void checkVersion();
+    void emitConnected();
 
 
 private:

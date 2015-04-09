@@ -75,6 +75,13 @@ QString USetting::getUltrastarLocation()
     return _settings->value("UltrastarLocation","/").toString();
 }
 
+QString USetting::getSongsLocation()
+{
+    QDir d(getUltrastarLocation());
+    d.cd("Songs"); //if it doesnt exist, stay at the same directory
+    return d.absolutePath();
+}
+
 void USetting::showDialog()
 {
     USettingDialog d(this);
@@ -95,6 +102,18 @@ QString USetting::getSoftId(void)
 {
     return _settings->value("softId",NULL).toString();
 }
+QStringList USetting::lastOpenFiles() const
+{
+    return _settings->value("lastOpenFiles").toStringList();
+}
+void USetting::addOpenFile(QString filename)
+{
+    QStringList l = _settings->value("lastOpenFiles").toStringList();
+    l.removeAll(filename);
+    l.push_front(filename);
+    _settings->setValue("lastOpenFiles", l);
+}
+
 
 
 

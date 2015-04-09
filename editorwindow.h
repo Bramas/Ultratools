@@ -41,7 +41,7 @@ class ShowLines;
 class UWydget_Timeline;
 class UWydget_Lyrics;
 class Recorder;
-
+class QScrollBar;
 namespace Ui
 {
     class EditWindowClass;
@@ -95,11 +95,17 @@ public slots:
 private slots:
    void tick(qint64 time);
    void aboutToFinish();
+   void about();
 
 
 public:
     UEditorWindow(QWidget *parent=0);
     ~UEditorWindow();
+
+
+    QScrollBar * verticalScrollBar();
+    QScrollBar * horizontalScrollBar();
+
 private:
     void fileConnect(void);
     void fileDisconnect(void);
