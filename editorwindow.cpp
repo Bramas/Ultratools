@@ -40,7 +40,10 @@
 #define URL_VERSION "http://ultratools.org/version.php?soft=editor"
 
 UEditorWindow::UEditorWindow(QWidget *parent)
-    : QMainWindow(parent), _spaceNoteGeneration(false), ui(new Ui::EditWindowClass)
+    : QMainWindow(parent),
+      _spaceNoteGeneration(false),
+      ui(new Ui::EditWindowClass),
+      _confirmCloseMessageBox(0)
 {
 
     this->setFocusPolicy(Qt::StrongFocus);
@@ -217,27 +220,62 @@ void UEditorWindow::newFile()
 {
 
 }
-int UEditorWindow::discardChange()
+bool UEditorWindow::fileCanBeClosed()
 {
-    if(_currentFile && _currentFile->isModified())
+    if(!_currentFile || !_currentFile->isModified())
     {
-            QMessageBox msgBox;
-            msgBox.setText(tr("Voulez-vous continuer ?"));
-            msgBox.setInformativeText(tr("Les changements ne seront pas enregistré"));
-            msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-            msgBox.setDefaultButton(QMessageBox::Yes);
-            return msgBox.exec();
+        return true;
     }
 
-    return QMessageBox::Yes;
+    QString insertedFilename = "";
+    if(!_currentFile->getFileName().isEmpty())
+    {
+        insertedFilename = " \""+QFileInfo(_currentFile->getFileName()).baseName()+"\"";
+    }
+    if(!_confirmCloseMessageBox)
+    {
+        _confirmCloseMessageBox = new QMessageBox(trUtf8("Continuer?"),
+                                              trUtf8("Le fichier%1 a été modifié.").arg(insertedFilename) + "\n" +
+          trUtf8("Voullez-vous sauvegarder les changements?"),//Do you want to save your changes?"),
+            QMessageBox::Warning,
+            QMessageBox::Yes | QMessageBox::Default,
+            QMessageBox::No,
+            QMessageBox::Cancel | QMessageBox::Escape,
+            this, Qt::Sheet);
+        _confirmCloseMessageBox->setButtonText(QMessageBox::Yes,
+              _currentFile->getFileName().isEmpty() ? trUtf8("Sauvegarder")+"..." : trUtf8("Sauvegarder"));
+        _confirmCloseMessageBox->setButtonText(QMessageBox::No,
+            trUtf8("Ne pas sauvegarder"));
+        _confirmCloseMessageBox->setButtonText(QMessageBox::Cancel,
+            trUtf8("Annuler"));
+    }
+
+    int i = _confirmCloseMessageBox->exec();
+
+    if(i == QMessageBox::Cancel)
+    {
+        return false;
+    }
+    else
+    {
+        if(i == QMessageBox::Yes)
+        {
+            if(!this->save())
+            {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 void UEditorWindow::openFile(QString fileName)
 {
 
-
-
-    if(discardChange() != QMessageBox::Yes) return;
+    if(!fileCanBeClosed())
+    {
+        return;
+    }
 
     if(fileName=="")
     {
@@ -590,20 +628,17 @@ void UEditorWindow::readSettings()
 void UEditorWindow::closeEvent(QCloseEvent *event)
 {
 
-    int ret = discardChange();
-
-    if(ret != QMessageBox::Yes) {  event->ignore(); return; }
-
-    //if (userReallyWantsToQuit()) {
+    if(!fileCanBeClosed())
+    {
+        event->ignore();
+        return;
+    }
 
     _currentFile->cleanBAK();
 
     writeSettings();
-
     event->accept();
-    //} else {
-    //    event->ignore();
-    //}
+
 }
 
 void UEditorWindow::saveAs()
@@ -616,11 +651,9 @@ void UEditorWindow::saveAs()
 
 }
 
-void UEditorWindow::save()
+bool UEditorWindow::save()
 {
-
-    _currentFile->saveInFile();
-
+    return _currentFile->saveInFile();
 }
 void UEditorWindow::toggleRecord()
 {
@@ -672,7 +705,10 @@ void UEditorWindow::tooglePlay()
 
 void UEditorWindow::newSong(void)
 {
-    if(discardChange() != QMessageBox::Yes) return;
+    if(!fileCanBeClosed())
+    {
+        return;
+    }
 
     if(_currentFile)
     {

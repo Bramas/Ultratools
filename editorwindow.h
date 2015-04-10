@@ -34,6 +34,7 @@ class UWydget_Lyrics;
 class Recorder;
 class QScrollBar;
 class WidgetSongData;
+class QMessageBox;
 namespace Ui
 {
     class EditWindowClass;
@@ -73,7 +74,7 @@ public slots:
    void changeSeek(quint64);
    void gapModified(double d);
    void saveAs(void);
-   void save(void);
+   bool save(void);
    void newFile(void);
    void tooglePlay(void);
    void play();
@@ -105,7 +106,7 @@ private:
     void adaptNewFile(void);
     void setupUi(void);
     void setupAudio(void);
-    int discardChange(void);
+    bool fileCanBeClosed(void);
     bool _playViolon;
 
     bool _isPlaying;
@@ -133,10 +134,7 @@ private:
 
     QTimer * _autoSaveTimer;
 
- /*   QSlider * hSlider;
-    QSlider * vSlider;
-    QScrollBar * hScroll;
-    QScrollBar * vScroll;*/
+    QMessageBox * _confirmCloseMessageBox;
 
 };
 

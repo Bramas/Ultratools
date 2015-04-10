@@ -19,6 +19,7 @@
 #include "uDialog_fileheader.h"
 #include <QStatusBar>
 #include <QMessageBox>
+#include <QFileDialog>
 #include "editorwindow.h"
 #include "uShowSentenceWydget.h"
 #define DEFAULT_GAP 0
@@ -138,6 +139,15 @@ bool UFile::saveInFile(QString fileName, bool autoSave)
         }
 
         _fileName = fileName;
+
+        if(fileName.isEmpty())
+        {
+            _fileName = fileName = QFileDialog::getSaveFileName(_parent, tr("Sauvegarder le fichier"), USetting::Instance.getSongsLocation(), tr("Texte (*.txt)"));
+        }
+        if(fileName.isEmpty())
+        {
+            return false;
+        }
     }
 
 
@@ -145,7 +155,6 @@ bool UFile::saveInFile(QString fileName, bool autoSave)
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         QMessageBox::warning(_parent,tr("Erreur"),tr("Impossible d'ouvrir le fichier : ")+"\n"+fileName);
-
           return false;
      }
 
@@ -204,7 +213,6 @@ if(!autoSave)
 
     cleanBAK();
 }
-
 
 _parent->statusBar()->showMessage(tr("Musique sauvegardée avec succés"),20000);
 
