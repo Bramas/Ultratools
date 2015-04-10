@@ -118,4 +118,5 @@ win32{
 }
 DEFINES += "OS_STRING=$${OS_STRING}"
 
-DISTFILES +=
+DISTFILES += \
+    qt_licence.txt
