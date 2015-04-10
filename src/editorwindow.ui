@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>EditWindowClass</class>
+ <widget class="QMainWindow" name="EditWindowClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>960</width>
+    <height>534</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="data.qrc">
+    <normaloff>:/Images/images/logo2.png</normaloff>:/Images/images/logo2.png</iconset>
+  </property>
+  <widget class="QWidget" name="mainHorizontalLayoutWidget">
+   <layout class="QHBoxLayout" name="mainHorizontalLayout">
+    <item>
+     <layout class="QVBoxLayout" name="tabEditVLayContener">
+      <item>
+       <layout class="QHBoxLayout" name="HLayAudioDevice">
+        <item>
+         <widget class="QLCDNumber" name="lcd_music"/>
+        </item>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Musique :</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="Slider_MusiqueVolume">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Note :</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="Slider_NoteVolume">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>prévisualiser avec un décalage de</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="offsetSpinBox">
+          <property name="maximum">
+           <number>120</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="tabEditeurLayMain">
+        <item row="2" column="3">
+         <widget class="QSlider" name="vSlider">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QScrollBar" name="hScroll">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QSlider" name="hSlider">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QScrollBar" name="vScroll">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QWidget" name="widget" native="true"/>
+        </item>
+        <item row="1" column="2">
+         <widget class="QWidget" name="widget_2" native="true"/>
+        </item>
+        <item row="0" column="2">
+         <widget class="QWidget" name="widget_3" native="true"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>960</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFichier">
+    <property name="title">
+     <string>Fichier</string>
+    </property>
+    <addaction name="actionNouveau"/>
+    <addaction name="actionOuvrir"/>
+    <addaction name="actionSauvegarder"/>
+    <addaction name="actionEnregistrer_sous"/>
+    <addaction name="separator"/>
+    <addaction name="actionFichiers_r_cents"/>
+    <addaction name="separator"/>
+    <addaction name="actionPr_f_rences"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuitter"/>
+   </widget>
+   <widget class="QMenu" name="menuAide">
+    <property name="title">
+     <string>Aide</string>
+    </property>
+    <addaction name="actionAide"/>
+    <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menuEdition">
+    <property name="title">
+     <string>Edition</string>
+    </property>
+    <addaction name="actionEditer_les_ent_tes"/>
+    <addaction name="separator"/>
+    <addaction name="actionScinder_une_note"/>
+    <addaction name="actionFusionner_deux_notes"/>
+    <addaction name="separator"/>
+    <addaction name="actionNode_normale"/>
+    <addaction name="actionNote_freestyle"/>
+    <addaction name="actionNote_Gold"/>
+    <addaction name="separator"/>
+    <addaction name="actionAjouter_une_note"/>
+    <addaction name="actionAjouter_un_s_parateur"/>
+    <addaction name="actionSupprimer_une_note"/>
+    <addaction name="separator"/>
+    <addaction name="actionMorphe"/>
+    <addaction name="actionVerrouiller_les_timings"/>
+    <addaction name="actionDoublePrecision"/>
+   </widget>
+   <addaction name="menuFichier"/>
+   <addaction name="menuEdition"/>
+   <addaction name="menuAide"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="baseSize">
+    <size>
+     <width>0</width>
+     <height>40</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>35</width>
+     <height>30</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionNouveau"/>
+   <addaction name="actionOuvrir"/>
+   <addaction name="actionSauvegarder"/>
+   <addaction name="separator"/>
+   <addaction name="actionNode_normale"/>
+   <addaction name="actionNote_freestyle"/>
+   <addaction name="actionNote_Gold"/>
+   <addaction name="separator"/>
+   <addaction name="actionFusionner_deux_notes"/>
+   <addaction name="actionScinder_une_note"/>
+   <addaction name="separator"/>
+   <addaction name="actionAjouter_une_note"/>
+   <addaction name="actionAjouter_un_s_parateur"/>
+   <addaction name="separator"/>
+   <addaction name="actionSupprimer_une_note"/>
+   <addaction name="separator"/>
+   <addaction name="actionMorphe"/>
+   <addaction name="actionVerrouiller_les_timings"/>
+   <addaction name="actionDoublePrecision"/>
+   <addaction name="actionCentrer"/>
+   <addaction name="actionD_caler_les_notes"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionNouveau">
+   <property name="icon">
+    <iconset resource="data.qrc">
+     <normaloff>:/Images/images/new.png</normaloff>:/Images/images/new.png</iconset>
+   </property>
+   <property name="text">
+    <string>Nouveau</string>
+   </property>
+   <property name="statusTip">
+    <string>Nouveau</string>
+   </property>
+   <property name="whatsThis">
+    <string comment="nouveau" extracomment="com"/>
+   </property>
+  </action>
+  <action name="actionOuvrir">
+   <property name="icon">
+    <iconset resource="data.qrc">
+     <normaloff>:/Images/images/open.png</normaloff>:/Images/images/open.png</iconset>
+   </property>
+   <property name="text">
+    <string>Ouvrir</string>
+   </property>
+   <property name="statusTip">
+    <string>Ouvrir</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSauvegarder">
+   <property name="icon">
+    <iconset resource="data.qrc">
+     <normaloff>:/Images/images/save.png</normaloff>:/Images/images/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Enregistrer</string>
+   </property>
+   <property name="statusTip">
+    <string>Enregistrer</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionQuitter">
+   <property name="icon">
+    <iconset resource="data.qrc">
+     <normaloff>:/Images/images/exit.png</normaloff>:/Images/images/exit.png</iconset>
+   </property>
+   <property name="text">
+    <string>Quitter</string>
+   </property>
+   <property name="statusTip">
+    <string>Quitter</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionAide">
+   <property name="text">
+    <string>Aide</string>
+   </property>
+  </action>
+  <action name="actionEditer_les_ent_tes">
+   <property name="text">
+    <string>Editer les entêtes</string>
+   </property>
+   <property name="statusTip">
+    <string comment="Edition">Editer les entêtes (Titre, Auteur, Background...)</string>
+   </property>
+  </action>
+  <action name="actionFichiers_r_cents">
+   <property name="text">
+    <string>Fichiers récents</string>
+   </property>
+  </action>
+  <action name="actionScinder_une_note">
+   <property name="icon">
+    <iconset resource="data.qrc">
+     <normaloff>:/Images/images/scinder.png</normaloff>:/Images/images/scinder.png</iconset>
+   </property>
+   <property name="text">
+    <string>Scinder une note</string>
+   </property>
+   <property name="statusTip">
+    <string>Scinder la note en 2</string>
+   </property>
+  </action>
+  <action name="actionFusionner_deux_notes">
+   <property name="icon">
+    <iconset resource="data.qrc">
+     <normaloff>:/Images/images/fusion.png</normaloff>:/Images/images/fusion.png</iconset>
+   </property>
+   <property name="text">
+    <string>Fusionner deux notes</string>
+   </property>
+   <property name="statusTip">
+    <string>Fusionner les notes sélectionnées</string>
+   </property>
+  </action>
+  <action name="actionNode_normale">
+   <property name="icon">
+    <iconset resource="data.qrc">
+     <normaloff>:/Images/images/nodeNormal.png</normaloff>:/Images/images/nodeNormal.png</iconset>
+   </property>
+   <property name="text">
+    <string>Node normale</string>
+   </property>
+   <property name="statusTip">
+    <string>Transformer les notes sélectionnées en notes Normales</string>
+   </property>
+   <property name="shortcut">
+    <string>N</string>
+   </property>
+  </action>
+  <action name="actionNote_freestyle">
+   <property name="icon">
+    <iconset resource="data.qrc">
+     <normaloff>:/Images/images/nodeFree.png</normaloff>:/Images/images/nodeFree.png</iconset>
+   </property>
+   <property name="text">
+    <string>Note freestyle</string>
+   </property>
+   <property name="statusTip">
+    <string>Transformer les notes sélectionnées en notes libres</string>
+   </property>
+   <property name="shortcut">
+    <string>F</string>
+   </property>
+  </action>
+  <action name="actionNote_Gold">
+   <property name="icon">
+    <iconset resource="data.qrc">
+     <normaloff>:/Images/images/nodeGold.png</normaloff>:/Images/images/nodeGold.png</iconset>
+   </property>
+   <property name="text">
+    <string>Note Gold</string>
+   </property>
+   <property name="statusTip">
+    <string>Transformer les notes sélectionnées en notes Gold</string>
+   </property>
+   <property name="shortcut">
+    <string>G</string>
+   </property>
+  </action>
+  <action name="actionAjouter_une_note">
+   <property name="icon">
+    <iconset resource="data.qrc">
+     <normaloff>:/Images/images/addNote.png</normaloff>:/Images/images/addNote.png</iconset>
+   </property>
+   <property name="text">
+    <string>Ajouter une note</string>
+   </property>
+   <property name="statusTip">
+    <string>Ajouter une note</string>
+   </property>
+  </action>
+  <action name="actionAjouter_un_s_parateur">
+   <property name="icon">
+    <iconset resource="data.qrc">
+     <normaloff>:/Images/images/addSep.png</normaloff>:/Images/images/addSep.png</iconset>
+   </property>
+   <property name="text">
+    <string>Ajouter un séparateur</string>
+   </property>
+   <property name="statusTip">
+    <string>Ajouter un séparateur (pour coupé une phrase en 2)</string>
+   </property>
+  </action>
+  <action name="actionEnregistrer_sous">
+   <property name="icon">
+    <iconset resource="data.qrc">
+     <normaloff>:/Images/images/save.png</normaloff>:/Images/images/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Enregistrer sous...</string>
+   </property>
+   <property name="statusTip">
+    <string>Enregistrer sous</string>
+   </property>
+  </action>
+  <action name="actionSupprimer_une_note">
+   <property name="icon">
+    <iconset resource="data.qrc">
+     <normaloff>:/Images/images/supp.png</normaloff>:/Images/images/supp.png</iconset>
+   </property>
+   <property name="text">
+    <string>Supprimer les notes sélectionnées</string>
+   </property>
+   <property name="statusTip">
+    <string>Supprimer les notes sélectionnées</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="actionPr_f_rences">
+   <property name="text">
+    <string>Préférences</string>
+   </property>
+   <property name="statusTip">
+    <string>Préférences du logiciel</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::PreferencesRole</enum>
+   </property>
+  </action>
+  <action name="actionMorphe">
+   <property name="icon">
+    <iconset resource="data.qrc">
+     <normaloff>:/Images/images/morphe.png</normaloff>:/Images/images/morphe.png</iconset>
+   </property>
+   <property name="text">
+    <string>Calquer les notes sélectionnées</string>
+   </property>
+   <property name="toolTip">
+    <string>Calquer les notes sélectionnées sur les notes des phrases d'avant (qui sont affiché en gris)</string>
+   </property>
+   <property name="statusTip">
+    <string>Calquer les notes sélectionnées sur les notes des phrases d'avant (qui sont affiché en gris)</string>
+   </property>
+  </action>
+  <action name="actionVerrouiller_les_timings">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="data.qrc">
+     <normaloff>:/Images/images/lockTime.png</normaloff>:/Images/images/lockTime.png</iconset>
+   </property>
+   <property name="text">
+    <string>Verrouiller les timings</string>
+   </property>
+   <property name="statusTip">
+    <string>Verrouiller les timings (les notes ne bougerons que de bas en haut)</string>
+   </property>
+  </action>
+  <action name="actionDoublePrecision">
+   <property name="icon">
+    <iconset resource="data.qrc">
+     <normaloff>:/Images/images/doubleP.png</normaloff>:/Images/images/doubleP.png</iconset>
+   </property>
+   <property name="text">
+    <string>Doubler la précision</string>
+   </property>
+   <property name="statusTip">
+    <string>Doubler la précision</string>
+   </property>
+  </action>
+  <action name="actionCentrer">
+   <property name="text">
+    <string>Centrer</string>
+   </property>
+   <property name="toolTip">
+    <string>Centrer la vue sur le curseur</string>
+   </property>
+   <property name="shortcut">
+    <string>C</string>
+   </property>
+  </action>
+  <action name="actionEnvoyer_une_suggestion_remarque_rapide">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Envoyer une suggestion/remarque rapide</string>
+   </property>
+  </action>
+  <action name="actionD_caler_les_notes">
+   <property name="text">
+    <string>Décaler les notes</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="data.qrc"/>
+ </resources>
+ <connections/>
+</ui>

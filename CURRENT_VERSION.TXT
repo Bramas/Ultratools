@@ -1,7 +1,30 @@
 Author : BRAMAS Quentin [ quentin@bramas.fr ]
 
-Read LICENCE.txt
 
+*******************************************/
+**
+**  Ultratools - Editor 1.2
+**
+**
+**  Date : 10th April 2015
+**
+*******************************************/
+
+- Add song wave
+- Lots of bug fixes thanks to Daniel Glöckner
+- other bugs are fixed and some features are back	
+
+*******************************************/
+**
+**  Ultratools - Editor 1.1.beta
+**
+**
+**  Date : 30th August 2014
+**
+*******************************************/
+
+- removed some bugs
+- added new bugs
 
 
 *******************************************/
