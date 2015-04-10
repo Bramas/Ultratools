@@ -117,3 +117,5 @@ win32{
     OS_STRING = \\\"'Windows'\\\"
 }
 DEFINES += "OS_STRING=$${OS_STRING}"
+
+DISTFILES +=
