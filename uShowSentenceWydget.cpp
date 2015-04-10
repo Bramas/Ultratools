@@ -845,7 +845,7 @@ void ShowSentenceWidget::renderPreviousSentence(QPainter * painter)
     {
         QList<Word*> sentence = lyrics->sentencesOfWord(wd);
 
-        if(wd->isSeparator() || wd != sentence.first() && wd != _wordsDisplayed->first())
+        if(wd->isSeparator() || (wd != sentence.first() && wd != _wordsDisplayed->first()))
         {
             // we draw the sentence once
             continue;
@@ -880,9 +880,20 @@ void ShowSentenceWidget::renderPreviousSentence(QPainter * painter)
 
         int add = sentence.first()->getTime() - (*wordIt)->getTime();
 
+        auto lastIt = lyrics->words().constBegin() + lyrics->words().indexOf(sentence.last());
+        int maxTime = (*lastIt)->getTime2() + add;
+        if(lastIt + 1 != lyrics->words().constEnd())
+        {
+            maxTime =  (*(lastIt+1))->getTime();
+        }
+
+
         while(wordIt != lyrics->words().constEnd() && !(*wordIt)->isSeparator())
         {
-
+            if((*wordIt)->getTime()+add >= maxTime)
+            {
+                break;
+            }
             QPointF p = scaledCoordinates((*wordIt)->getTime()+add,(255-(*wordIt)->getPitch())*10-HAUTEUR_NOTE/2);
             QRectF r(p.x(), p.y(), scaleWidth((*wordIt)->getLength()), scaleHeight(HAUTEUR_NOTE));
 
@@ -1303,7 +1314,7 @@ void ShowSentenceWidget::calquer()
     }
 
     // fill originSentence with the words of the sentence we want to match
-    while(!(*wordIt)->isSeparator() && wordIt != lyrics->words().constEnd())
+    while(wordIt != lyrics->words().constEnd() && !(*wordIt)->isSeparator())
     {
         originSentence << *wordIt;
         ++wordIt;
@@ -1400,40 +1411,11 @@ void ShowSentenceWidget::calquer()
     {
         lyrics->addWord(w);
     }
-/*
-        wordAdded.first()->setText(str);
-        int k = 0;
-        QString tempS;
-        foreach(Word*w,wordAdded)
-        {
-            lyrics->addWord(w);
-             if(k<str.count(QRegExp("[ ,'\"-;:!.]")))
-            {
-                 //QMessageBox::information(NULL,"",str.section(QRegExp("[ ,'\"-;:!.]"),k,k,QString::SectionIncludeLeadingSep));
-
-                tempS = str.section(QRegExp("[ ,'\"-;:!.]"),k,k,QString::SectionIncludeLeadingSep);
-                k++;
-            }
-            else
-            {
-                tempS="~";
-            }
-
-            if(k==wordAdded.count() && k<str.count(QRegExp("[ ,'\"-;:!.]")))
-            {
-                tempS=  str.section(QRegExp("[ ,'\"-;:!.]"),k,-1,QString::SectionIncludeLeadingSep);
-            }
-
-            w->setText((tempS.compare("")?tempS:"~"));
-        }*/ /*
-
-        lyrics->addSeparator(wordAdded.first()->getTime()-2,0);
 
 
 #ifndef UPDATE_BY_TIMER
     update();
 #endif
-*/
 }
 void ShowSentenceWidget::sortSelected()
 {

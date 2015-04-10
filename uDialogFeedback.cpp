@@ -60,7 +60,7 @@ void UDialogFeedback::accept()
 
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    request.setRawHeader("User-Agent", QString("Ultratools Editor "VERSION" "OS_STRING).toLatin1());
+    request.setRawHeader("User-Agent", QString("Ultratools Editor " VERSION " " OS_STRING).toLatin1());
     request.setRawHeader("soft-id", USetting::Instance.getSoftId().toLatin1());
 
     _reply = _manager.post(request, data);

@@ -2,6 +2,7 @@
 # Project created by QtCreator 2009-09-10T14:23:16
 # -------------------------------------------------
 QT += core widgets network
+CONFIG += c++11
 TARGET = "UltraTools Editor"
 TEMPLATE = app
 

@@ -33,7 +33,7 @@
 #include <QFileInfo>
 
 void setLang(QApplication& app, const QString& idl){
-        qWarning(QString("Lang is %1 (lang_%1)").arg(idl).toLatin1());
+        qWarning("Lang is %s", idl.toLatin1().data());
 
         QTranslator* translator = new QTranslator();
         translator->load("UltraTools_Editor_" + idl,":/lang");
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
     a.setOrganizationName("Ultratools");
     a.setOrganizationDomain("ultratools.org");
     a.setApplicationName("Editor");
-    qDebug()<<"Ultratools Editor "VERSION;
+    qDebug()<<"Ultratools Editor " VERSION;
 
     manageLang(a);
 
