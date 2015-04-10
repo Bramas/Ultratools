@@ -609,6 +609,7 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
 // RENDER verticale lines
        if(!_isPlaying  || _mousePressed) //to go faster while playing
       {
+           pas=32;
            for(int i=_firstBeatDisplayed - ceil(mod(_firstBeatDisplayed,pas)) ; i<=_lastBeatDisplayed;i+=pas)
             {
                  painter.drawLine(scaledCoordinates(i,0).x(),0,scaledCoordinates(i,0).x(),height());
@@ -619,7 +620,7 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
             {
                 //opacity=expRangeOpacity(100,1000,200);
                 painter.setPen(QPen(QColor(0,0,0,opacity)));
-               pas=10;
+               pas=8;
                 for(int i=max(0,_firstBeatDisplayed-ceil(mod(_firstBeatDisplayed,pas)));i<=_lastBeatDisplayed;i+=pas)
                 {
                      painter.drawLine(scaledCoordinates(i,0).x(), 0,scaledCoordinates(i,0).x(), height());
@@ -1271,43 +1272,55 @@ void ShowSentenceWidget::calquer()
     QList<Word*> destinationSentence;
 
     QList<Word*>::const_iterator wordIt = lyrics->words().constBegin() + lyrics->words().indexOf(firstWord);
-    for(int i = 0; i < _previousDisplayed; ++i) // ignore _previousDisplay separator to find the origin sentence
+    // ignore _previousDisplay separator to find the origin sentence
+    int nbSkip = _previousDisplayed + 1;
+    while(nbSkip > 0 && wordIt != lyrics->words().constBegin())
     {
-        while(!(*wordIt)->isSeparator() && wordIt != lyrics->words().constBegin())
+        --wordIt;
+        while(wordIt != lyrics->words().constBegin() && !(*wordIt)->isSeparator())
             --wordIt;
-        if(wordIt == lyrics->words().constBegin())
-        {
-            return;
-        }
         if(firstSentenceWordIt == lyrics->words().constEnd())
         {
-            firstSentenceWordIt = (wordIt + 1); //the first word of the sentence that contains the first selected word.
+            firstSentenceWordIt = wordIt + 1;
         }
-        --wordIt;
+        --nbSkip;
+    }
+    if(nbSkip > 0)
+    {
+        return;
+    }
+    if(!(*wordIt)->isSeparator())
+    {
+        wordIt = lyrics->words().constBegin();
+    }
+    else
+    {
+        ++wordIt;
+    }
+    if((*wordIt)->isSeparator())
+    {
+        return;
     }
 
     // fill originSentence with the words of the sentence we want to match
-    while(!(*wordIt)->isSeparator() && wordIt != lyrics->words().constBegin())
+    while(!(*wordIt)->isSeparator() && wordIt != lyrics->words().constEnd())
     {
         originSentence << *wordIt;
-        --wordIt;
-    }
-    if(wordIt == lyrics->words().constBegin())
-    {
-        originSentence << *wordIt;
+        ++wordIt;
     }
     if(originSentence.empty())
     {
-        qDebug()<<"originSentence.empty()";
         return;
     }
+
+
     // time to add to the time of the word we want to match.
     int add = (*firstSentenceWordIt)->getTime() - originSentence.first()->getTime();
 
     wordIt = firstSentenceWordIt;
     // fill destinationSentence with the words of the sentence we want to replace
-    while(!(*wordIt)->isSeparator()
-          && wordIt != lyrics->words().constEnd()
+    while(wordIt != lyrics->words().constEnd()
+          && !(*wordIt)->isSeparator()
           && (destinationSentence.size() < originSentence.size()
               || (*wordIt)->getTime() < originSentence.last()->getTime() + add))
     {

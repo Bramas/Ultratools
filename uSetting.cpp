@@ -100,7 +100,7 @@ int USetting::getAutoSaveInterval(void)
 }
 QString USetting::getSoftId(void)
 {
-    return _settings->value("softId",NULL).toString();
+    return _settings->value("softId","").toString();
 }
 QStringList USetting::lastOpenFiles() const
 {
