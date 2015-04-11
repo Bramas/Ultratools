@@ -128,8 +128,8 @@ void ShowSentenceWidget::mousePressEvent(QMouseEvent *event)
 
     if(_nextClick)
     {
-        mouseTime=((float)(_lastBeatDisplayed-_firstBeatDisplayed))*(((float)event->x())/((float)width()))+_firstBeatDisplayed;
-        mousePitch=(((-(float)vScale)/10.0))*(((float)event->y())/((float)height()))+(256-vScroll);
+        //mouseTime=((float)(_lastBeatDisplayed-_firstBeatDisplayed))*(((float)event->x())/((float)width()))+_firstBeatDisplayed;
+        //mousePitch=(((-(float)vScale)/10.0))*(((float)event->y())/((float)height()))+(256-vScroll);
 
         if(_nextClick==ShowSentenceWidget::NEXT_CLICK_ADD_NOTE)
         {
@@ -339,13 +339,13 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
 
 
 
-   mouseTime=((float)(_lastBeatDisplayed-_firstBeatDisplayed))*(((float)event->x())/((float)width()))+_firstBeatDisplayed;
-   mousePitch=(256-vScroll) - (vScale/10)*(((qreal)event->y())/((qreal)height()));
+   mouseTime=(_lastBeatDisplayed-_firstBeatDisplayed)*event->x()/(qreal)width()+_firstBeatDisplayed;
+   mousePitch=vScroll+ (vScale)*((qreal)(height()-event->y()))/((qreal)height());
 
-   //qDebug()<<(((qreal)event->y())/((qreal)height()))<<" "<<(vScale/10)*(((qreal)event->y())/((qreal)height()))<<" "<<(256-vScroll);
-   //qDebug()<<mousePitch;
+   int diffY = floor(mousePitch) - floor(vScale*(height()-_fPointPress.y())/(qreal)height()+vScroll);
+   int diffX = floor(mouseTime) - floor((_lastBeatDisplayed-_firstBeatDisplayed)*_fPointPress.x()/(qreal)width()+_firstBeatDisplayed);
 
-    if(_mousePressed && !_isPlaying && (_fMousePosition-_fPointPress).manhattanLength()<10 && _timePress.msecsTo(QTime::currentTime())<500 && _overed==NULL)
+   if(_mousePressed && !_isPlaying && (_fMousePosition-_fPointPress).manhattanLength()<10 && _timePress.msecsTo(QTime::currentTime())<500 && _overed==NULL)
     {
         _clickAndMoveSelection = true;
     }
@@ -354,7 +354,6 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
     {
 
         //int diffY = floor(mousePitch) - floor((((-(float)vScale)/10.0))*(((float)_fPointPress.y())/((float)height()))+256-vScroll);
-        int diffX = floor(mouseTime) - floor(((float)(_lastBeatDisplayed-_firstBeatDisplayed))*(((float)_fPointPress.x())/((float)width()))+_firstBeatDisplayed);
 
 
         if(_overSep->getOver() & ShowSentenceWidget::OVER_LEFT)
@@ -416,9 +415,6 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
        Word * w;
 
 
-       int diffY = floor(mousePitch) - floor((((-(float)vScale)/10.0))*(((float)_fPointPress.y())/((float)height()))+256-vScroll);
-       int diffX = floor(mouseTime) - floor(((float)(_lastBeatDisplayed-_firstBeatDisplayed))*(((float)_fPointPress.x())/((float)width()))+_firstBeatDisplayed);
-
        if(_selected.count()==1 && _selected.first()->getOver())
        {
            w=_selected.first();
@@ -451,8 +447,6 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
        }
        else
        {
-
-          // qDebug()<<_selected.count()<<"  "<<_selected.first()->getOver();
             foreach(w,_selected)
             {
                 w->setPitch(w->getOPitch()+diffY,false);
@@ -476,35 +470,11 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
 #ifndef UPDATE_BY_TIMER
     update();
 #endif
-/*
-    QListIterator<Word *> Iwords(words);
-            Word* tWord;
-
-         while(Iwords.hasNext())
-         {
-              tWord=Iwords.next();
-               if(tWord->getTime()+tWord->getLength()>=realHStartView)
-              {
-                  if(
-                   break;
-               }
-
-         }
-         while(Iwords.hasNext())
-         {
-
-            tWord=Iwords.next();
-            if(tWord->getTime()+tWord->getLength()>realHEndView) break;
-             renderWord(painter,tWord);
-
-         }
-*/
-
 }
 
 QRectF ShowSentenceWidget::scaleRect(qreal x, qreal y, qreal w, qreal h)
 {
-    return QRectF(scaledCoordinates(x,y), scaledCoordinates(x+w, y+h));
+    return QRectF(scaledCoordinates(x,y+h), scaledCoordinates(x+w, y));
 }
 qreal ShowSentenceWidget::scaleWidth(qreal w)
 {
@@ -517,7 +487,7 @@ qreal ShowSentenceWidget::scaleHeight(qreal h)
 
 QPointF ShowSentenceWidget::scaledCoordinates(qreal x, int y)
 {
-    return QPoint((x - realHStartView + _gap)*(qreal)width()/(qreal)hScale, height() - (y-vScroll)*(qreal)height()/(qreal)vScale);
+    return QPoint((x - realHStartView + _gap)*(qreal)width()/(qreal)hScale, height() - (y-vScroll)*height()/(qreal)vScale);
 }
 QPointF ShowSentenceWidget::scaledCoordinates(const QPointF &point)
 {
@@ -710,7 +680,8 @@ void ShowSentenceWidget::renderLyrics(QPainter * painter)
             foreach(Word * w, currentSentence)
             {
                 //qDebug()<<"renderWord "<<w->getText()<<" with offset "<<octaveMin<<" "<<octaveMax;
-                renderWord(painter,w, -octaveMin);
+                w->setOctaveOffset(octaveMin);
+                renderWord(painter,w);
             }
             currentSentence.clear();
             if(wordIt + 1 != lyrics->words().constEnd())
@@ -725,7 +696,9 @@ void ShowSentenceWidget::renderLyrics(QPainter * painter)
         }
         if((*wordIt)->getTime()+(*wordIt)->getLength()>=_firstBeatDisplayed && (*wordIt)->getTime()<_lastBeatDisplayed)
         {
-            currentSentence << *wordIt;
+            if(!(*wordIt)->isSeparator())
+                currentSentence << *wordIt;
+
             _wordsDisplayed->push_back((*wordIt));
             if((*wordIt)->isSeparator())
             {
@@ -737,7 +710,8 @@ void ShowSentenceWidget::renderLyrics(QPainter * painter)
     foreach(Word * w, currentSentence)
     {
         //qDebug()<<"renderWord "<<w->getText()<<" with offset "<<octaveMin<<" "<<octaveMax;
-        renderWord(painter,w, -octaveMin);
+        w->setOctaveOffset(octaveMin);
+        renderWord(painter,w);
     }
 }
 
@@ -752,16 +726,15 @@ void ShowSentenceWidget::deselect()
 }
 
 
-bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w, int octave)
+bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w)
 {
 
 
     painter->setBrush(QBrush(QColor(0,173,232,170)));
 
-    int pitch = octave*12 + w->getPitch();
-
+    int pitch = -w->getOctaveOffset()*12 + w->getPitch();
     if(!_nextClick && mouseTime>w->getTime() && mouseTime<w->getTime()+w->getLength() &&
-      mousePitch>pitch && mousePitch<pitch+2)
+      mousePitch > pitch-1 && mousePitch < pitch + 1)
     {
         painter->setBrush(QBrush(QColor(232,173,0,170)));
         _overed=w;
@@ -775,7 +748,6 @@ bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w, int octave)
     else if(w->isFree())
     {
         painter->setBrush(QBrush(QColor(232,173,0,170)));
-
         painter->setBrush(QBrush(QColor(0,0,0,40)));
     }
    else
@@ -789,13 +761,13 @@ bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w, int octave)
    }
 
 
-   QPointF p = scaledCoordinates(w->getTime(),pitch+HAUTEUR_NOTE/2+0.5);
+   QPointF p = scaledCoordinates(w->getTime(),pitch+HAUTEUR_NOTE/2+1);
    painter->drawText(p.x(), p.y(),
            200,
            30,
            Qt::TextWordWrap,w->getText());
 
-   p = scaledCoordinates(w->getTime(),pitch-HAUTEUR_NOTE/2);
+   p = scaledCoordinates(w->getTime(),pitch+HAUTEUR_NOTE/2);
    QRectF r(p.x(), p.y(), scaleWidth(w->getLength()), scaleHeight(HAUTEUR_NOTE));
     if(80<this->hScale)
     {
@@ -819,7 +791,7 @@ bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w, int octave)
 
             painter->setBrush(QBrush(QColor(0,0,0,100)));
             w->setOver(ShowSentenceWidget::OVER_LEFT);
-            painter->drawRect(scaleRect(w->getTime(),(255-pitch)*10,min(w->getLength()/2.0,1.5),HAUTEUR_NOTE/2));
+            painter->drawRect(scaleRect(w->getTime(),pitch,min(w->getLength()/2.0,1.5),HAUTEUR_NOTE/2));
 
             _hSizeCursor=true;
         }
@@ -829,7 +801,7 @@ bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w, int octave)
 
             painter->setBrush(QBrush(QColor(0,0,0,100)));
             w->setOver(ShowSentenceWidget::OVER_RIGHT);
-            painter->drawRect(scaleRect(w->getTime()+w->getLength()-min(w->getLength()/2.0,1.5),(255-pitch)*10,min(w->getLength()/2.0,1.5),HAUTEUR_NOTE/2));
+            painter->drawRect(scaleRect(w->getTime()+w->getLength()-min(w->getLength()/2.0,1.5),pitch,min(w->getLength()/2.0,1.5),HAUTEUR_NOTE/2));
 
             _hSizeCursor=true;
         }

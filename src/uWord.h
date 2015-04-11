@@ -39,6 +39,9 @@ public:
     int setPitch(int newPitch, bool definitly = true);
     int getPitch(void) const;
 
+    void setOctaveOffset(int newOctave, bool definitly = true);
+    int getOctaveOffset(void) const;
+
     void setGold(bool newGold=true);
     bool isGold(void) const { return _type & Word::Gold; }
     bool isFree(void) const { return _type & Word::Free; }
@@ -99,7 +102,10 @@ private:
     int _time;
     int _length;
     int _pitch;
+    int _octaveOffset;
     QString _text;
+
+
 
 
 

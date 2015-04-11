@@ -81,7 +81,7 @@ public:
     ~ShowSentenceWidget();
     void renderLyrics(QPainter * painter);
     void renderPreviousSentence(QPainter * painter);
-    bool renderWord(QPainter * painter, Word * w, int octave);
+    bool renderWord(QPainter * painter, Word * w);
     void setLyrics(Lyrics * lyrics);
     Lyrics * getLyrics() { return lyrics; }
     void updateGap(void);
@@ -120,10 +120,10 @@ protected:
     void paintEvent(QPaintEvent * event);
     void contextMenuEvent(QContextMenuEvent * event);
 
-    quint32 hScale;
+    int hScale;
     qreal vScale;
-    quint16 hScroll;
-    quint16 vScroll;
+    int hScroll;
+    int vScroll;
 
     QList<Word*> _selected;
 

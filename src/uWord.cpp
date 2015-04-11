@@ -23,6 +23,7 @@ Word::Word(Lyrics * parent, int time, int length, int pitch, Word::Type type)
     _oTime = _time=time;
     _length=_oLength=length;
     _oPitch = _pitch=pitch;
+    _octaveOffset = 0;
     _selected = false;
     _over = 0;
     if(_parent)
@@ -79,6 +80,15 @@ int Word::setPitch(int newPitch, bool definitly)
      return _pitch = newPitch;
 }
 
+void Word::setOctaveOffset(int newOctave, bool definitly)
+{
+    if(definitly)
+    {
+        //_oPitch = newOctave;
+    }
+    _octaveOffset = newOctave;
+}
+
 void Word::setGold(bool newGold)
 {
     if(_parent) _parent->modified("setGold()");
@@ -103,6 +113,10 @@ int Word::getLength(void) const
 int Word::getPitch(void) const
 {
     return _pitch;
+}
+int Word::getOctaveOffset(void) const
+{
+    return _octaveOffset;
 }
 
 void Word::setParent(Lyrics *par)

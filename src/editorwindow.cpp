@@ -458,7 +458,9 @@ void UEditorWindow::setupUi()
     //ui->hScroll = new QScrollBar(Qt::Horizontal);
     //ui->vScroll = new QScrollBar(Qt::Vertical);
     ui->hScroll->setRange(0,999);
-    ui->vScroll->setRange(0,70);
+    ui->vScroll->setRange(0,71);
+    ui->vScroll->setValue(71);
+
 
         ui->tabEditeurLayMain->setColumnMinimumWidth(0,70);// the minimal width to display the showline wydget
         ui->tabEditeurLayMain->setRowMinimumHeight(1,30);// the minimal height to display the timeline wydget
