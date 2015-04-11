@@ -43,5 +43,5 @@ Source: "{#FmodEXLocation}\fmodex.dll"; DestDir: "{app}"
 
                                               
 [Icons]
-Name: "{commonprograms}\Ultratools"; Filename: "{app}\Ultratools Editor.exe"
-Name: "{commondesktop}\Ultratools"; Filename: "{app}\Ultratools Editor.exe"
+Name: "{commonprograms}\Ultratools Editor"; Filename: "{app}\Ultratools Editor.exe"
+Name: "{commondesktop}\Ultratools Editor"; Filename: "{app}\Ultratools Editor.exe"

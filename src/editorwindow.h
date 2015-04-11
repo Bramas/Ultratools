@@ -60,10 +60,9 @@ public slots:
    void hoverAction(QAction*);
    void autoSave(void);
     void editHeader(void);
-   void changeVSlider(int);
-   void changeHSlider(int);
-   void changeVScroll(int);
-   void changeHScroll(int);
+   void changeHSlider(int s = 0);
+   void onUpdateVScrollAndScale(int s = 0);
+   void changeHScroll(int s =0);
    void openFile(QString fileName="");
    void openLastFile(void);
    void openTiming(void);

@@ -66,15 +66,17 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
 
             this->showSentenceWidget->setHScroll(0);
 
-        connect(ui->vScroll,SIGNAL(valueChanged(int)),this,SLOT(changeVScroll(int)));
+        connect(ui->vScroll,SIGNAL(valueChanged(int)),this,SLOT(onUpdateVScrollAndScale(int)));
+        connect(ui->vSlider,SIGNAL(valueChanged(int)),this,SLOT(onUpdateVScrollAndScale(int)));
+        connect(ui->vScroll,SIGNAL(sliderPressed()),this,SLOT(onUpdateVScrollAndScale()));
+        connect(ui->vSlider,SIGNAL(sliderPressed()),this,SLOT(onUpdateVScrollAndScale()));
         //connect(ui->vScroll,SIGNAL(actionTriggered(int)),this,SLOT(changeVScroll(int)));
 
         connect(ui->hScroll,SIGNAL(valueChanged(int)),this,SLOT(changeHScroll(int)));
-        //connect(ui->hScroll,SIGNAL(actionTriggered(int)),this,SLOT(changeHScroll(int)));
-
         connect(ui->hSlider,SIGNAL(sliderMoved(int)),this,SLOT(changeHSlider(int)));
+        connect(ui->hScroll,SIGNAL(sliderPressed()),this,SLOT(changeHScroll()));
+        connect(ui->hSlider,SIGNAL(sliderPressed()),this,SLOT(changeHSlider()));
 
-        connect(ui->vSlider,SIGNAL(sliderMoved(int)),this,SLOT(changeVSlider(int)));
 
 
 
@@ -136,11 +138,7 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
 
 
 
-       // connect(ui->menubar,SIGNAL(hovered(QAction*)),this,SLOT(hoverAction(QAction*)));
-       // connect(ui->menuFichier,SIGNAL(hovered(QAction*)),this,SLOT(hoverAction(QAction*)));
-
-        ui->vSlider->setValue(12);
-        changeVSlider(12);
+        onUpdateVScrollAndScale();
         changeHScroll(0);
 
 
@@ -337,29 +335,25 @@ void UEditorWindow::adaptNewFile()
     }
     showSentenceWidget->setVScroll((255-_currentFile->lyrics->words().at(0)->getPitch())*2);
 
-    //qDebug()<<*range;
     ui->hScroll->setMaximum(_currentFile->getMax()+_currentFile->lyrics->timeToBeat(_currentFile->lyrics->getGap()));
 
     ui->vScroll->setValue((255-_currentFile->lyrics->words().at(0)->getPitch()));
 
     UNoteManager::Instance.setMaxPitch(_currentFile->lyrics->getPitchMax());
 
-       ui->vScroll->setRange((245-_currentFile->lyrics->getPitchMax()),(255-_currentFile->lyrics->getPitchMin()));
-    //qDebug()<<"maxR "<<(255-lyrics->getPitchMax())<<" , "<<(255-lyrics->getPitchMin());
-    //qDebug()<<((lyrics->getSentences()->at(0)->getPitchMin()+lyrics->getSentences()->at(0)->getPitchMax())/2);
+    //ui->vScroll->setRange((245-_currentFile->lyrics->getPitchMax()),(255-_currentFile->lyrics->getPitchMin()));
 
 
 
     if((_currentFile->lyrics->getPitchMin()+_currentFile->lyrics->getPitchMax())/2+20>_currentFile->lyrics->getPitchMax())
     {
-         this->changeVScroll(255-_currentFile->lyrics->getPitchMax());
          ui->vScroll->setValue(255-_currentFile->lyrics->getPitchMax());
     }
     else
     {
-         this->changeVScroll((235-(_currentFile->lyrics->getPitchMin()+_currentFile->lyrics->getPitchMax())/2));
          ui->vScroll->setValue((235-(_currentFile->lyrics->getPitchMin()+_currentFile->lyrics->getPitchMax())/2));
      }
+    onUpdateVScrollAndScale();
 
 
     this->changeHScroll((_currentFile->lyrics->getGap()>2000?_currentFile->lyrics->getGap()-2000:0)*_currentFile->lyrics->getBpm()/15000.0);
@@ -368,15 +362,6 @@ void UEditorWindow::adaptNewFile()
       onFileModified(false);
 }
 
-void UEditorWindow::changeVSlider(int s)
-{
-this->showSentenceWidget->setVScale(s*20);
-
-
-this->showLines->setMin(ui->vScroll->value());
-this->showLines->setMax(s*2+ui->vScroll->value());
-//qDebug()<<"vScale : "<<s;
-}
 void UEditorWindow::changeHSlider(int s)
 {
     ui->hScroll->setPageStep(exp(((double)ui->hSlider->value())/100.0));
@@ -400,14 +385,18 @@ QScrollBar * UEditorWindow::horizontalScrollBar()
     return this->ui->hScroll;
 }
 
-void UEditorWindow::changeVScroll(int s)
+void UEditorWindow::onUpdateVScrollAndScale(int /*s*/)
 {
+    // s is now the minimum pitch visible in the editor
+    int vScroll = 70 - ui->vScroll->value();
 
-this->showSentenceWidget->setVScroll(s);
-this->showLines->setMin(s);
-////qDebug()<<this->vSlider->value();
-//qDebug()<<"vScale : "<<this->vSlider->value();
-this->showLines->setMax(s+ui->vSlider->value()*2);
+    // slider value is an integer so this gives more precision
+    qreal vScale = ui->vSlider->value()/10.0;
+
+    this->showSentenceWidget->setVScroll(vScroll);
+    this->showSentenceWidget->setVScale(vScale);
+    this->showLines->setMin(vScroll);
+    this->showLines->setMax(vScroll+vScale);
 
 }
 void UEditorWindow::changeHScroll(int s)
@@ -458,7 +447,8 @@ void UEditorWindow::setupUi()
     ui->hSlider->setValue((log(100)*100.0));
 
     //vSlider=new QSlider(Qt::Vertical,this);
-    ui->vSlider->setRange(6,20);
+    ui->vSlider->setRange(100,400);
+    ui->vSlider->setValue(200);
 
 
     _widgetSongData = new WidgetSongData(this);
@@ -468,7 +458,7 @@ void UEditorWindow::setupUi()
     //ui->hScroll = new QScrollBar(Qt::Horizontal);
     //ui->vScroll = new QScrollBar(Qt::Vertical);
     ui->hScroll->setRange(0,999);
-    ui->vScroll->setRange(185,235);
+    ui->vScroll->setRange(0,70);
 
         ui->tabEditeurLayMain->setColumnMinimumWidth(0,70);// the minimal width to display the showline wydget
         ui->tabEditeurLayMain->setRowMinimumHeight(1,30);// the minimal height to display the timeline wydget

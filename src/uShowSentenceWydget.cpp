@@ -26,7 +26,7 @@
 #include <QAction>
 
 #define TAILLE_FENETRE 1000
-#define HAUTEUR_NOTE 20
+#define HAUTEUR_NOTE 2
 
 //#define UPDATE_BY_TIMER
 //#define DISPLAY_FPS
@@ -65,7 +65,7 @@ double min(double a,double b)
 ShowSentenceWidget::ShowSentenceWidget(UEditorWindow * parent)
 {
     hScale=100;// nombre de deciseconds visible sur une fenettre
-    vScale=500;
+    vScale=20;
     _seekPosition=0;
     lyrics=0;
     setMouseTracking(true);
@@ -515,9 +515,9 @@ qreal ShowSentenceWidget::scaleHeight(qreal h)
     return h*(qreal)height()/(qreal)vScale;
 }
 
-QPointF ShowSentenceWidget::scaledCoordinates(qreal x, qreal y)
+QPointF ShowSentenceWidget::scaledCoordinates(qreal x, int y)
 {
-    return QPoint((x - realHStartView + _gap)*(qreal)width()/(qreal)hScale, (y-vScroll*10.0)*(qreal)height()/(qreal)vScale);
+    return QPoint((x - realHStartView + _gap)*(qreal)width()/(qreal)hScale, height() - (y-vScroll)*(qreal)height()/(qreal)vScale);
 }
 QPointF ShowSentenceWidget::scaledCoordinates(const QPointF &point)
 {
@@ -532,11 +532,6 @@ void ShowSentenceWidget::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter painter(this);
      painter.setRenderHint(QPainter::Antialiasing);
-     //painter.scale((float)width()/(float)hScale, (float)height()/(float)vScale);
-
-    //painter.translate(-realHStartView+_gap,-vScroll*10.0);
-
-//qDebug()<<(lyrics->getGap()/1000.0-floor(lyrics->getGap()/1000.0));
 _firstBeatDisplayed = hScroll - _gap;
 _lastBeatDisplayed = hScroll + hScale  - _gap;
 
@@ -545,8 +540,7 @@ _hSplitHCursor=_hSizeCursor=_sizeAllCursor=false;
 
 
 int pas=100;
-int opacity=200,sc=vScroll*10.0; //sc=vScroll*vScale/12, sc2=vScale+vScroll*vScale/8;
-
+int opacity=200,sc=vScroll*10.0;
 
 //backgroud Test_______________________
 
@@ -556,11 +550,8 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
 
 
     painter.setPen(QPen(QColor(0,173,232,170)));
-
     painter.setBrush(QBrush(QColor(255,255,255,255)));
-
-
-    painter.drawRect(QRectF(scaledCoordinates(_firstBeatDisplayed,sc),scaledCoordinates(_firstBeatDisplayed+30,sc+30)));
+    //painter.drawRect(QRectF(scaledCoordinates(_firstBeatDisplayed,sc),scaledCoordinates(_firstBeatDisplayed+30,sc+30)));
 
 
 }
@@ -581,16 +572,13 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
 
 
 
-      QTextOption numbreTextOption;
-      numbreTextOption.setWrapMode(QTextOption::NoWrap);
+    QTextOption numbreTextOption;
+    numbreTextOption.setWrapMode(QTextOption::NoWrap);
 
-      for(int i=ceil(vScroll*10.0/20);i<=ceil((vScroll*10.0+vScale)/20);i++)
-     {
-         painter.drawLine(scaledCoordinates(_firstBeatDisplayed,i*20),scaledCoordinates(_lastBeatDisplayed,i*20));
-         
-
-
-     }
+    for(int i = vScroll - (vScroll%2); i<=vScroll+vScale; i+=2)
+    {
+        painter.drawLine(scaledCoordinates(_firstBeatDisplayed,i),scaledCoordinates(_lastBeatDisplayed,i));
+    }
 
 
       painter.setPen(QPen(QColor(0,0,0,linearRangeOpacity(1500, 7000,250,80))));
@@ -598,7 +586,7 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
 
 
 // RENDER verticale lines
-       if(!_isPlaying  || _mousePressed) //to go faster while playing
+      if(!_isPlaying  || _mousePressed) //to go faster while playing
       {
            pas=32;
            for(int i=_firstBeatDisplayed - ceil(mod(_firstBeatDisplayed,pas)) ; i<=_lastBeatDisplayed;i+=pas)
@@ -606,11 +594,9 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
                  painter.drawLine(scaledCoordinates(i,0).x(),0,scaledCoordinates(i,0).x(),height());
             }
 
-
             if(( opacity=expRangeOpacity(100,2000,200))>20)
             {
-                //opacity=expRangeOpacity(100,1000,200);
-                painter.setPen(QPen(QColor(0,0,0,opacity)));
+               painter.setPen(QPen(QColor(0,0,0,opacity)));
                pas=8;
                 for(int i=max(0,_firstBeatDisplayed-ceil(mod(_firstBeatDisplayed,pas)));i<=_lastBeatDisplayed;i+=pas)
                 {
@@ -706,23 +692,52 @@ void ShowSentenceWidget::renderLyrics(QPainter * painter)
     font.setFamily("Niagara");
     painter->setFont(font);
 
-    foreach(Word* tWord,lyrics->words())
+    if(lyrics->words().isEmpty())
+        return;
+
+    int octaveMax, octaveMin;
+    octaveMin = octaveMax = lyrics->words().first()->getPitch()/12;
+
+    auto wordIt = lyrics->words().constBegin();
+
+    QList<Word*> currentSentence;
+    while(wordIt != lyrics->words().constEnd())
     {
         painter->setPen(QPen(QColor(0,0,0,170)));
         painter->setBrush(QBrush(QColor(0,173,232,170)));
-        if(tWord->getTime()+tWord->getLength()>=_firstBeatDisplayed && tWord->getTime()<_lastBeatDisplayed)
+        if((*wordIt)->isSeparator())
         {
-            _wordsDisplayed->push_back(tWord);
-            if(tWord->isSeparator())
+            foreach(Word * w, currentSentence)
             {
-                renderSeparator(painter, tWord);
+                //qDebug()<<"renderWord "<<w->getText()<<" with offset "<<octaveMin<<" "<<octaveMax;
+                renderWord(painter,w, -octaveMin);
             }
-            else
+            currentSentence.clear();
+            if(wordIt + 1 != lyrics->words().constEnd())
             {
-                renderWord(painter,tWord);
+                octaveMin = octaveMax = (*(wordIt+1))->getPitch()/12;
             }
         }
-
+        else
+        {
+            octaveMin = min(octaveMin, (*(wordIt))->getPitch()/12);
+            octaveMax = max(octaveMax, (*(wordIt))->getPitch()/12);
+        }
+        if((*wordIt)->getTime()+(*wordIt)->getLength()>=_firstBeatDisplayed && (*wordIt)->getTime()<_lastBeatDisplayed)
+        {
+            currentSentence << *wordIt;
+            _wordsDisplayed->push_back((*wordIt));
+            if((*wordIt)->isSeparator())
+            {
+                renderSeparator(painter, (*wordIt));
+            }
+        }
+        ++wordIt;
+    }
+    foreach(Word * w, currentSentence)
+    {
+        //qDebug()<<"renderWord "<<w->getText()<<" with offset "<<octaveMin<<" "<<octaveMax;
+        renderWord(painter,w, -octaveMin);
     }
 }
 
@@ -737,15 +752,16 @@ void ShowSentenceWidget::deselect()
 }
 
 
-bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w)
+bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w, int octave)
 {
 
 
     painter->setBrush(QBrush(QColor(0,173,232,170)));
 
+    int pitch = octave*12 + w->getPitch();
 
     if(!_nextClick && mouseTime>w->getTime() && mouseTime<w->getTime()+w->getLength() &&
-      mousePitch>w->getPitch() && mousePitch<w->getPitch()+2)
+      mousePitch>pitch && mousePitch<pitch+2)
     {
         painter->setBrush(QBrush(QColor(232,173,0,170)));
         _overed=w;
@@ -773,13 +789,13 @@ bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w)
    }
 
 
-   QPointF p = scaledCoordinates(w->getTime(),(255-w->getPitch())*10+HAUTEUR_NOTE/2+5);
+   QPointF p = scaledCoordinates(w->getTime(),pitch+HAUTEUR_NOTE/2+0.5);
    painter->drawText(p.x(), p.y(),
            200,
            30,
            Qt::TextWordWrap,w->getText());
 
-   p = scaledCoordinates(w->getTime(),(255-w->getPitch())*10-HAUTEUR_NOTE/2);
+   p = scaledCoordinates(w->getTime(),pitch-HAUTEUR_NOTE/2);
    QRectF r(p.x(), p.y(), scaleWidth(w->getLength()), scaleHeight(HAUTEUR_NOTE));
     if(80<this->hScale)
     {
@@ -798,22 +814,22 @@ bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w)
         w->setOver(0);//if the mouse is pressed the word must remember where the mouse has begined to drop it
 
         if(mouseTime>w->getTime() && mouseTime<w->getTime() + min(w->getLength()/2.0,1.5) &&
-          mousePitch>w->getPitch() && mousePitch<w->getPitch()+1  )
+          mousePitch>pitch && mousePitch<pitch+1  )
         {
 
             painter->setBrush(QBrush(QColor(0,0,0,100)));
             w->setOver(ShowSentenceWidget::OVER_LEFT);
-            painter->drawRect(scaleRect(w->getTime(),(255-w->getPitch())*10,min(w->getLength()/2.0,1.5),HAUTEUR_NOTE/2));
+            painter->drawRect(scaleRect(w->getTime(),(255-pitch)*10,min(w->getLength()/2.0,1.5),HAUTEUR_NOTE/2));
 
             _hSizeCursor=true;
         }
         if(mouseTime<w->getTime()+w->getLength() && mouseTime>w->getTime()+w->getLength() - min(w->getLength()/2.0,1.5) &&
-          mousePitch>w->getPitch() && mousePitch<w->getPitch()+1 )
+          mousePitch>pitch && mousePitch<pitch+1 )
         {
 
             painter->setBrush(QBrush(QColor(0,0,0,100)));
             w->setOver(ShowSentenceWidget::OVER_RIGHT);
-            painter->drawRect(scaleRect(w->getTime()+w->getLength()-min(w->getLength()/2.0,1.5),(255-w->getPitch())*10,min(w->getLength()/2.0,1.5),HAUTEUR_NOTE/2));
+            painter->drawRect(scaleRect(w->getTime()+w->getLength()-min(w->getLength()/2.0,1.5),(255-pitch)*10,min(w->getLength()/2.0,1.5),HAUTEUR_NOTE/2));
 
             _hSizeCursor=true;
         }
@@ -885,7 +901,7 @@ void ShowSentenceWidget::renderPreviousSentence(QPainter * painter)
             {
                 break;
             }
-            QPointF p = scaledCoordinates((*wordIt)->getTime()+add,(255-(*wordIt)->getPitch())*10-HAUTEUR_NOTE/2);
+            QPointF p = scaledCoordinates((*wordIt)->getTime()+add,(255-(*wordIt)->getPitch())-HAUTEUR_NOTE/2);
             QRectF r(p.x(), p.y(), scaleWidth((*wordIt)->getLength()), scaleHeight(HAUTEUR_NOTE));
 
             painter->drawRect(r);
@@ -905,7 +921,7 @@ void ShowSentenceWidget::setHScale(int s)
     update();
 #endif
 }
-void ShowSentenceWidget::setVScale(int s)
+void ShowSentenceWidget::setVScale(qreal s)
 {
 
     this->vScale=s;
@@ -1421,8 +1437,11 @@ void ShowSentenceWidget::sortSelected()
 
 void ShowSentenceWidget::contextMenuEvent(QContextMenuEvent * event)
 {
+    event->ignore();
+    /* maybe available in the next version
     event->accept();
     QMenu menu(this);
     menu.addAction("test");
     menu.exec(event->globalPos());
+    */
 }

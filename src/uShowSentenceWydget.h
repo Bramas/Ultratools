@@ -57,7 +57,7 @@ void nextClickAddSeparator(void);
 void nextClickAddNote(void);
 
        void setHScale(int);
-       void setVScale(int);
+       void setVScale(qreal);
        void setHScroll(int);
        void setVScroll(int);
        void setSeekPosition(qreal);
@@ -81,7 +81,7 @@ public:
     ~ShowSentenceWidget();
     void renderLyrics(QPainter * painter);
     void renderPreviousSentence(QPainter * painter);
-    bool renderWord(QPainter * painter,Word * w);
+    bool renderWord(QPainter * painter, Word * w, int octave);
     void setLyrics(Lyrics * lyrics);
     Lyrics * getLyrics() { return lyrics; }
     void updateGap(void);
@@ -121,7 +121,7 @@ protected:
     void contextMenuEvent(QContextMenuEvent * event);
 
     quint32 hScale;
-    quint16 vScale;
+    qreal vScale;
     quint16 hScroll;
     quint16 vScroll;
 
@@ -140,7 +140,7 @@ protected:
     QRectF scaleRect(qreal x, qreal y, qreal w, qreal h);
     qreal scaleWidth(qreal w);
     qreal scaleHeight(qreal h);
-    QPointF scaledCoordinates(qreal x, qreal y);
+    QPointF scaledCoordinates(qreal x, int y);
     QPointF scaledCoordinates(const QPointF &);
     QPointF scaledCoordinates(const QPoint &);
 

@@ -16,6 +16,7 @@
 
 #include "uShowLines.h"
 #include <QPainter>
+#include <QDebug>
 
 ShowLines::ShowLines()
 {
@@ -25,31 +26,29 @@ ShowLines::ShowLines()
 }
 void ShowLines::paintEvent(QPaintEvent * /*event*/)
 {
- QPainter painter(this);
+    QPainter painter(this);
 
-     painter.setPen(QPen(QColor(0,173,232,170)));
-     painter.setBrush(QBrush(QColor(255,255,255,255)));
-//painter.drawText(QRect(0,0,50,50),QString::number(255));
+    painter.setPen(QPen(QColor(0,173,232,170)));
+    painter.setBrush(QBrush(QColor(255,255,255,255)));
 
-     float tempsR = ((float)height())/((float)(max-min));
-     int deca=0;
-if(min%2)
-deca=((float)height())/((float)(max-min));
-for(int i=min+1;i<=max;i+=2)
-     {
-         painter.drawText(QRect(0,((float)(i-min))*tempsR+deca,50,50),QString::number(255-i));
+    qreal tempsR = ((qreal)height())/((qreal)(max-min));
 
-  //  //qDebug()<<(max-i);
-      painter.drawLine(0,((float)(i-min))*tempsR+deca,25,((float)(i-min))*tempsR+deca);
+    qreal offset = min*tempsR;
+    for(int i=min+1;i<=max;i+=2)
+    {
+        qreal y = height() - i*tempsR + offset;
+        painter.drawText(QRect(0, y, 50, 50),QString::number(i));
+        //  //qDebug()<<(max-i);
+        painter.drawLine(0, y, 25, y);
 
-  }
-for(int i=min;i<=max;i+=2)
-     {
-         painter.drawText(QRect(30,((float)(i-min))*tempsR+deca,50,50),QString::number(255-i));
-  //  //qDebug()<<(max-i);
-      painter.drawLine(25,((float)(i-min))*tempsR+deca,50,((float)(i-min))*tempsR+deca);
-
-  }
+    }
+    for(int i=min;i<=max;i+=2)
+    {
+        qreal y = height() - i*tempsR + offset;
+         painter.drawText(QRect(30, y, 50, 50),QString::number(i));
+        //  //qDebug()<<(max-i);
+        painter.drawLine(25, y, 50, y);
+    }
 
 }
 
