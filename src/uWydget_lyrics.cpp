@@ -73,16 +73,16 @@ void UWydget_Lyrics::onTextChanged()
         return;
     }
     QTextBlock block = this->document()->firstBlock();
-    QList<Word*>::iterator it = _wydgetWords->getLyrics()->words().begin();
+    auto it = _wydgetWords->getLyrics()->words().begin();
     while(block.isValid())
     {
         if(it == _wydgetWords->getLyrics()->words().end())
         {
             break;
         }
-        if(!(*it)->isSeparator())
+        if(!(*it).isSeparator())
         {
-            (*it)->setText(block.text());
+            (*it).setText(block.text());
             block = block.next();
         }
         ++it;
@@ -95,9 +95,9 @@ void UWydget_Lyrics::onTextChanged()
             {
                 break;
             }
-            Word * w = new Word(_wydgetWords->getLyrics(), _wydgetWords->getLyrics()->words().last()->getTime2()+1, 2,_wydgetWords->getLyrics()->words().last()->getPitch());
-            w->setText(block.text());
-            _wydgetWords->getLyrics()->words().append(w);
+            Word w(_wydgetWords->getLyrics(), _wydgetWords->getLyrics()->words().last().getTime2()+1, 2,_wydgetWords->getLyrics()->words().last().getPitch());
+            w.setText(block.text());
+            _wydgetWords->getLyrics()->addWord(w);
             block = block.next();
         }
     }
@@ -105,9 +105,9 @@ void UWydget_Lyrics::onTextChanged()
     {
         while(it != _wydgetWords->getLyrics()->words().end())
         {
-            if(!(*it)->isSeparator())
+            if(!(*it).isSeparator())
             {
-                (*it)->setText("");
+                (*it).setText("");
             }
             ++it;
         }
@@ -156,11 +156,11 @@ void UWydget_Lyrics::updateChange()
         return;
     }
     QString t;
-    foreach(const Word * w, _wydgetWords->getLyrics()->words())
+    foreach(const Word & w, _wydgetWords->getLyrics()->words())
     {
-        if(!w->isSeparator())
+        if(!w.isSeparator())
         {
-            t += w->getText()+"\n";
+            t += w.getText()+"\n";
         }
     }
 
@@ -172,11 +172,11 @@ void UWydget_Lyrics::updateChange()
 
 void UWydget_Lyrics::onScroll()
 {
-    if(!_wydgetWords || !_wydgetWords->getWordsDisplayedPtr()->count())
+    if(!_wydgetWords || !_wydgetWords->getWordsDisplayedPtr().count())
     {
         return;
     }
-    int firstBlock = Word::indexOfWord( _wydgetWords->getLyrics()->words(), _wydgetWords->getWordsDisplayedPtr()->first());
+    int firstBlock = Word::indexOfWord( _wydgetWords->getLyrics()->words(), _wydgetWords->getWordsDisplayedPtr().first());
     this->verticalScrollBar()->setValue(firstBlock);
 
 }

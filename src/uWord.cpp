@@ -13,7 +13,7 @@
  * ----------------------------------------------------------------------------
  */
 
-
+#include <QSet>
 #include "uWord.h"
 #include "uLyrics.h"
 
@@ -124,24 +124,24 @@ void Word::setParent(Lyrics *par)
     _parent = par;
 }
 
-QPair<int, int> Word::rangeTime(QList<Word *> *wlist)
+QPair<int, int> Word::rangeTime(const QSet<Word> & wlist)
 {
     QPair<int, int> range(0,0);
-    if(wlist->empty()) return range;
+    if(wlist.empty()) return range;
 
 
-        range.first = wlist->first()->getTime();
-        range.second = wlist->first()->getTime()+wlist->first()->getLength();
+        range.first = (*(wlist.constBegin())).getTime();
+        range.second = (*(wlist.constBegin())).getTime()+(*(wlist.constBegin())).getLength();
 
-    foreach(Word *w , *wlist)
+    foreach(const Word &w , wlist)
     {
-        if(w->getTime()<range.first)
+        if(w.getTime()<range.first)
         {
-            range.first = w->getTime();
+            range.first = w.getTime();
         }
-        if(w->getTime() + w->getLength()>range.second)
+        if(w.getTime() + w.getLength()>range.second)
         {
-            range.second = w->getTime() + w->getLength();
+            range.second = w.getTime() + w.getLength();
         }
     }
     return range;
@@ -154,16 +154,16 @@ bool Word::wordLessThanPtr(const Word *a, const Word *b)
     return a->getTime()<b->getTime();
 }
 
-int Word::indexOfWord(const QList<Word*> & list, Word * word)
+int Word::indexOfWord(const QMap<int, Word> &list, const Word & word)
 {
     int idx = 0;
-    foreach(const Word * w, list)
+    foreach(const Word & w, list)
     {
         if(w == word)
         {
             return idx;
         }
-        if(w->isSeparator())
+        if(w.isSeparator())
         {
             continue;
         }
@@ -173,11 +173,11 @@ int Word::indexOfWord(const QList<Word*> & list, Word * word)
 }
 
 
-int Word::minIndexOfWords(QList<Word *> theWords,QList<Word *> inThisWords)
+int Word::minIndexOfWords(const QSet<Word> & theWords, const QMap<int, Word> &inThisWords)
 {
     if(inThisWords.empty() || theWords.empty()) return -1;
-    int min = indexOfWord(inThisWords,theWords.first());
-    foreach(Word * w,theWords)
+    int min = indexOfWord(inThisWords, *(theWords.constBegin()));
+    foreach(const Word & w, theWords)
     {        
         int m = indexOfWord(inThisWords, w);
         if(min > m)
@@ -187,11 +187,11 @@ int Word::minIndexOfWords(QList<Word *> theWords,QList<Word *> inThisWords)
     }
     return min;
 }
-int Word::maxIndexOfWords(QList<Word *> theWords,QList<Word *> inThisWords)
+int Word::maxIndexOfWords(const QSet<Word> &theWords, const QMap<int, Word> &inThisWords)
 {
     if(inThisWords.empty() || theWords.empty()) return -1;
-    int max = indexOfWord(inThisWords,theWords.first());
-    foreach(Word * w,theWords)
+    int max = indexOfWord(inThisWords, *(theWords.constBegin()));
+    foreach(const Word & w, theWords)
     {
         int m = indexOfWord(inThisWords, w);
         if(max < m)

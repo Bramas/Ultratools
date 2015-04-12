@@ -19,8 +19,8 @@
 #define USPACENOTEGENERATOR_H
 
 #include <QtCore>
+#include "uWord.h"
 class ShowSentenceWidget;
-class Word;
 class QKeyEvent;
 
 class Recorder : public QObject
@@ -38,7 +38,7 @@ public slots:
 
 private:
 
-    Word * _currentWord;
+    Word _currentWord;
     int _beat;
     ShowSentenceWidget * _showSentenceWidget;
     quint64 _currentTime;

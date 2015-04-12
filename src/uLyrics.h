@@ -17,7 +17,11 @@
 #ifndef LYRICS_H
 #define LYRICS_H
 
+
+#include <QMultiMap>
 #include "uWord.h"
+
+class WordSelection;
 
 class Lyrics : public QObject
 {
@@ -28,7 +32,6 @@ signals:
     void hasBeenModified(void);
 public slots:
 
-    void sortAll();
     void doublePresicion();
 
 public:
@@ -43,8 +46,8 @@ public:
     void setModified(bool b=true) { if(b==true) modified(); else _modified=false; }
 
 
-    const QList<Word*>& words(void) const { return _words; }
-    QList<Word*>& words(void) { return _words; }
+    const QMultiMap<int, Word>& words(void) const { return _words; }
+    QMultiMap<int, Word>& words(void) { return _words; }
 
     int getPitchMax(void);
     int getPitchMin(void);
@@ -53,13 +56,15 @@ public:
     void setBpm(float in) { _bpm = in; }
     qreal getBpm(void) { return _bpm; }
 
-    void resortWord(Word * w);
-    Word* addSeparator(int time);
-    void removeWord(Word * w);
-    void addWord(Word *ws);
+    Word addSeparator(int time);
+    void removeWord(const Word &w);
+    void addWord(const Word &w);
 
-     QList<Word*> *  separatorsOfWords(QList<Word*> * list) const;
-     QList<Word *> sentencesOfWord(Word* w) const;
+    QMap<int, Word>::const_iterator find(const Word &w);
+    bool contains(const Word &w) { return _words.contains(w.getTime(), w); }
+
+     QList<Word> separatorsOfWords(const QList<Word> &list) const;
+     QList<Word> sentencesOfWord(const Word &w) const;
 
      bool setDelay(int delay, quint64 from=0);
      qreal timeToBeat(quint64 time)
@@ -72,19 +77,21 @@ public:
      }
 
 
-    void moveLeft(Word * from);
-    Word * moveRight(Word *from, int indexIWant=0);
+
 
 
 private:
     QWidget * parent;
-    QList<Word*> _words;
+    QMultiMap<int, Word> _words;
 
     bool _modified;
 
     int  pitchMax, pitchMin;
     qreal _gap;
     qreal _bpm;
+
+    QList<WordSelection*> _selections;
+    friend class WordSelection;
 };
 
 #endif // LYRICS_H

@@ -26,7 +26,10 @@ class Word
 public:
     typedef enum Type { Default = 7, Normal = 1, Free = 2, Gold = 4, Separator = 8 } Type;
 
-    Word(Lyrics * parent,int time,int length, int pitch, Word::Type type = Word::Normal);
+    Word() : _parent(0) { }
+    bool isNull() const { return !_parent; }
+
+    Word(Lyrics * parent, int time, int length, int pitch, Word::Type type = Word::Normal);
 
 
     int setTime(int newTime, bool definitly = true);
@@ -45,6 +48,7 @@ public:
     void setGold(bool newGold=true);
     bool isGold(void) const { return _type & Word::Gold; }
     bool isFree(void) const { return _type & Word::Free; }
+    Word::Type getType(void) const { return _type; }
     void setFree(bool in=true);
     bool isSeparator() const { return _type & Word::Separator; }
     Lyrics * getParent() { return _parent; }
@@ -55,7 +59,7 @@ public:
     void setSelected(bool selected = true) { _selected = selected; }
     bool isSelected(void) const { return _selected; }
 
-    bool hasBeenModified(void) { return _oTime!=_time || _oPitch!=_pitch || _oLength!=_length; }
+    bool hasBeenModified(void) const { return _oTime!=_time || _oPitch!=_pitch || _oLength!=_length; }
 
 
 
@@ -74,7 +78,8 @@ public:
         return (this->getLength()  ==t2.getLength()
                 && this->getPitch()==t2.getPitch()
                 && this->getTime() ==t2.getTime()
-                && this->getText() ==t2.getText());
+                && this->getText() ==t2.getText()
+                && this->getType() ==t2.getType());
     }
     bool operator==(const Word& t2) const
     {
@@ -83,6 +88,45 @@ public:
     bool operator!=(const Word& t2) const
     {
         return !this->equal(t2);
+    }
+    bool operator<(const Word& t2) const
+    {
+
+        if (this->getTime() != t2.getTime())
+            return this->getTime() < t2.getTime();
+
+        if (this->getLength() != t2.getLength())
+            return this->getLength() < t2.getLength();
+
+        if (this->isSeparator() != t2.isSeparator())
+            return (this->isSeparator() && !t2.isSeparator()); //separator come before
+
+        if (this->isSeparator())// at this point, if they  are both separators, they are equals
+        {
+            return false;
+        }
+
+        if (this->getPitch() != t2.getPitch())
+            return this->getPitch() < t2.getPitch();
+
+        if (this->getText() != t2.getText())
+            return this->getText() < t2.getText();
+
+        // else, they are equal
+        return false;
+
+    }
+    bool operator<=(const Word& t2) const
+    {
+        return *this < t2 || this->equal(t2);
+    }
+    bool operator>(const Word& t2) const
+    {
+        return t2 < *this;
+    }
+    bool operator>=(const Word& t2) const
+    {
+        return *this > t2 || this->equal(t2);
     }
 
 
@@ -111,15 +155,23 @@ private:
 
 
 public:
-    static QPair<int,int> rangeTime(QList<Word*> * wlist);
-    static int minIndexOfWords(QList<Word*>,QList<Word*>);
-    static int maxIndexOfWords(QList<Word*>,QList<Word*>);
-    static int indexOfWord(const QList<Word*> & list, Word * word);
+    static QPair<int,int> rangeTime(const QSet<Word> &wlist);
+    static int minIndexOfWords(const QSet<Word> &, const QMap<int, Word> &);
+    static int maxIndexOfWords(const QSet<Word> &, const QMap<int, Word> &);
+    static int indexOfWord(const QMap<int, Word> &list, const Word &word);
 
 
 };
 
 
+inline uint qHash(const Word &key, uint seed)
+{
+    if(key.isNull())
+    {
+        return 0;
+    }
+    return (qHash(key.getTime(), seed) ^ 13) + (qHash(key.getLength(), seed) ^ 27) + qHash(key.getText(), seed);
+}
 
 
 #endif // WORD_H

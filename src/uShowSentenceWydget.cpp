@@ -90,11 +90,7 @@ _previousDisplayed=2;
      _fPointPress=QPointF(0.0,0.0);
      _timePress=QTime::currentTime();
     _hSizeCursor=_hSplitHCursor=_sizeAllCursor=_timeLocked=false;
-     _overed=NULL;
-     _overSep=NULL;
 
-
-        _wordsDisplayed = new QList<Word*>();
 
         connect(&UInputManager::Instance, SIGNAL(keyPressEvent(QKeyEvent*)), this, SLOT(onKeyPressEvent(QKeyEvent*)));
 
@@ -107,14 +103,14 @@ void ShowSentenceWidget::mouseDoubleClickEvent(QMouseEvent * /*event*/)
 {
     //QMessageBox::warning(NULL,"","LOL");
 
-    if(_selected.empty())
+    if(_selected.isEmpty())
     {
         emit doubleClik(-1);
         return;
     }
 
 
-    emit doubleClik(_wordsDisplayed->indexOf(_selected.first()));
+    emit doubleClik(_wordsDisplayed.indexOf(_selected.first()));
 
 }
 
@@ -133,17 +129,16 @@ void ShowSentenceWidget::mousePressEvent(QMouseEvent *event)
 
         if(_nextClick==ShowSentenceWidget::NEXT_CLICK_ADD_NOTE)
         {
-            Word * w = new Word(NULL,mouseTime,4,mousePitch);
-            w->setText("~");
+            Word w(NULL,mouseTime,4,mousePitch);
+            w.setText("~");
             lyrics->addWord(w);
-            _selected.push_back(w);
+            _selected << w;
             emit modified();
 
         }else
         if(_nextClick==ShowSentenceWidget::NEXT_CLICK_ADD_SEPARATOR)
         {
-            _overSep = lyrics->addSeparator(mouseTime);
-
+            lyrics->addSeparator(mouseTime);
         }
 
         _nextClick = 0;
@@ -158,22 +153,21 @@ void ShowSentenceWidget::mousePressEvent(QMouseEvent *event)
 
     if(UInputManager::Instance.isKeyPressed(Qt::Key_Control) && _selected.contains(_overed) )
     {
-        _selected.removeOne(_overed);
-        _overed->setSelected(false);
-        if(!_selected.empty())
+        _selected.remove(_overed);
+
+        if(!_selected.isEmpty())
         {
-            emit selection(Word::minIndexOfWords(_selected,lyrics->words()),Word::maxIndexOfWords(_selected,lyrics->words()));
+            emit selection(_selected.firstIndex(),_selected.lastIndex());
         }
     }
     else
-    if(!_selected.contains(_overed) && _overed)
+    if(!_selected.contains(_overed) && !_overed.isNull())
     {
-        _overed->setSelected(true);
-        _selected.push_back(_overed);
-        emit selection(Word::minIndexOfWords(_selected,lyrics->words()),Word::maxIndexOfWords(_selected,lyrics->words()));
+        _selected << _overed;
+        emit selection(_selected.firstIndex(),_selected.lastIndex());;
     }
     else
-    if(!_overed)
+    if(_overed.isNull())
     {
         emit emptyClik();
     }
@@ -221,7 +215,7 @@ void ShowSentenceWidget::mouseReleaseEvent(QMouseEvent *event)
    QPointF pointRealease(event->x(),event->y());
 
 
-   if((pointRealease-_fPointPress).manhattanLength()<10 && _timePress.msecsTo(QTime::currentTime())<500 && _overed==NULL)
+   if((pointRealease-_fPointPress).manhattanLength()<10 && _timePress.msecsTo(QTime::currentTime())<500 && _overed.isNull())
    {
        //it is a single click
 
@@ -234,28 +228,19 @@ void ShowSentenceWidget::mouseReleaseEvent(QMouseEvent *event)
    }
 
 
-   if(!_selected.empty() && _selected.first()->hasBeenModified())
+   /*if(!_selected.isEmpty() && _selected.first().hasBeenModified())
    {
-       Word * w;
-       foreach(w,_selected)
+       foreach(const Word &w, _selected) /// FIXME
        {
-           w->hold();// finish the modification
+           //w.hold();// finish the modification
            lyrics->removeWord(w);
        }
-       foreach(w,_selected)
+       foreach(const Word &w,_selected)
        {
            lyrics->addWord(w);
        }
        emit modified();
-   }
-   if(_overSep)
-   {
-       _overSep->hold();
-       lyrics->resortWord(_overSep);
-
-     //  qDebug()<<_overSep->getLength();
-   }
-
+   }*/ //FIXME
     if(_clickAndMoveSelection)
     {
         _seekPosition = posXToBeat(min(_fPointPress.x(),event->x()));
@@ -264,9 +249,9 @@ void ShowSentenceWidget::mouseReleaseEvent(QMouseEvent *event)
     }
 
 
-    if(!_clickAndMoveSelection && !_selected.empty() && !_isPlaying)
+    if(!_clickAndMoveSelection && !_selected.isEmpty() && !_isPlaying)
     {
-        QPair<int,int> range = Word::rangeTime(&_selected);
+        QPair<int,int> range(_selected.first().getTime(), _selected.last().getTime2());
         _floatSelection[0] = range.first;// - _gap;
         _floatSelection[1] = range.second;// - _gap;
         emit floatSelection(lyrics->beatToMsc(range.first), lyrics->beatToMsc(range.second));
@@ -296,36 +281,36 @@ void ShowSentenceWidget::onKeyPressEvent(QKeyEvent * event)
     {
         return;
     }
-    if(event->key() == Qt::Key_Up)
+    /*if(event->key() == Qt::Key_Up)
     {
         foreach(Word * w, _selected)
         {
-            w->setPitch(w->getPitch() + 1);
+            w.setPitch(w.getPitch() + 1);
         }
     }
     else if(event->key() == Qt::Key_Down)
     {
         foreach(Word * w, _selected)
         {
-            w->setPitch(w->getPitch() - 1);
+            w.setPitch(w.getPitch() - 1);
         }
     }
     else if(event->key() == Qt::Key_Left)
     {
-        foreach(Word * w, _selected)
+        foreach(const Word &w, _selected)
         {
-            w->setTime(w->getTime() - 1);
+            w.setTime(w.getTime() - 1);
             lyrics->resortWord(w);
         }
     }
     else if(event->key() == Qt::Key_Right)
     {
-        foreach(Word * w, _selected)
+        foreach(const Word &w, _selected)
         {
-            w->setTime(w->getTime() + 1);
+            w.setTime(w.getTime() + 1);
             lyrics->resortWord(w);
         }
-    }
+    }*/ //FIXME
     update();
 }
 
@@ -345,18 +330,18 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
    int diffY = floor(mousePitch) - floor(vScale*(height()-_fPointPress.y())/(qreal)height()+vScroll);
    int diffX = floor(mouseTime) - floor((_lastBeatDisplayed-_firstBeatDisplayed)*_fPointPress.x()/(qreal)width()+_firstBeatDisplayed);
 
-   if(_mousePressed && !_isPlaying && (_fMousePosition-_fPointPress).manhattanLength()<10 && _timePress.msecsTo(QTime::currentTime())<500 && _overed==NULL)
+   if(_mousePressed && !_isPlaying && (_fMousePosition-_fPointPress).manhattanLength()<10 && _timePress.msecsTo(QTime::currentTime())<500 && !_overed.isNull())
     {
         _clickAndMoveSelection = true;
     }
 
-    if(_mousePressed && _overSep)
+    if(_mousePressed)// && _overSep)
     {
-
+/* //FIXME
         //int diffY = floor(mousePitch) - floor((((-(float)vScale)/10.0))*(((float)_fPointPress.y())/((float)height()))+256-vScroll);
 
 
-        if(_overSep->getOver() & ShowSentenceWidget::OVER_LEFT)
+        if(_overSep.getOver() & ShowSentenceWidget::OVER_LEFT)
         {
             if(_overSep->getOLength()-diffX>0)
             {
@@ -384,7 +369,7 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
         else
         {
             _overSep->setTime(_overSep->getOTime()+diffX,false);
-        }
+        }*/
     }
     else
     if(_mousePressed && _clickAndMoveSelection)
@@ -396,52 +381,50 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
 
         deselect();
 
-        foreach(Word * w, *_wordsDisplayed)
+        foreach(const Word & w, _wordsDisplayed)
         {
-             if(w->getTime()<_floatSelection[1]
-                 && w->getTime()+w->getLength()>_floatSelection[0])
+             if(w.getTime()<_floatSelection[1]
+                 && w.getTime()+w.getLength()>_floatSelection[0])
              {
-                 //QMessageBox::warning(NULL,"" ,"lol");
-                     _selected.push_back(w);
-                     w->setSelected();
+                     _selected << w;
               }
         }
-        emit selection(Word::minIndexOfWords(_selected,lyrics->words()),Word::maxIndexOfWords(_selected,lyrics->words()));
+        emit selection(_selected.firstIndex(),_selected.lastIndex());
 
     }
     else
-   if(_mousePressed && !_selected.empty() && (!UInputManager::Instance.isKeyPressed(Qt::Key_Control) || _selected.count()==1))
+   if(_mousePressed && !_selected.isEmpty() && (!UInputManager::Instance.isKeyPressed(Qt::Key_Control) || _selected.count()==1))
    {
        Word * w;
 
-
+/* //FIXME
        if(_selected.count()==1 && _selected.first()->getOver())
        {
            w=_selected.first();
-           if(w->getOver() & ShowSentenceWidget::OVER_LEFT )
+           if(w.getOver() & ShowSentenceWidget::OVER_LEFT )
            {
-               if(w->getOLength()-diffX>0)
+               if(w.getOLength()-diffX>0)
                {
-                   w->setLength(w->getOLength()-diffX,false);
-                   w->setTime(w->getOTime()+diffX,false);
+                   w.setLength(w.getOLength()-diffX,false);
+                   w.setTime(w.getOTime()+diffX,false);
                }
                else
                {
-                   w->setLength(1,false);
-                   w->setTime(w->getOTime()+w->getOLength()-1,false);
+                   w.setLength(1,false);
+                   w.setTime(w.getOTime()+w.getOLength()-1,false);
                }
 
            }
            else
-           if(w->getOver() & ShowSentenceWidget::OVER_RIGHT )
+           if(w.getOver() & ShowSentenceWidget::OVER_RIGHT )
            {
-               if(w->getOLength()+diffX>0)
+               if(w.getOLength()+diffX>0)
                {
-                   w->setLength(w->getOLength()+diffX,false);
+                   w.setLength(w.getOLength()+diffX,false);
                }
                else
                {
-                   w->setLength(1,false);
+                   w.setLength(1,false);
                }
            }
        }
@@ -449,13 +432,13 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
        {
             foreach(w,_selected)
             {
-                w->setPitch(w->getOPitch()+diffY,false);
+                w.setPitch(w.getOPitch()+diffY,false);
                 if(!_timeLocked)
                 {
-                    w->setTime(w->getOTime()+diffX,false);
+                    w.setTime(w.getOTime()+diffX,false);
                 }
             }
-       }
+       }*/
    }
     else
     if(_isPlaying && _mousePressed)
@@ -510,7 +493,7 @@ _hSplitHCursor=_hSizeCursor=_sizeAllCursor=false;
 
 
 int pas=100;
-int opacity=200,sc=vScroll*10.0;
+int opacity=200;
 
 //backgroud Test_______________________
 
@@ -545,6 +528,7 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
     QTextOption numbreTextOption;
     numbreTextOption.setWrapMode(QTextOption::NoWrap);
 
+// RENDER horizontal lines
     for(int i = vScroll - (vScroll%2); i<=vScroll+vScale; i+=2)
     {
         painter.drawLine(scaledCoordinates(_firstBeatDisplayed,i),scaledCoordinates(_lastBeatDisplayed,i));
@@ -552,14 +536,13 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
 
 
       painter.setPen(QPen(QColor(0,0,0,linearRangeOpacity(1500, 7000,250,80))));
-      //1500, 7000
 
 
 // RENDER verticale lines
       if(!_isPlaying  || _mousePressed) //to go faster while playing
       {
            pas=32;
-           for(int i=_firstBeatDisplayed - ceil(mod(_firstBeatDisplayed,pas)) ; i<=_lastBeatDisplayed;i+=pas)
+           for(int i=max(0,_firstBeatDisplayed - ceil(mod(_firstBeatDisplayed,pas))) ; i<=_lastBeatDisplayed;i+=pas)
             {
                  painter.drawLine(scaledCoordinates(i,0).x(),0,scaledCoordinates(i,0).x(),height());
             }
@@ -575,7 +558,6 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
 
                  if((opacity=expRangeOpacity(20,340,200))>20)
                 {
-                     ////qDebug()<<opacity;
                     painter.setPen(QPen(QColor(0,0,0,opacity)));
 
                    pas=1;
@@ -590,13 +572,10 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
            }
         }// if( RENDER verticale lines )
 
-       if(!_mousePressed)
-           _overSep=NULL;
 
        if(lyrics)
        {
             renderLyrics(&painter);
-            sortSelected();
             renderPreviousSentence(&painter);
         }
 
@@ -614,7 +593,7 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
 
         // THE SELECTION____________________
 
-        if(_clickAndMoveSelection || !_selected.empty())
+        if(_clickAndMoveSelection || !_selected.isEmpty())
         {
             //QMessageBox::warning(NULL,"","lol");
             painter.setBrush(QBrush(QColor(0,0,255,60)));
@@ -655,8 +634,7 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
 
 void ShowSentenceWidget::renderLyrics(QPainter * painter)
 {
-    _wordsDisplayed->clear();
-    _overed=NULL;
+    _wordsDisplayed.clear();
     QFont font;
     font.setPixelSize(15);
     font.setFamily("Niagara");
@@ -666,86 +644,77 @@ void ShowSentenceWidget::renderLyrics(QPainter * painter)
         return;
 
     int octaveMax, octaveMin;
-    octaveMin = octaveMax = lyrics->words().first()->getPitch()/12;
+    octaveMin = octaveMax = lyrics->words().first().getPitch()/12;
 
     auto wordIt = lyrics->words().constBegin();
 
-    QList<Word*> currentSentence;
+    QList<Word> currentSentence;
     while(wordIt != lyrics->words().constEnd())
     {
         painter->setPen(QPen(QColor(0,0,0,170)));
         painter->setBrush(QBrush(QColor(0,173,232,170)));
-        if((*wordIt)->isSeparator())
+        if((*wordIt).isSeparator())
         {
-            foreach(Word * w, currentSentence)
+            foreach(const Word & w, currentSentence)
             {
-                //qDebug()<<"renderWord "<<w->getText()<<" with offset "<<octaveMin<<" "<<octaveMax;
-                w->setOctaveOffset(octaveMin);
-                renderWord(painter,w);
+                renderWord(painter, w, octaveMin);
             }
             currentSentence.clear();
             if(wordIt + 1 != lyrics->words().constEnd())
             {
-                octaveMin = octaveMax = (*(wordIt+1))->getPitch()/12;
+                octaveMin = octaveMax = (*(wordIt+1)).getPitch()/12;
             }
         }
         else
         {
-            octaveMin = min(octaveMin, (*(wordIt))->getPitch()/12);
-            octaveMax = max(octaveMax, (*(wordIt))->getPitch()/12);
+            octaveMin = min(octaveMin, (*(wordIt)).getPitch()/12);
+            octaveMax = max(octaveMax, (*(wordIt)).getPitch()/12);
         }
-        if((*wordIt)->getTime()+(*wordIt)->getLength()>=_firstBeatDisplayed && (*wordIt)->getTime()<_lastBeatDisplayed)
+        if((*wordIt).getTime()+(*wordIt).getLength()>=_firstBeatDisplayed && (*wordIt).getTime()<_lastBeatDisplayed)
         {
-            if(!(*wordIt)->isSeparator())
+            if(!(*wordIt).isSeparator())
                 currentSentence << *wordIt;
 
-            _wordsDisplayed->push_back((*wordIt));
-            if((*wordIt)->isSeparator())
+            _wordsDisplayed << *wordIt;
+            if((*wordIt).isSeparator())
             {
                 renderSeparator(painter, (*wordIt));
             }
         }
         ++wordIt;
     }
-    foreach(Word * w, currentSentence)
+    foreach(const Word & w, currentSentence)
     {
-        //qDebug()<<"renderWord "<<w->getText()<<" with offset "<<octaveMin<<" "<<octaveMax;
-        w->setOctaveOffset(octaveMin);
-        renderWord(painter,w);
+        renderWord(painter,w, octaveMin);
     }
 }
 
 void ShowSentenceWidget::deselect()
 {
-    Word * w;
-    foreach(w,_selected)
-    {
-        w->setSelected(false);
-    }
-    _selected.clear();
+    _selected = WordSelection(lyrics);
 }
 
 
-bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w)
+bool ShowSentenceWidget::renderWord(QPainter * painter, const Word & w, int octave)
 {
 
 
     painter->setBrush(QBrush(QColor(0,173,232,170)));
 
-    int pitch = -w->getOctaveOffset()*12 + w->getPitch();
-    if(!_nextClick && mouseTime>w->getTime() && mouseTime<w->getTime()+w->getLength() &&
+    int pitch = -octave*12 + w.getPitch();
+    /*if(!_nextClick && mouseTime>w.getTime() && mouseTime<w.getTime()+w.getLength() &&
       mousePitch > pitch-1 && mousePitch < pitch + 1)
     {
         painter->setBrush(QBrush(QColor(232,173,0,170)));
         _overed=w;
 
        _sizeAllCursor=true;
-    }
-    else if(w->isGold())
+    } ///FIXME (not here)
+    else*/ if(w.isGold())
     {
         painter->setBrush(QBrush(QColor(255,255,0,210)));
     }
-    else if(w->isFree())
+    else if(w.isFree())
     {
         painter->setBrush(QBrush(QColor(232,173,0,170)));
         painter->setBrush(QBrush(QColor(0,0,0,40)));
@@ -755,20 +724,20 @@ bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w)
         painter->setBrush(QBrush(QColor(0,173,232,170)));
     }
 
-   if(w->isSelected())
+   if(w.isSelected())
    {
        painter->setBrush(QBrush(QColor(255,173,0,255)));
    }
 
 
-   QPointF p = scaledCoordinates(w->getTime(),pitch+HAUTEUR_NOTE/2+1);
+   QPointF p = scaledCoordinates(w.getTime(),pitch+HAUTEUR_NOTE/2+1);
    painter->drawText(p.x(), p.y(),
            200,
            30,
-           Qt::TextWordWrap,w->getText());
+           Qt::TextWordWrap,w.getText());
 
-   p = scaledCoordinates(w->getTime(),pitch+HAUTEUR_NOTE/2);
-   QRectF r(p.x(), p.y(), scaleWidth(w->getLength()), scaleHeight(HAUTEUR_NOTE));
+   p = scaledCoordinates(w.getTime(),pitch+HAUTEUR_NOTE/2);
+   QRectF r(p.x(), p.y(), scaleWidth(w.getLength()), scaleHeight(HAUTEUR_NOTE));
     if(80<this->hScale)
     {
           painter->drawRect(r);
@@ -783,25 +752,25 @@ bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w)
 
     if(!_mousePressed && !_nextClick)
     {
-        w->setOver(0);//if the mouse is pressed the word must remember where the mouse has begined to drop it
+        //FIXME w.setOver(0);//if the mouse is pressed the word must remember where the mouse has begined to drop it
 
-        if(mouseTime>w->getTime() && mouseTime<w->getTime() + min(w->getLength()/2.0,1.5) &&
+        if(mouseTime>w.getTime() && mouseTime<w.getTime() + min(w.getLength()/2.0,1.5) &&
           mousePitch>pitch && mousePitch<pitch+1  )
         {
 
             painter->setBrush(QBrush(QColor(0,0,0,100)));
-            w->setOver(ShowSentenceWidget::OVER_LEFT);
-            painter->drawRect(scaleRect(w->getTime(),pitch,min(w->getLength()/2.0,1.5),HAUTEUR_NOTE/2));
+            //FIXME w.setOver(ShowSentenceWidget::OVER_LEFT);
+            painter->drawRect(scaleRect(w.getTime(),pitch,min(w.getLength()/2.0,1.5),HAUTEUR_NOTE/2));
 
             _hSizeCursor=true;
         }
-        if(mouseTime<w->getTime()+w->getLength() && mouseTime>w->getTime()+w->getLength() - min(w->getLength()/2.0,1.5) &&
+        if(mouseTime<w.getTime()+w.getLength() && mouseTime>w.getTime()+w.getLength() - min(w.getLength()/2.0,1.5) &&
           mousePitch>pitch && mousePitch<pitch+1 )
         {
 
             painter->setBrush(QBrush(QColor(0,0,0,100)));
-            w->setOver(ShowSentenceWidget::OVER_RIGHT);
-            painter->drawRect(scaleRect(w->getTime()+w->getLength()-min(w->getLength()/2.0,1.5),pitch,min(w->getLength()/2.0,1.5),HAUTEUR_NOTE/2));
+            //FIXME w.setOver(ShowSentenceWidget::OVER_RIGHT);
+            painter->drawRect(scaleRect(w.getTime()+w.getLength()-min(w.getLength()/2.0,1.5),pitch,min(w.getLength()/2.0,1.5),HAUTEUR_NOTE/2));
 
             _hSizeCursor=true;
         }
@@ -809,34 +778,34 @@ bool ShowSentenceWidget::renderWord(QPainter * painter,Word * w)
 
 
     return true;
-// //qDebug()<<w->getPitch();
+// //qDebug()<<w.getPitch();
 }
 
 
 void ShowSentenceWidget::renderPreviousSentence(QPainter * painter)
 {
-    if(_wordsDisplayed->empty() || !_previousDisplayed) return;
+    if(_wordsDisplayed.empty() || !_previousDisplayed) return;
 
     painter->setBrush(QBrush(QColor(0,0,0,40)));
     painter->setPen(QPen(QColor(0,0,0,0)));
 
-    foreach(Word * wd, *_wordsDisplayed)
+    foreach(const Word & wd, _wordsDisplayed)
     {
-        QList<Word*> sentence = lyrics->sentencesOfWord(wd);
+        QList<Word> sentence = lyrics->sentencesOfWord(wd);
 
-        if(wd->isSeparator() || (wd != sentence.first() && wd != _wordsDisplayed->first()))
+        if(wd.isSeparator() || (wd != sentence.first() && wd != _wordsDisplayed.first()))
         {
             // we draw the sentence once
             continue;
         }
 
-        QList<Word*>::const_iterator wordIt = lyrics->words().constBegin() + lyrics->words().indexOf(sentence.first());
+        auto wordIt = lyrics->find(sentence.first());
 
         int nbSkip = _previousDisplayed + 1;
         while(nbSkip > 0 && wordIt != lyrics->words().constBegin())
         {
             --wordIt;
-            while(wordIt != lyrics->words().constBegin() && !(*wordIt)->isSeparator())
+            while(wordIt != lyrics->words().constBegin() && !(*wordIt).isSeparator())
                 --wordIt;
             --nbSkip;
         }
@@ -844,7 +813,7 @@ void ShowSentenceWidget::renderPreviousSentence(QPainter * painter)
         {
             continue;
         }
-        if(!(*wordIt)->isSeparator())
+        if(!(*wordIt).isSeparator())
         {
             wordIt = lyrics->words().constBegin();
         }
@@ -852,29 +821,29 @@ void ShowSentenceWidget::renderPreviousSentence(QPainter * painter)
         {
             ++wordIt;
         }
-        if((*wordIt)->isSeparator())
+        if((*wordIt).isSeparator())
         {
             continue;
         }
 
-        int add = sentence.first()->getTime() - (*wordIt)->getTime();
+        int add = sentence.first().getTime() - (*wordIt).getTime();
 
-        auto lastIt = lyrics->words().constBegin() + lyrics->words().indexOf(sentence.last());
-        int maxTime = (*lastIt)->getTime2() + add;
+        auto lastIt = lyrics->find(sentence.last());
+        int maxTime = (*lastIt).getTime2() + add;
         if(lastIt + 1 != lyrics->words().constEnd())
         {
-            maxTime =  (*(lastIt+1))->getTime();
+            maxTime =  (*(lastIt+1)).getTime();
         }
 
 
-        while(wordIt != lyrics->words().constEnd() && !(*wordIt)->isSeparator())
+        while(wordIt != lyrics->words().constEnd() && !(*wordIt).isSeparator())
         {
-            if((*wordIt)->getTime()+add >= maxTime)
+            if((*wordIt).getTime()+add >= maxTime)
             {
                 break;
             }
-            QPointF p = scaledCoordinates((*wordIt)->getTime()+add,(255-(*wordIt)->getPitch())-HAUTEUR_NOTE/2);
-            QRectF r(p.x(), p.y(), scaleWidth((*wordIt)->getLength()), scaleHeight(HAUTEUR_NOTE));
+            QPointF p = scaledCoordinates((*wordIt).getTime()+add,(*wordIt).getPitch()+HAUTEUR_NOTE/2);
+            QRectF r(p.x(), p.y(), scaleWidth((*wordIt).getLength()), scaleHeight(HAUTEUR_NOTE));
 
             painter->drawRect(r);
             ++wordIt;
@@ -938,6 +907,7 @@ int ShowSentenceWidget::linearRangeOpacity(int a, int b,int op1,int op2)
 void ShowSentenceWidget::setLyrics(Lyrics * lyrics)
 {
     this->lyrics=lyrics;
+    _selected = WordSelection(lyrics);
 
      _gap = (floor(lyrics->getGap())/1000.0)*lyrics->getBpm()/15.0f;
 
@@ -1001,7 +971,7 @@ void ShowSentenceWidget::setSeekPosition(qreal beat)
         emit autoScroll(hScroll);
     }
 
-    if((!_selected.empty() || _clickAndMoveSelection) && _seekPosition < _floatSelection[1] && beat >= _floatSelection[1])
+    if((!_selected.isEmpty() || _clickAndMoveSelection) && _seekPosition < _floatSelection[1] && beat >= _floatSelection[1])
     {
         stop();
         _seekPosition = _floatSelection[0];
@@ -1021,41 +991,42 @@ void ShowSentenceWidget::setSeekPosition(qreal beat)
 
 }
 
-QList<Word*> * ShowSentenceWidget::getWordsDisplayedPtr()
+QList<Word>&  ShowSentenceWidget::getWordsDisplayedPtr()
 {
     return _wordsDisplayed;
 
 
 
 }
-void ShowSentenceWidget::renderSeparator(QPainter * painter, Word * w)
+void ShowSentenceWidget::renderSeparator(QPainter * painter, const Word & w)
 {
     painter->setPen(QPen(QColor(100,255,100,210)));
     painter->setBrush(QBrush(QColor(100,255,100,210)));
     QRectF rect[3];
 
 
-    qreal middle =  scaledCoordinates((w->getTime1()+w->getTime2())/2.0,0).x();
-    qreal m = max(scaleWidth(w->getLength()+2), 20);
+    qreal middle =  scaledCoordinates((w.getTime1()+w.getTime2())/2.0,0).x();
+    qreal m = max(scaleWidth(w.getLength()+2), 20);
     rect[0] = QRectF(middle-m/2,0, m,15);
 
-    qreal s = max(scaleWidth(w->getLength()/2.0), 8);
+    qreal s = max(scaleWidth(w.getLength()/2.0), 8);
     rect[1] = QRectF(middle - s - 5, 18, s, 15);
 
     rect[2] = QRectF(middle+5, 18, s, 15);
 
+    Word _overSep;
 
     if(!_nextClick && _fMousePosition.x() > rect[0].left() - 1 &&
             _fMousePosition.x() < rect[0].right() + 1 &&
             _fMousePosition.y() > rect[0].top() &&
             _fMousePosition.y() < rect[0].bottom() &&
-     (!_overSep || (_overSep == w && _overSep->getOver() == 0)) // if it's currently selected
+     (_overSep.isNull() || (_overSep == w && _overSep.getOver() == 0)) // if it's currently selected
      )
     {
         painter->setBrush(QBrush(QColor(255,100,100,210)));
         _hSplitHCursor=true;
         _overSep = w;
-        w->setOver(0);
+        ///FIXME w.setOver(0);
     }
     else
     {
@@ -1069,12 +1040,12 @@ void ShowSentenceWidget::renderSeparator(QPainter * painter, Word * w)
       _fMousePosition.x() < rect[1].right() &&
       _fMousePosition.y() > rect[1].top() &&
       _fMousePosition.y() < rect[1].bottom() + 1 &&
-     (!_overSep || (_overSep == w && _overSep->getOver() & ShowSentenceWidget::OVER_LEFT)) )
+     (_overSep.isNull() || (_overSep == w && _overSep.getOver() & ShowSentenceWidget::OVER_LEFT)) )
     {
         painter->setBrush(QBrush(QColor(255,100,100,210)));
         _hSizeCursor=true;
         _overSep = w;
-        w->setOver(ShowSentenceWidget::OVER_LEFT);
+        ///FIXME w.setOver(ShowSentenceWidget::OVER_LEFT);
     }
     else
     {
@@ -1087,12 +1058,12 @@ void ShowSentenceWidget::renderSeparator(QPainter * painter, Word * w)
             _fMousePosition.x() < rect[2].right() + 1 &&
             _fMousePosition.y() > rect[2].top() &&
             _fMousePosition.y() < rect[2].bottom() &&
-     (!_overSep || (_overSep == w && _overSep->getOver() & ShowSentenceWidget::OVER_RIGHT)))
+     (_overSep.isNull() || (_overSep == w && _overSep.getOver() & ShowSentenceWidget::OVER_RIGHT)))
     {
         painter->setBrush(QBrush(QColor(255,100,100,210)));
         _hSizeCursor=true;
         _overSep = w;
-        w->setOver(ShowSentenceWidget::OVER_RIGHT);
+        ///FIXME  w.setOver(ShowSentenceWidget::OVER_RIGHT);
     }
     else
     {
@@ -1103,36 +1074,21 @@ void ShowSentenceWidget::renderSeparator(QPainter * painter, Word * w)
     painter->drawRect(rect[2]);
 
     painter->setBrush(QBrush(QColor(100,255,100,210)));
-    painter->drawRect(scaledCoordinates(w->getTime1(),0).x(),35,scaleWidth(w->getLength()+0.1),height()-30);
+    painter->drawRect(scaledCoordinates(w.getTime1(),0).x(),35,scaleWidth(w.getLength()+0.1),height()-30);
 
 }
 
 void ShowSentenceWidget::setNormal()
 {
-    Word * w;
-    foreach(w,_selected)
-    {
-        w->setFree(false);
-        w->setGold(false);
-    }
+    _selected.setNormal();
 }
 void ShowSentenceWidget::setGold()
 {
-    Word * w;
-    foreach(w,_selected)
-    {
-        w->setFree(false);
-        w->setGold(true);
-    }
+    _selected.setGold();
 }
 void ShowSentenceWidget::setFree()
 {
-    Word * w;
-    foreach(w,_selected)
-    {
-        w->setFree(true);
-        w->setGold(false);
-    }
+    _selected.setFree();
 }
 void ShowSentenceWidget::fusion()
 {
@@ -1141,35 +1097,8 @@ void ShowSentenceWidget::fusion()
         QMessageBox::warning(this,tr("Attention"),tr("Il faut selectionner au moin deux notes"));
         return;
     }
-    Word * newW = new Word(NULL,0,0,0);
 
-    Word * w;
-
-int fTime = _selected.first()->getTime()
-        , lTime = _selected.first()->getTime() + _selected.first()->getLength()
-        ,fPitch = _selected.first()->getPitch();
-
-    foreach(w,_selected)
-    {
-        newW->setText(newW->getText()+w->getText());
-        if(w->getTime() < fTime)
-        {
-            fTime = w->getTime();
-            fPitch = w->getPitch();
-        }
-        if(w->getTime() + w->getLength() > lTime)
-        {
-            lTime = w->getTime() + w->getLength();
-        }
-        lyrics->removeWord(w);
-        _selected.removeAll(w);
-       delete w;
-
-    }
-    newW->setTime(fTime);
-    newW->setLength(lTime - fTime);
-    newW->setPitch(fPitch);
-    lyrics->addWord(newW);
+    _selected.merge();
 
 #ifndef UPDATE_BY_TIMER
     update();
@@ -1177,39 +1106,38 @@ int fTime = _selected.first()->getTime()
 }
 void ShowSentenceWidget::scinder()
 {
-    if(_selected.count()>1 || _selected.empty())
+    if(_selected.count()>1 || _selected.isEmpty())
     {
         QMessageBox::warning(this,tr("Attention"),tr("Il faut selectionner une seule note"));
         return;
     }
 
-    Word * w =_selected.first();
+    Word w =_selected.first();
 
-    if(w->getLength()<2)
+    if(w.getLength()<2)
     {
         QMessageBox::warning(this,tr("Attention"),tr("La note doit avoir une longueur d'au moin 2"));
         return;
     }
 
-    Word * newW = new Word(w->getParent(),w->getTime()+floor(w->getLength()/2),floor(w->getLength()/2),w->getPitch());
+    Word newW(w.getParent(),w.getTime()+floor(w.getLength()/2),floor(w.getLength()/2),w.getPitch());
 
     QRegExp reg("[, -:!.]");
 
-    QStringList strlist = w->getText().split(reg,QString::SkipEmptyParts);
+    QStringList strlist = w.getText().split(reg,QString::SkipEmptyParts);
 
-    w->setLength(ceil(w->getLength()/2));
+    w.setLength(ceil(w.getLength()/2));
 
     if(strlist.count()<2)
     {
         lyrics->addWord(newW);
-        newW->setText("~");
+        newW.setText("~");
         return;
     }
 
-    //newW->setText(strlist.last());
-    newW->setText(w->getText().section(reg,-2,-1,QString::SectionSkipEmpty | QString::SectionIncludeLeadingSep));
+    newW.setText(w.getText().section(reg,-2,-1,QString::SectionSkipEmpty | QString::SectionIncludeLeadingSep));
 
-    w->setText(w->getText().section(reg,0,-3,QString::SectionSkipEmpty | QString::SectionIncludeLeadingSep));
+    w.setText(w.getText().section(reg,0,-3,QString::SectionSkipEmpty | QString::SectionIncludeLeadingSep));
     lyrics->addWord(newW);
 
 #ifndef UPDATE_BY_TIMER
@@ -1232,12 +1160,7 @@ void ShowSentenceWidget::nextClickAddSeparator()
 
 void ShowSentenceWidget::deleteNotes()
 {
-    foreach(Word *w, _selected)
-    {
-        lyrics->removeWord(w);
-        _selected.removeOne(w);
-        delete w;
-    }
+    _selected.deleteSelectedWords();
 #ifndef UPDATE_BY_TIMER
     update();
 #endif
@@ -1254,20 +1177,20 @@ void ShowSentenceWidget::setPreviousDisplayed(int n)
 
 void ShowSentenceWidget::calquer()
 {
-    if(_selected.empty()) { return; }
+    if(_selected.isEmpty()) { return; }
 
-    Word * firstWord = _selected.first();
-    QList<Word*>::const_iterator firstSentenceWordIt = lyrics->words().constEnd();
-    QList<Word*> originSentence;
-    QList<Word*> destinationSentence;
+    Word firstWord = _selected.first();
+    auto  firstSentenceWordIt = lyrics->words().constEnd();
+    QList<Word> originSentence;
+    QList<Word> destinationSentence;
 
-    QList<Word*>::const_iterator wordIt = lyrics->words().constBegin() + lyrics->words().indexOf(firstWord);
+    auto wordIt = lyrics->find(firstWord);
     // ignore _previousDisplay separator to find the origin sentence
     int nbSkip = _previousDisplayed + 1;
     while(nbSkip > 0 && wordIt != lyrics->words().constBegin())
     {
         --wordIt;
-        while(wordIt != lyrics->words().constBegin() && !(*wordIt)->isSeparator())
+        while(wordIt != lyrics->words().constBegin() && !(*wordIt).isSeparator())
             --wordIt;
         if(firstSentenceWordIt == lyrics->words().constEnd())
         {
@@ -1279,7 +1202,7 @@ void ShowSentenceWidget::calquer()
     {
         return;
     }
-    if(!(*wordIt)->isSeparator())
+    if(!(*wordIt).isSeparator())
     {
         wordIt = lyrics->words().constBegin();
     }
@@ -1287,13 +1210,13 @@ void ShowSentenceWidget::calquer()
     {
         ++wordIt;
     }
-    if((*wordIt)->isSeparator())
+    if((*wordIt).isSeparator())
     {
         return;
     }
 
     // fill originSentence with the words of the sentence we want to match
-    while(wordIt != lyrics->words().constEnd() && !(*wordIt)->isSeparator())
+    while(wordIt != lyrics->words().constEnd() && !(*wordIt).isSeparator())
     {
         originSentence << *wordIt;
         ++wordIt;
@@ -1305,14 +1228,14 @@ void ShowSentenceWidget::calquer()
 
 
     // time to add to the time of the word we want to match.
-    int add = (*firstSentenceWordIt)->getTime() - originSentence.first()->getTime();
+    int add = (*firstSentenceWordIt).getTime() - originSentence.first().getTime();
 
     wordIt = firstSentenceWordIt;
     // fill destinationSentence with the words of the sentence we want to replace
     while(wordIt != lyrics->words().constEnd()
-          && !(*wordIt)->isSeparator()
+          && !(*wordIt).isSeparator()
           && (destinationSentence.size() < originSentence.size()
-              || (*wordIt)->getTime() < originSentence.last()->getTime() + add))
+              || (*wordIt).getTime() < originSentence.last().getTime() + add))
     {
         destinationSentence << *wordIt;
         ++wordIt;
@@ -1323,29 +1246,29 @@ void ShowSentenceWidget::calquer()
     }
 
     // the maximum possible time is time of the next separator (or a dummy value if it is the last sentence)
-    int maxAllowedTime = lyrics->words().last()->getTime() + add;
+    int maxAllowedTime = lyrics->words().last().getTime() + add;
     if(wordIt != lyrics->words().constEnd())
     {
-        maxAllowedTime = (*wordIt)->getTime();
+        maxAllowedTime = (*wordIt).getTime();
     }
 
 
 
-    QList<Word*> wordAdded;
-    foreach(Word * w, originSentence) // create a new word for each word in the origin sentence
+    QList<Word> wordAdded;
+    foreach(const Word & w, originSentence) // create a new word for each word in the origin sentence
     {
-        if( w->getTime() + add < maxAllowedTime)
+        if( w.getTime() + add < maxAllowedTime)
         {
-            Word * newWord = new Word(0, w->getTime()+add, w->getLength(), w->getPitch());
-            newWord->setText("~");
+            Word newWord(0, w.getTime()+add, w.getLength(), w.getPitch());
+            newWord.setText("~");
             wordAdded << newWord;
         }
     }
 
-    QList<Word*> wordRemoved;
-    foreach(Word *w, destinationSentence)
+    QList<Word> wordRemoved;
+    foreach(const Word &w, destinationSentence)
     {
-        if(w->getTime() < maxAllowedTime)
+        if(w.getTime() < maxAllowedTime)
         {
             wordRemoved << w;
         }
@@ -1356,7 +1279,7 @@ void ShowSentenceWidget::calquer()
     {
         for(int i=0;i<wordAdded.count();++i)
         {
-            wordAdded.at(i)->setText(wordRemoved.at(i)->getText());
+            wordAdded[i].setText(wordRemoved.at(i).getText());
         }
     }
     else
@@ -1364,7 +1287,7 @@ void ShowSentenceWidget::calquer()
     {
         for(int i=0;i<wordRemoved.count();++i)
         {
-            wordAdded.at(i)->setText(wordRemoved.at(i)->getText());
+            wordAdded[i].setText(wordRemoved.at(i).getText());
         }
 
     }
@@ -1372,21 +1295,20 @@ void ShowSentenceWidget::calquer()
     {
         for(int i=0;i<wordAdded.count();++i)
         {
-            wordAdded.at(i)->setText(wordRemoved.at(i)->getText());
+            wordAdded[i].setText(wordRemoved.at(i).getText());
         }
         for(int i=wordAdded.count();i<wordRemoved.count();++i)
         {
-            wordAdded.back()->setText(wordAdded.back()->getText()+wordRemoved.at(i)->getText());
+            wordAdded.back().setText(wordAdded.back().getText()+wordRemoved.at(i).getText());
         }
 
     }
 
-    foreach(Word*w,wordRemoved)
+    foreach(const Word &w,wordRemoved)
     {
         lyrics->removeWord(w);
-        delete w;
     }
-    foreach(Word*w,wordAdded)
+    foreach(const Word &w,wordAdded)
     {
         lyrics->addWord(w);
     }
@@ -1396,13 +1318,6 @@ void ShowSentenceWidget::calquer()
     update();
 #endif
 }
-void ShowSentenceWidget::sortSelected()
-{
-    if(_selected.empty()) return;
-
-    qSort(_selected.begin(),_selected.end(),Word::wordLessThanPtr);
-}
-
 
 
 

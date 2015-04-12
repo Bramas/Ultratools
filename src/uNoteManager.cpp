@@ -105,7 +105,7 @@ void UNoteManager::setupAudio(QObject * /*parent*/)
 
 }
 
-void UNoteManager::play(Word * w)
+void UNoteManager::play(const Word & w)
 {
     _isPlaying = true;
     //QMessageBox::information(NULL,"","LOL");
@@ -113,15 +113,15 @@ void UNoteManager::play(Word * w)
 
     _played.push_back(w);
 
-    //QMessageBox::information(NULL,"",QString::number(pitchToNote(w->getPitch())));
-  // _violonList.value(pitchToNote(w->getPitch()))->play();
+    //QMessageBox::information(NULL,"",QString::number(pitchToNote(w.getPitch())));
+  // _violonList.value(pitchToNote(w.getPitch()))->play();
 
     FMOD_BOOL rep;
-    FMOD_Channel_GetPaused(_channels[pitchToNote(w->getPitch())], &rep);
+    FMOD_Channel_GetPaused(_channels[pitchToNote(w.getPitch())], &rep);
     if(rep)
     {
-        FMOD_Channel_SetPaused(_channels[pitchToNote(w->getPitch())],false);
-        //qDebug()<<"play "<<pitchToNote(w->getPitch());
+        FMOD_Channel_SetPaused(_channels[pitchToNote(w.getPitch())],false);
+        //qDebug()<<"play "<<pitchToNote(w.getPitch());
     }
 
 
@@ -143,9 +143,9 @@ int UNoteManager::pitchToNote(int note)
 
 bool UNoteManager::checkPitch(int p)
 {
-    foreach(Word * w,_played)
+    foreach(const Word & w,_played)
     {
-        if(w->getPitch()==p)
+        if(w.getPitch()==p)
         {
             return true;
         }
@@ -167,21 +167,21 @@ void UNoteManager::tick(quint64 time)
 
     double temp = (((time-floor(_lyrics->getGap()))/1000.0) * _lyrics->getBpm()/15.0f);
 
-    foreach(Word * w, _played)
+    foreach(const Word & w, _played)
     {
-        if( temp  > w->getTime() + w->getLength() + 0.5 || temp < w->getTime() - 0.2)
+        if( temp  > w.getTime() + w.getLength() + 0.5 || temp < w.getTime() - 0.2)
         {
             _played.removeOne(w);
-            if(!checkPitch(w->getPitch()))
+            if(!checkPitch(w.getPitch()))
             {
                 FMOD_BOOL rep;
-                FMOD_Channel_GetPaused(_channels[pitchToNote(w->getPitch())], &rep);
+                FMOD_Channel_GetPaused(_channels[pitchToNote(w.getPitch())], &rep);
                 if(!rep)
                 {
-                    FMOD_Channel_SetPaused(_channels[pitchToNote(w->getPitch())],true);
-                    //qDebug()<<"stop "<<pitchToNote(w->getPitch());
+                    FMOD_Channel_SetPaused(_channels[pitchToNote(w.getPitch())],true);
+                    //qDebug()<<"stop "<<pitchToNote(w.getPitch());
                 }
-                FMOD_Channel_SetPosition(_channels[pitchToNote(w->getPitch())],0,FMOD_TIMEUNIT_MS);
+                FMOD_Channel_SetPosition(_channels[pitchToNote(w.getPitch())],0,FMOD_TIMEUNIT_MS);
             }
 
         }
@@ -209,9 +209,9 @@ void UNoteManager::play()
     
     if(!_played.empty())
     {
-        foreach(Word * w, _played)
+        foreach(const Word & w, _played)
         {
-                FMOD_Channel_SetPaused(_channels[pitchToNote(w->getPitch())],false);
+                FMOD_Channel_SetPaused(_channels[pitchToNote(w.getPitch())],false);
 
         }
     }

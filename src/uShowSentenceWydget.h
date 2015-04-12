@@ -18,9 +18,12 @@
 
 
 #include <QTime>
- #include <QTimer>
+#include <QTimer>
+#include <QSet>
 
 #include "uShowLines.h"
+#include "uWord.h"
+#include "wordselection.h"
 
 double min(double a,double b);
 double max(double a,double b);
@@ -81,7 +84,7 @@ public:
     ~ShowSentenceWidget();
     void renderLyrics(QPainter * painter);
     void renderPreviousSentence(QPainter * painter);
-    bool renderWord(QPainter * painter, Word * w);
+    bool renderWord(QPainter * painter, const Word &w, int octave);
     void setLyrics(Lyrics * lyrics);
     Lyrics * getLyrics() { return lyrics; }
     void updateGap(void);
@@ -90,7 +93,7 @@ public:
     int getMaximumHScroll();
     int getMaximumVScroll();
 
-    QList<Word*> * getWordsDisplayedPtr(void);
+    QList<Word> &getWordsDisplayedPtr(void);
 
     void deselect();
 
@@ -100,18 +103,17 @@ public:
 
 protected:
 
-    void sortSelected(void);
 
     quint8 _nextClick;
 
     quint8 _previousDisplayed;
 
-    void renderSeparator(QPainter * painter, Word * w);
+    void renderSeparator(QPainter * painter, const Word &w);
     bool _mousePressed, _isPlaying;
     float _gap;
     qreal _seekPosition;
 
-    QList<Word*> * _wordsDisplayed;
+    QList<Word> _wordsDisplayed;
     void mouseMoveEvent ( QMouseEvent * event );
     void mousePressEvent ( QMouseEvent * event );
     void mouseReleaseEvent ( QMouseEvent * event );
@@ -125,10 +127,8 @@ protected:
     int hScroll;
     int vScroll;
 
-    QList<Word*> _selected;
-
-    Word * _overed;
-    Word * _overSep;
+    WordSelection _selected;
+    Word _overed;
 
     QPointF _fPointPress;
     QPointF _fMousePosition;
@@ -161,7 +161,6 @@ protected:
     QTime time;
     Lyrics * lyrics;
 
-    //QList<Word*> words;
 
     quint16 realVStartView;
     quint16 realVEndView;

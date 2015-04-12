@@ -31,19 +31,6 @@ Lyrics::Lyrics(QWidget * parent)
     _gap=0;
 
     _modified=false;
-
-    //sentences.push_back();
-
-     /*     Phonon::MediaObject *music;// =  Phonon::createPlayer(Phonon::MusicCategory,Phonon::MediaSource("songs/arkol - vingt ans/01-anthem park two.mp3"));
-    //music->play();
-
-*/
-  //   Phonon::MediaObject *mediaObject = new Phonon::MediaObject(parent);
-   /*  mediaObject->setCurrentSource(Phonon::MediaSource("songs/arkol - vingt ans/01-anthem park two.mp3"));
-     Phonon::AudioOutput *audioOutput =
-         new Phonon::AudioOutput(Phonon::MusicCategory, this);
-     Phonon::Path path = Phonon::createPath(mediaObject, audioOutput);*/
-
 }
 
 void Lyrics::parseLine(QString &line)
@@ -55,7 +42,7 @@ void Lyrics::parseLine(QString &line)
         return;
     }
 
-    Word * word = 0;
+    Word word;
     if(typeChar == '-') // it's a separator
     {
         int time1, time2 = 0;
@@ -65,8 +52,7 @@ void Lyrics::parseLine(QString &line)
         {
             time2 -= time1;
         }
-        //qDebug()<<line<<" sep : "<<time1<<" "<<time2;
-        word = new Word(this,time1, time2, 0, Word::Separator);
+        word = Word(this,time1, time2, 0, Word::Separator);
 
     }else
     {
@@ -80,14 +66,13 @@ void Lyrics::parseLine(QString &line)
                                (typeChar == 'F' ?
                                     Word::Free :
                                     Word::Normal));
-        word = new Word(this,time, length, pitch, type);
-        //qDebug()<<line<<" word : "<<time<<length<<pitch<<type;
+        word = Word(this,time, length, pitch, type);
         QString text = in.readLine();
-        word->setText(text);
+        word.setText(text);
     }
-    _words.push_back(word);
-    if(_words.back()->getPitch() < pitchMin) pitchMin=_words.back()->getPitch();
-    if(_words.back()->getPitch() > pitchMax) pitchMax=_words.back()->getPitch();
+    this->addWord(word);
+    if(word.getPitch() < pitchMin) pitchMin=word.getPitch();
+    if(word.getPitch() > pitchMax) pitchMax=word.getPitch();
     this->setModified(false);
 }
 
@@ -99,7 +84,6 @@ void Lyrics::parseCode(QString &code)
     {
         parseLine(line);
     }
-    sortAll();
 }
 
 int Lyrics::getPitchMax()
@@ -111,100 +95,12 @@ int Lyrics::getPitchMin()
     return pitchMin;
 }
 
-void Lyrics::moveLeft(Word *from)
-{
-
-    bool trouve = false;
-    Word * w;
-    Word * wBefore=NULL;
-
-    foreach(w,_words)
-    {
-        if(w->isSeparator()) continue;
-        if(trouve)
-        {
-            wBefore->setText(w->getText());
-            w->setText("");
-        }
-
-        if(!trouve && wBefore && wBefore->equal(*from))
-        {
-            wBefore->setText(wBefore->getText()+w->getText());
-            trouve=true;
-        }
-
-        wBefore=w;
-    }
-    modified("moveLeft");
 
 
-}
-
-
-Word * Lyrics::moveRight(Word *from, int indexIWant)
-{
-
-
-    Word * ret = from;
-    bool trouve = false;
-    Word * w = 0;
-    Word * wBefore=NULL;
-
-    QString temp="", temp2="";
-
-    int i=0;
-
-    qDebug()<<"Move Left : "<<_words.count();
-    foreach(w,_words)
-    {
-        if(w->isSeparator()) continue;
-        if(trouve)
-        {
-            temp2=w->getText();
-            w->setText(temp);
-
-            temp = temp2;
-
-            if(++i == indexIWant)
-            {
-                ret = w;
-            }
-            //qDebug()<<"- "<<wBefore->getText();
-        }
-
-        if(!trouve && wBefore && wBefore->equal(*from))
-        {
-            temp = w->getText();
-            w->setText(wBefore->getText());
-
-            trouve=true;
-            //qDebug()<<"FIRST : "<<wBefore->getText();
-
-            if(indexIWant == 1)
-            {
-                ret = w;
-            }
-            ++i;
-        }
-
-        wBefore=w;
-    }
-
-    if(w && temp.compare("")) // !=""
-    {
-        w->setText(w->getText()+temp);
-    }
-
-    modified("moveRight");
-    return ret;
-
-
-}
-
-QList<Word*> * Lyrics::separatorsOfWords(QList<Word *> * list) const
+QList<Word> Lyrics::separatorsOfWords(const QList<Word> &list) const
 {
     Q_UNUSED(list);
-    QList<Word*> * sep= new QList<Word*>();
+    QList<Word> sep;
     return sep;
     /** FIXME */
     /*Word* w;
@@ -225,26 +121,25 @@ QList<Word*> * Lyrics::separatorsOfWords(QList<Word *> * list) const
     return sep;
 
 }
-QList<Word*> Lyrics::sentencesOfWord(Word *w) const
+QList<Word> Lyrics::sentencesOfWord(const Word &w) const
 {
-    Q_UNUSED(w);
-    QList<Word*> sentence;
+    QList<Word> sentence;
 
-    QList<Word*>::const_iterator wordIt = this->words().constBegin() + this->words().indexOf(w);
+    auto wordIt = this->words().find(w.getTime(), w);
 
-    while(wordIt != this->words().constBegin() && !(*wordIt)->isSeparator())
+    while(wordIt != this->words().constBegin() && !(*wordIt).isSeparator())
         --wordIt;
 
-    if(!(*wordIt)->isSeparator())
+    if(!(*wordIt).isSeparator())
     {
         wordIt = this->words().constBegin();
     }
-    if((*wordIt)->isSeparator())
+    if((*wordIt).isSeparator())
     {
         ++wordIt;
     }
 
-    while(wordIt != this->words().constEnd() && !(*wordIt)->isSeparator())
+    while(wordIt != this->words().constEnd() && !(*wordIt).isSeparator())
     {
         sentence << (*wordIt);
         ++wordIt;
@@ -253,59 +148,30 @@ QList<Word*> Lyrics::sentencesOfWord(Word *w) const
     return sentence;
 
 }
-void Lyrics::resortWord(Word *wdr)
+
+Word Lyrics::addSeparator(int time)
 {
-    if(_words.count()<2) { return; }
-
-    _words.removeOne(wdr);
-    addWord(wdr);
-}
-
-
-Word *  Lyrics::addSeparator(int time)
-{
-    Word * sep = new Word(this, time, 0, 0, Word::Separator);
+    Word sep(this, time, 0, 0, Word::Separator);
     addWord(sep);
     return sep;
 }
 
-void Lyrics::removeWord(Word *w)
+QMap<int, Word>::const_iterator Lyrics::find(const Word &w)
 {
-    _words.removeOne(w);
+    return _words.find(w.getTime(), w);
+}
+
+void Lyrics::removeWord(const Word &w)
+{
+    _words.remove(w.getTime(), w);
     modified("removeWord");
 }
-void Lyrics::addWord(Word *ws)
+void Lyrics::addWord(const Word &w)
 {
-    QList<Word*>::iterator it = _words.begin();
-
-    while(it != _words.end())
-    {
-        if((*it)->getTime() > ws->getTime() ||
-	   ((*it)->getTime() == ws->getTime() && ws->isSeparator()))
-        {
-            if((*it)->isSeparator() && ws->isSeparator())
-            {
-                return;
-            }
-            if(it != _words.begin() && (*(it - 1))->isSeparator() && ws->isSeparator())
-            {
-                return;
-            }
-            break;
-        }
-        ++it;
-    }
-    _words.insert(it, ws);
+    _words.insert(w.getTime(), w);
     modified("addWord");
 }
 
-void Lyrics::sortAll()
-{
-    if(_words.empty()) return;
-
-    qSort(_words.begin(),_words.end(),Word::wordLessThanPtr);
-    modified("sortAll");
-}
 
 void Lyrics::doublePresicion()
 {
@@ -314,10 +180,10 @@ void Lyrics::doublePresicion()
         return;
     }
 
-    foreach(Word *w,_words)
+    for(Word & w: _words)
     {
-        w->setTime(w->getTime()*2);
-        w->setLength(w->getLength()*2);
+        w.setTime(w.getTime()*2);
+        w.setLength(w.getLength()*2);
     }
 
     modified("doublePresicion");
@@ -331,15 +197,15 @@ bool Lyrics::setDelay(int delay, quint64 from)
         temp = (((from-qFloor(this->getGap()))/1000.0) * this->getBpm()/15.0f);
 
 
-    Word * last=NULL;
+    Word last;
     // check only if the delay is negative
     bool firstWordChecked=(delay>=0);
-    foreach(Word * w, words())
+    for(Word & w: words())
     {
-        if( temp  <= w->getTime() && !firstWordChecked)
+        if( temp  <= w.getTime() && !firstWordChecked)
         {
-            if(w->getTime() + delay < 0 ||
-               (last && w->getTime() + delay < last->getTime() + last->getLength()))
+            if( w.getTime() + delay < 0 ||
+               (!last.isNull() && w.getTime() + delay < last.getTime() + last.getLength()))
             {
                 return false;
             }
@@ -347,11 +213,11 @@ bool Lyrics::setDelay(int delay, quint64 from)
             {
                 firstWordChecked=true;
             }
-            w->setTime(w->getTime()+delay);
+            w.setTime( w.getTime()+delay);
         }
-        else if( temp  <= w->getTime() )
+        else if( temp  <= w.getTime() )
         {
-            w->setTime(w->getTime()+delay);
+            w.setTime(w.getTime()+delay);
         }
         else
         {

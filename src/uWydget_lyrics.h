@@ -21,7 +21,6 @@
 #include <QPlainTextEdit>
 
 class ShowSentenceWidget;
-class Word;
 
 #include "uWydget_timeline.h"
 

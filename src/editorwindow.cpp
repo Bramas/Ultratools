@@ -333,11 +333,9 @@ void UEditorWindow::adaptNewFile()
     {
         return;
     }
-    showSentenceWidget->setVScroll((255-_currentFile->lyrics->words().at(0)->getPitch())*2);
 
     ui->hScroll->setMaximum(_currentFile->getMax()+_currentFile->lyrics->timeToBeat(_currentFile->lyrics->getGap()));
 
-    ui->vScroll->setValue((255-_currentFile->lyrics->words().at(0)->getPitch()));
 
     UNoteManager::Instance.setMaxPitch(_currentFile->lyrics->getPitchMax());
 
@@ -566,15 +564,13 @@ void UEditorWindow::tick(quint64 time)
 if(_currentFile->lyrics->words().empty()) return;
 
 
-  Word * w = NULL;
-
   //qDebug()<<time<<" : s :"<<_currentFile->beatToMsc(_currentFile->lyrics->getSentences()->first()->getSepAfter()->getTime2())<< "Sentence commençant par "<<s->getWords()->first()->getWord();
 
   if(UNoteManager::Instance.isPlaying())
-  foreach(w,_currentFile->lyrics->words())
+  foreach(const Word & w,_currentFile->lyrics->words())
   {
-        if(!w->isSeparator() && _currentFile->lyrics->beatToMsc(w->getTime())-20<=time
-           && _currentFile->lyrics->beatToMsc(w->getTime()+w->getLength())>time
+        if(!w.isSeparator() && _currentFile->lyrics->beatToMsc(w.getTime())-20<=time
+           && _currentFile->lyrics->beatToMsc(w.getTime()+w.getLength())>time
            )
         {
 

@@ -17,6 +17,7 @@
 #define UMIDIMANAGER_H
 
 #include "uAudioManager.h"
+#include "uWord.h"
 class Lyrics;
 
 class UNoteManager : public QObject
@@ -33,7 +34,7 @@ public slots:
 public:
     void setMaxPitch(int in) { _maxPitch = in; }
 
-    void play(Word * w);
+    void play(const Word & w);
 
     bool isPlaying() { return _isPlaying; }
 
@@ -65,7 +66,7 @@ protected:
 
     QMap<int,FMOD_CHANNEL *> _channels;
 
-    QList<Word*> _played;
+    QList<Word> _played;
 
 
 public:

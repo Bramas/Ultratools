@@ -116,7 +116,7 @@ if(QFile::exists(getBAK()))
 
         lyrics->parseCode(sourceCode);
 
-        _hMax = lyrics->words().back()->getTime2() + 10;
+        _hMax = lyrics->words().last().getTime2() + 10;
         extractHead();
         lyrics->setGap(_headGap);
         lyrics->setBpm(_headBpm);
@@ -176,27 +176,27 @@ bool UFile::saveInFile(QString fileName, bool autoSave)
     out<<"#GAP:"<<_headGap<< "\n";
    // out<<"#END:"<<_headEnd<< "\n";
 
-foreach(Word * w,lyrics->words())
+foreach(const Word & w,lyrics->words())
 {
-    if(w->isSeparator())
+    if(w.isSeparator())
     {
-        out<<"- "<<w->getTime1();
-        if(w->getLength())
+        out<<"- "<<w.getTime1();
+        if(w.getLength())
         {
-            out<<" "<<w->getTime2();
+            out<<" "<<w.getTime2();
         }
         out<<"\n";
         continue;
     }
-    if(w->isFree())
+    if(w.isFree())
         out<<"F ";
     else
-    if(w->isGold())
+    if(w.isGold())
         out<<"* ";
     else
         out<<": ";
 
-    out<<w->getTime()<<" "<<w->getLength()<<" "<<w->getPitch()<<" "<<w->getText()<<"\n";
+    out<<w.getTime()<<" "<<w.getLength()<<" "<<w.getPitch()<<" "<<w.getText()<<"\n";
 }
 
 out<<"E\n";
@@ -357,27 +357,27 @@ QString UFile::plainText()
    // plainString+="#END:"+_headEnd+ "\n";
 
 
-foreach(Word * w, lyrics->words())
+foreach(const Word & w, lyrics->words())
 {
-    if(w->isSeparator())
+    if(w.isSeparator())
     {
-        plainString+="- "+QString::number(w->getTime1());
-        if(w->getLength())
+        plainString+="- "+QString::number(w.getTime1());
+        if(w.getLength())
         {
-            plainString+=" "+QString::number(w->getTime2());
+            plainString+=" "+QString::number(w.getTime2());
         }
         plainString+="\n";
         continue;
     }
-    if(w->isFree())
+    if(w.isFree())
         plainString+="F ";
     else
-    if(w->isGold())
+    if(w.isGold())
         plainString+="* ";
     else
         plainString+=": ";
 
-    plainString+=QString::number(w->getTime())+" "+QString::number(w->getLength())+" "+QString::number(w->getPitch())+" "+w->getText()+"\n";
+    plainString+=QString::number(w.getTime())+" "+QString::number(w.getLength())+" "+QString::number(w.getPitch())+" "+w.getText()+"\n";
 }
 
 plainString+="E\n";

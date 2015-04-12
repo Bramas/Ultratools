@@ -34,7 +34,9 @@ SOURCES += main.cpp \
     uRecorder.cpp \
     uDialog_timing.cpp \
     uDialogAbout.cpp \
-    uWidgetSongData.cpp
+    uWidgetSongData.cpp \
+    undocommands.cpp \
+    wordselection.cpp
 HEADERS += editorwindow.h \
     uWord.h \
     uLyrics.h \
@@ -57,7 +59,9 @@ HEADERS += editorwindow.h \
     uRecorder.h \
     uDialog_timing.h \
     uDialogAbout.h \
-    uWidgetSongData.h
+    uWidgetSongData.h \
+    undocommands.h \
+    wordselection.h
 FORMS += editorwindow.ui \
     udialog_fileheader.ui \
     uNewSongForm_Browse.ui \
