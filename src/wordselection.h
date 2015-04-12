@@ -33,6 +33,7 @@ public:
     void setNormal();
     void deleteSelectedWords();
     void merge();
+    void translate(int addTime, int addPitch);
 
 private:
 

@@ -25,7 +25,6 @@ Word::Word(Lyrics * parent, int time, int length, int pitch, Word::Type type)
     _oPitch = _pitch=pitch;
     _octaveOffset = 0;
     _selected = false;
-    _over = 0;
     if(_parent)
     {
         _parent->modified("in the constructor");

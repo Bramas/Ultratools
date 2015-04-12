@@ -84,3 +84,7 @@ int fTime = this->first().getTime()
     _selectedWords.clear();
 
 }
+void WordSelection::translate(int addTime, int addPitch)
+{
+    qDebug()<<"translate "<<addTime<<" "<<addPitch;
+}

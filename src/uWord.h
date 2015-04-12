@@ -69,9 +69,6 @@ public:
 
     void hold(void);
 
-    void setOver(quint8 n) { _over = n; }
-    quint8 getOver(void) const { return _over; }
-
 
     bool equal(const Word& t2) const
     {
@@ -137,7 +134,6 @@ private:
     bool _selected;
     Lyrics * _parent;
 
-    quint8 _over;
     int _oTime;
     int _oPitch;
     int _oLength;

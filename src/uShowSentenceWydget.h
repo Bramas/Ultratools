@@ -109,7 +109,7 @@ protected:
     quint8 _previousDisplayed;
 
     void renderSeparator(QPainter * painter, const Word &w);
-    bool _mousePressed, _isPlaying;
+    bool _mousePressed, _isPlaying, _mousePressdOnSelectedWord;
     float _gap;
     qreal _seekPosition;
 
@@ -129,6 +129,7 @@ protected:
 
     WordSelection _selected;
     Word _overed;
+    quint8 _overType;
 
     QPointF _fPointPress;
     QPointF _fMousePosition;
