@@ -320,22 +320,18 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
     _fMousePosition.setY(event->y());
 
 
+    mouseTime=(_lastBeatDisplayed-_firstBeatDisplayed)*event->x()/(qreal)width()+_firstBeatDisplayed;
+    mousePitch=vScroll+ (vScale)*((qreal)(height()-event->y()))/((qreal)height());
 
-
-
-
-   mouseTime=(_lastBeatDisplayed-_firstBeatDisplayed)*event->x()/(qreal)width()+_firstBeatDisplayed;
-   mousePitch=vScroll+ (vScale)*((qreal)(height()-event->y()))/((qreal)height());
-
-   int diffY = floor(mousePitch) - floor(vScale*(height()-_fPointPress.y())/(qreal)height()+vScroll);
-   int diffX = floor(mouseTime) - floor((_lastBeatDisplayed-_firstBeatDisplayed)*_fPointPress.x()/(qreal)width()+_firstBeatDisplayed);
+    int diffY = floor(mousePitch) - floor(vScale*(height()-_fPointPress.y())/(qreal)height()+vScroll);
+    int diffX = floor(mouseTime) - floor((_lastBeatDisplayed-_firstBeatDisplayed)*_fPointPress.x()/(qreal)width()+_firstBeatDisplayed);
 
    if(_mousePressed && !_isPlaying && (_fMousePosition-_fPointPress).manhattanLength()<10 && _timePress.msecsTo(QTime::currentTime())<500 && !_overed.isNull())
     {
         _clickAndMoveSelection = true;
     }
 
-    if(_mousePressed)// && _overSep)
+    if(_mousePressed /*&& _overSep*/ && false)
     {
 /* //FIXME
         //int diffY = floor(mousePitch) - floor((((-(float)vScale)/10.0))*(((float)_fPointPress.y())/((float)height()))+256-vScroll);
@@ -484,43 +480,31 @@ QPointF ShowSentenceWidget::scaledCoordinates(const QPoint &point)
 void ShowSentenceWidget::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter painter(this);
-     painter.setRenderHint(QPainter::Antialiasing);
-_firstBeatDisplayed = hScroll - _gap;
-_lastBeatDisplayed = hScroll + hScale  - _gap;
+    painter.setRenderHint(QPainter::Antialiasing);
+    _firstBeatDisplayed = hScroll - _gap;
+    _lastBeatDisplayed = hScroll + hScale  - _gap;
 
-_hSplitHCursor=_hSizeCursor=_sizeAllCursor=false;
-
-
-
-int pas=100;
-int opacity=200;
-
-//backgroud Test_______________________
-
-
-if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
-{
-
-
-    painter.setPen(QPen(QColor(0,173,232,170)));
-    painter.setBrush(QBrush(QColor(255,255,255,255)));
-    //painter.drawRect(QRectF(scaledCoordinates(_firstBeatDisplayed,sc),scaledCoordinates(_firstBeatDisplayed+30,sc+30)));
-
-
-}
-
-//____________________
+    _hSplitHCursor=_hSizeCursor=_sizeAllCursor=false;
 
 
 
-     painter.setPen(QPen(QColor(0,0,0,170)));
-     painter.setBrush(QBrush(QColor(0,255,255,255)));
+    int pas=100;
+    int opacity=200;
+
+    //backgroud Test_______________________
 
 
+    if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
+    {
+        painter.setPen(QPen(QColor(0,173,232,170)));
+        painter.setBrush(QBrush(QColor(255,255,255,255)));
+        //painter.drawRect(QRectF(scaledCoordinates(_firstBeatDisplayed,sc),scaledCoordinates(_firstBeatDisplayed+30,sc+30)));
+    }
+
+    //____________________
 
 
      painter.setPen(QPen(QColor(0,173,232,170)));
-
      painter.setBrush(QBrush(QColor(255,255,255,255)));
 
 
@@ -589,13 +573,10 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
 
 
 
-
-
         // THE SELECTION____________________
 
         if(_clickAndMoveSelection || !_selected.isEmpty())
         {
-            //QMessageBox::warning(NULL,"","lol");
             painter.setBrush(QBrush(QColor(0,0,255,60)));
             painter.drawRect(QRectF(scaledCoordinates(_floatSelection[0],0).x(),0,scaleWidth(_floatSelection[1]-_floatSelection[0]), height()));
         }
@@ -624,7 +605,7 @@ if(UInputManager::Instance.isKeyPressed(Qt::Key_S))
 
 
 #ifdef DISPLAY_FPS
-    parent->setWindowTitle(QString::number(time.restart()));
+    parent->setWindowTitle(QString::number(1000/time.restart()));
 #endif
 
 
@@ -702,15 +683,14 @@ bool ShowSentenceWidget::renderWord(QPainter * painter, const Word & w, int octa
     painter->setBrush(QBrush(QColor(0,173,232,170)));
 
     int pitch = -octave*12 + w.getPitch();
-    /*if(!_nextClick && mouseTime>w.getTime() && mouseTime<w.getTime()+w.getLength() &&
+    if(!_nextClick && mouseTime>w.getTime() && mouseTime<w.getTime()+w.getLength() &&
       mousePitch > pitch-1 && mousePitch < pitch + 1)
     {
         painter->setBrush(QBrush(QColor(232,173,0,170)));
         _overed=w;
-
        _sizeAllCursor=true;
-    } ///FIXME (not here)
-    else*/ if(w.isGold())
+    }
+    else if(w.isGold())
     {
         painter->setBrush(QBrush(QColor(255,255,0,210)));
     }
