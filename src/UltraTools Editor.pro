@@ -114,6 +114,7 @@ mac{
     CONFIG += ppc \
         x86
     LIBS += -L/usr/local/lib -lfmodex
+    INCLUDEPATH += /usr/local/include/fmod
     OS_STRING = \\\"'Mac'\\\"
 }
 
