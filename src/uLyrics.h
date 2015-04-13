@@ -81,6 +81,9 @@ public:
 
 
 private:
+
+     Word & wordRef(const Word & w);
+
     QWidget * parent;
     QMultiMap<int, Word> _words;
 

@@ -346,8 +346,8 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
             {
                 if(diffX)
                 {
-                    _selected.expandLeft(-diffX);
-                    _fPointPress += QPointF(diffX*width()/(_lastBeatDisplayed-_firstBeatDisplayed), 0);
+                    int effectiveXMove = -_selected.expandLeft(-diffX);
+                    _fPointPress += QPointF(effectiveXMove*width()/(_lastBeatDisplayed-_firstBeatDisplayed), 0);
                 }
             }
             else
@@ -355,47 +355,16 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
             {
                 if(diffX)
                 {
-                    _selected.expandRight(diffX);
-                    _fPointPress += QPointF(diffX*width()/(_lastBeatDisplayed-_firstBeatDisplayed), 0);
+                    int effectiveXMove = _selected.expandRight(diffX);
+                    _fPointPress += QPointF(effectiveXMove*width()/(_lastBeatDisplayed-_firstBeatDisplayed), 0);
                 }
             }
             else
             {
-                _fPointPress += QPointF(diffX*width()/(_lastBeatDisplayed-_firstBeatDisplayed), -diffY*height()/vScale);
-                _selected.translate(diffX, diffY);
+                 QPoint effectiveMove = _selected.translate(diffX, diffY);
+                _fPointPress += QPointF(effectiveMove.x()*width()/(_lastBeatDisplayed-_firstBeatDisplayed), -effectiveMove.y()*height()/vScale);
             }
         }
-
-/*
-        if(_overSep.getOver() & ShowSentenceWidget::OVER_LEFT)
-        {
-            if(_overSep->getOLength()-diffX>0)
-            {
-                _overSep->setLength(_overSep->getOLength()-diffX,false);
-                _overSep->setTime(_overSep->getOTime()+diffX,false);
-            }
-            else
-            {
-                _overSep->setLength(0,false);
-                _overSep->setTime(_overSep->getOTime()+_overSep->getOLength(),false);
-            }
-        }
-        else
-        if(_overSep->getOver() & ShowSentenceWidget::OVER_RIGHT)
-        {
-            if(_overSep->getOLength()+diffX>0)
-            {
-                _overSep->setLength(_overSep->getOLength()+diffX,false);
-            }
-            else
-            {
-                _overSep->setLength(0,false);
-            }
-        }
-        else
-        {
-            _overSep->setTime(_overSep->getOTime()+diffX,false);
-        }*/
     }
     else
     if(_mousePressed && _clickAndMoveSelection)

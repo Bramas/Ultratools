@@ -190,6 +190,11 @@ void Lyrics::doublePresicion()
 }
 
 
+Word & Lyrics::wordRef(const Word &w)
+{
+    return _words.find(w.getTime(), w).value();
+}
+
 bool Lyrics::setDelay(int delay, quint64 from)
 {
     double temp = 0;

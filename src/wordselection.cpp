@@ -29,22 +29,68 @@ void WordSelection::remove(const Word & word)
 {
     _selectedWords.remove(word);
 }
-void WordSelection::setGold()
+
+
+void WordSelection::insertAndSelect(const Word &w)
 {
 
+}
+
+// not optimized function but so much clearer for the next functions
+QMap<Word, int> WordSelection::takeSelectedWords()
+{
+    QMap<Word, int> oldWords = _selectedWords;
+    _selectedWords.clear();
+    return oldWords;
+}
+
+
+void WordSelection::setGold()
+{
+    foreach(const Word &w, takeSelectedWords().keys())
+    {
+        if(!w.isSeparator())
+        {
+            Word nw = w;
+            nw.setGold();
+            _lyrics->wordRef(w) = nw;
+            _selectedWords.insert(nw, nw.getTime());
+        }
+    }
 }
 void WordSelection::setFree()
 {
-
+    foreach(const Word &w, takeSelectedWords().keys())
+    {
+        if(!w.isSeparator())
+        {
+            Word nw = w;
+            nw.setFree();
+            _lyrics->wordRef(w) = nw;
+            _selectedWords.insert(nw, nw.getTime());
+        }
+    }
 }
 void WordSelection::setNormal()
 {
-
+    foreach(const Word &w, takeSelectedWords().keys())
+    {
+        if(!w.isSeparator())
+        {
+            Word nw = w;
+            nw.setNormal();
+            _lyrics->wordRef(w) = nw;
+            _selectedWords.insert(nw, nw.getTime());
+        }
+    }
 }
 
 void WordSelection::deleteSelectedWords()
 {
-
+    foreach(const Word &w, takeSelectedWords().keys())
+    {
+        _lyrics->removeWord(w);
+    }
 }
 
 
@@ -84,15 +130,65 @@ int fTime = this->first().getTime()
     _selectedWords.clear();
 
 }
-void WordSelection::translate(int addTime, int addPitch)
+QPoint WordSelection::translate(int addTime, int addPitch)
 {
+    if(_selectedWords.size() == 0)
+    {
+        return QPoint(0,0);
+    }
     qDebug()<<"translate "<<addTime<<" "<<addPitch;
+    foreach(const Word & w, takeSelectedWords().keys())
+    {
+        _lyrics->removeWord(w);
+        Word newWord = w;
+        newWord.setPitch(w.getPitch() + addPitch);
+        newWord.setTime(w.getTime() + addTime);
+        _lyrics->addWord(newWord);
+        _selectedWords.insert(newWord, newWord.getTime());
+    }
+    return QPoint(addTime, addPitch);
 }
-void WordSelection::expandRight(int add)
+int WordSelection::expandRight(int add)
 {
+    if(_selectedWords.size() != 1)
+    {
+        return 0;
+    }
+    Word w = _selectedWords.firstKey();
+    int minLength = (w.isSeparator() ? 0 : 1);
+    add = std::max(add, minLength - w.getLength());
+    if(add == 0)
+    {
+        return 0;
+    }
+    _lyrics->removeWord(w);
+    w.setLength(w.getLength() + add);
+    _selectedWords.clear();
+    _lyrics->addWord(w);
+    _selectedWords.insert(w, w.getTime());
     qDebug()<<"expandRight "<<add;
+    return add;
 }
-void WordSelection::expandLeft(int add)
+int WordSelection::expandLeft(int add)
 {
+    if(_selectedWords.size() != 1)
+    {
+        return 0;
+    }
+    Word w = _selectedWords.firstKey();
+    int minLength = (w.isSeparator() ? 0 : 1);
+    add = std::max(add, minLength - w.getLength());
+    add = std::min(add, w.getTime());
+    if(add == 0)
+    {
+        return 0;
+    }
+    _lyrics->removeWord(w);
+    w.setTime(w.getTime() - add);
+    w.setLength(w.getLength() + add);
+    _selectedWords.clear();
+    _lyrics->addWord(w);
+    _selectedWords.insert(w, w.getTime());
     qDebug()<<"expandLeft "<<add;
+    return add;
 }

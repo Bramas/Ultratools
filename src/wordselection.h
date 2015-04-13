@@ -2,6 +2,7 @@
 #define WORDSELECTION_H
 
 #include <QMap>
+#include <QPoint>
 #include "uWord.h"
 class Lyrics;
 
@@ -33,12 +34,14 @@ public:
     void setNormal();
     void deleteSelectedWords();
     void merge();
-    void translate(int addTime, int addPitch);
-    void expandLeft(int add);
-    void expandRight(int add);
+    QPoint translate(int addTime, int addPitch);
+    int expandLeft(int add);
+    int expandRight(int add);
 
 private:
 
+    void insertAndSelect(const Word & w);
+    QMap<Word, int> takeSelectedWords();
     Lyrics * _lyrics;
     QMap<Word, int> _selectedWords;
 

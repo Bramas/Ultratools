@@ -88,16 +88,22 @@ void Word::setOctaveOffset(int newOctave, bool definitly)
     _octaveOffset = newOctave;
 }
 
-void Word::setGold(bool newGold)
+void Word::setGold()
 {
-    if(_parent) _parent->modified("setGold()");
-    _type = (Word::Type)(newGold ? _type | Word::Gold : _type & ~Word::Gold);
+    Q_ASSERT_X(_type != Word::Separator, "setting a separator gold", "a separator has immutable type");
+    _type = Word::Gold;
 }
-void Word::setFree(bool in)
+void Word::setFree()
 {
-    if(_parent) _parent->modified("setFree()");
-    _type = (Word::Type)(in ? _type | Word::Free : _type & ~Word::Free);
+    Q_ASSERT_X(_type != Word::Separator, "setting a separator free", "a separator has immutable type");
+    _type = Word::Free;
 }
+void Word::setNormal()
+{
+    Q_ASSERT_X(_type != Word::Separator, "setting a separator normal", "a separator has immutable type");
+    _type = Word::Normal;
+}
+
 void Word::hold(void) {
     if(_parent)
     {
