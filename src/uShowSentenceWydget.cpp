@@ -85,7 +85,7 @@ _previousDisplayed=2;
      timer->start();
 #endif
 
-
+    _overType = _overTypeOnMousePressed = 0;
      _mousePressed = _isPlaying = _clickAndMoveSelection = false;
 
      _fPointPress=QPointF(0.0,0.0);
@@ -123,6 +123,7 @@ void ShowSentenceWidget::mousePressEvent(QMouseEvent *event)
     _timePress = QTime::currentTime();
     _mousePressed = true;
     _mousePressdOnSelectedWord = !_overed.isNull();
+    _overTypeOnMousePressed = _overType;
 
     if(_nextClick)
     {
@@ -339,11 +340,30 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
 
     if(_mousePressed && _mousePressdOnSelectedWord)
     {
-        //int diffY = floor(mousePitch) - floor((((-(float)vScale)/10.0))*(((float)_fPointPress.y())/((float)height()))+256-vScroll);
         if(diffX != 0 || diffY != 0)
         {
-            _fPointPress += QPointF(diffX*width()/(_lastBeatDisplayed-_firstBeatDisplayed), -diffY*height()/vScale);
-            _selected.translate(diffX, diffY);
+            if(_selected.count() == 1 && _overTypeOnMousePressed == ShowSentenceWidget::OVER_LEFT)
+            {
+                if(diffX)
+                {
+                    _selected.expandLeft(-diffX);
+                    _fPointPress += QPointF(diffX*width()/(_lastBeatDisplayed-_firstBeatDisplayed), 0);
+                }
+            }
+            else
+            if(_selected.count() == 1 && _overTypeOnMousePressed == ShowSentenceWidget::OVER_RIGHT)
+            {
+                if(diffX)
+                {
+                    _selected.expandRight(diffX);
+                    _fPointPress += QPointF(diffX*width()/(_lastBeatDisplayed-_firstBeatDisplayed), 0);
+                }
+            }
+            else
+            {
+                _fPointPress += QPointF(diffX*width()/(_lastBeatDisplayed-_firstBeatDisplayed), -diffY*height()/vScale);
+                _selected.translate(diffX, diffY);
+            }
         }
 
 /*

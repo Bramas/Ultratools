@@ -34,6 +34,8 @@ public:
     void deleteSelectedWords();
     void merge();
     void translate(int addTime, int addPitch);
+    void expandLeft(int add);
+    void expandRight(int add);
 
 private:
 

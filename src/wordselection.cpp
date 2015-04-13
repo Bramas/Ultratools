@@ -88,3 +88,11 @@ void WordSelection::translate(int addTime, int addPitch)
 {
     qDebug()<<"translate "<<addTime<<" "<<addPitch;
 }
+void WordSelection::expandRight(int add)
+{
+    qDebug()<<"expandRight "<<add;
+}
+void WordSelection::expandLeft(int add)
+{
+    qDebug()<<"expandLeft "<<add;
+}

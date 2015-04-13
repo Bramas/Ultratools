@@ -129,7 +129,7 @@ protected:
 
     WordSelection _selected;
     Word _overed;
-    quint8 _overType;
+    quint8 _overType, _overTypeOnMousePressed;
 
     QPointF _fPointPress;
     QPointF _fMousePosition;
