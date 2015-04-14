@@ -340,7 +340,7 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
             }
             else
             {
-                 QPoint effectiveMove = _selected.translate(diffX, diffY);
+                 QPoint effectiveMove = _selected.translate(_timeLocked ? 0 : diffX, diffY);
                 _fPointPress += QPointF(effectiveMove.x()*width()/(_lastBeatDisplayed-_firstBeatDisplayed), -effectiveMove.y()*height()/vScale);
             }
         }
@@ -570,7 +570,7 @@ void ShowSentenceWidget::renderLyrics(QPainter * painter)
         return;
 
     int octaveMax, octaveMin;
-    octaveMin = octaveMax = lyrics->words().first().getPitch()/12;
+    octaveMin = octaveMax = floor(lyrics->words().first().getPitch()/12.0);
 
     auto wordIt = lyrics->words().constBegin();
 
@@ -593,8 +593,8 @@ void ShowSentenceWidget::renderLyrics(QPainter * painter)
         }
         else
         {
-            octaveMin = min(octaveMin, (*(wordIt)).getPitch()/12);
-            octaveMax = max(octaveMax, (*(wordIt)).getPitch()/12);
+            octaveMin = min(octaveMin, floor((*(wordIt)).getPitch()/12.0));
+            octaveMax = max(octaveMax, floor((*(wordIt)).getPitch()/12));
         }
         if((*wordIt).getTime()+(*wordIt).getLength()>=_firstBeatDisplayed && (*wordIt).getTime()<_lastBeatDisplayed)
         {
