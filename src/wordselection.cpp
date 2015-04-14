@@ -19,7 +19,9 @@ WordSelection::~WordSelection()
 
 void WordSelection::add(const Word & word)
 {
-    Q_ASSERT_X(_lyrics->contains(word), "When adding a word to the selection", "_overed must be part of the lyrics");
+    Q_ASSERT_X(_lyrics->contains(word), "When adding a word to the selection",
+               QString("word \""+word.getText()+
+                        "\" "+QString::number(word.getTime())+" must be part of the lyrics").toLatin1().data());
     _selectedWords.insert(word, word.getTime());
 }
 

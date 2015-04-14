@@ -34,7 +34,7 @@ WidgetSongData::WidgetSongData(QWidget *parent) :
     _floatSelection[0] = -1;
     _floatSelection[1] = -1;
 }
-void WidgetSongData::onFloatSelection(float a, float b)
+void WidgetSongData::onFloatSelection(double a, double b)
 {
     //qDebug()<<a<<b;
     _floatSelection[0] = a;
@@ -49,7 +49,7 @@ void WidgetSongData::setSeekPosition(quint64 seek)
 void WidgetSongData::setWidgetSentence(ShowSentenceWidget *showSentenceWidget)
 {
     _showSentenceWidget = showSentenceWidget;
-    connect(_showSentenceWidget, SIGNAL(floatSelection(float,float)), this, SLOT(onFloatSelection(float, float)));
+    connect(_showSentenceWidget, SIGNAL(floatSelection(double,double)), this, SLOT(onFloatSelection(double, double)));
     connect(_showSentenceWidget, SIGNAL(click(quint64)), this, SLOT(setSeekPosition(quint64)));
 }
 void WidgetSongData::setHScroll(int s)

@@ -97,30 +97,6 @@ int Lyrics::getPitchMin()
 
 
 
-QList<Word> Lyrics::separatorsOfWords(const QList<Word> &list) const
-{
-    Q_UNUSED(list);
-    QList<Word> sep;
-    return sep;
-    /** FIXME */
-    /*Word* w;
-    foreach(w,*list)
-    {
-        if(!sep->contains(w->getParent()->getSepAfter()))
-        {
-            sep->push_back(w->getParent()->getSepAfter());
-        }
-        if(!sep->contains(w->getParent()->getSepBefore()))
-        {
-            sep->push_back(w->getParent()->getSepBefore());
-        }
-    }*/
-
-
-
-    return sep;
-
-}
 QList<Word> Lyrics::sentencesOfWord(const Word &w) const
 {
     QList<Word> sentence;
@@ -195,39 +171,50 @@ Word & Lyrics::wordRef(const Word &w)
     return _words.find(w.getTime(), w).value();
 }
 
-bool Lyrics::setDelay(int delay, quint64 from)
+int Lyrics::setDelay(int delay, quint64 from)
 {
     double temp = 0;
-    if(from > 0)
-        temp = (((from-qFloor(this->getGap()))/1000.0) * this->getBpm()/15.0f);
+    if(from > _gap)
+        temp = (((from-qFloor(this->getGap()))/1000.0) * this->getBpm()/15.0);
 
 
-    Word last;
     // check only if the delay is negative
     bool firstWordChecked=(delay>=0);
-    for(Word & w: words())
+    auto wordIt = _words.begin();
+    QList<Word> toBeInserted;
+    while(wordIt != _words.end())
     {
-        if( temp  <= w.getTime() && !firstWordChecked)
+        if( temp  <= (*wordIt).getTime() && !firstWordChecked)
         {
-            if( w.getTime() + delay < 0 ||
-               (!last.isNull() && w.getTime() + delay < last.getTime() + last.getLength()))
+            //check if we don't go before the gap
+            if( (*wordIt).getTime() + delay < 0)
             {
-                return false;
+                delay = -(*wordIt).getTime();
             }
-            else
+
+            //check if we don't go before the previous word
+            if(wordIt != _words.begin() && (*wordIt).getTime() + delay < (*(wordIt - 1)).getTime() + (*(wordIt - 1)).getLength())
             {
-                firstWordChecked=true;
+                delay = -(*wordIt).getTime() + (*(wordIt - 1)).getTime() + (*(wordIt - 1)).getLength();
             }
-            w.setTime( w.getTime()+delay);
+            firstWordChecked=true;
         }
-        else if( temp  <= w.getTime() )
+        if(temp <= (*wordIt).getTime() && firstWordChecked)
         {
+            Word w = (*wordIt);
+            wordIt = _words.erase(wordIt);
             w.setTime(w.getTime()+delay);
+            toBeInserted << w;
         }
         else
         {
-            last=w;
+            ++wordIt;
         }
     }
-    return true;
+    foreach(const Word & w, toBeInserted)
+    {
+        wordIt = _words.insert(wordIt, w.getTime(), w);
+    }
+
+    return delay;
 }

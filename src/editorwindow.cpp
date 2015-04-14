@@ -420,7 +420,7 @@ void UEditorWindow::bpmChanged(int n)
     _wydget_timeline->setBpm(n);
     showSentenceWidget->updateGap();
 }
-void UEditorWindow::gapChanged(float n)
+void UEditorWindow::gapChanged(double n)
 {
 
     _wydget_timeline->setGap(n);
@@ -758,7 +758,7 @@ void UEditorWindow::fileConnect()
 
 
     connect(_currentFile,SIGNAL(bpmChanged(int)),this,SLOT(bpmChanged(int)));
-    connect(_currentFile,SIGNAL(gapChanged(float)),this,SLOT(gapChanged(float)));
+    connect(_currentFile,SIGNAL(gapChanged(double)),this,SLOT(gapChanged(double)));
     connect(_currentFile,SIGNAL(hasBeenModified(bool)),this,SLOT(onFileModified(bool)));
     connect(ui->actionDoublePrecision,SIGNAL(triggered()),_currentFile,SLOT(doublePrecision()));
 }
@@ -767,7 +767,7 @@ void UEditorWindow::fileDisconnect()
     if(!_currentFile) return;
 
     disconnect(_currentFile,SIGNAL(bpmChanged(int)),this,SLOT(bpmChanged(int)));
-    disconnect(_currentFile,SIGNAL(gapChanged(float)),this,SLOT(gapChanged(float)));
+    disconnect(_currentFile,SIGNAL(gapChanged(double)),this,SLOT(gapChanged(double)));
     disconnect(_currentFile,SIGNAL(hasBeenModified(bool)),this,SLOT(onFileModified(bool)));
     disconnect(ui->actionDoublePrecision,SIGNAL(triggered()),_currentFile,SLOT(doublePrecision()));
 }

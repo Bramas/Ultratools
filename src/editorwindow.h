@@ -69,7 +69,7 @@ public slots:
    void readLastFile(void);
    void writeSettings();
    void bpmChanged(int);
-   void gapChanged(float);
+   void gapChanged(double);
    void changeSeek(quint64);
    void gapModified(double d);
    void saveAs(void);

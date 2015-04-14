@@ -268,17 +268,17 @@ void UFile::extractHead()
             }
             if(!key.compare("GAP"))
             {
-                _headGap = line.section(':',1,1).replace(',','.').toFloat();
+                _headGap = line.section(':',1,1).replace(',','.').toDouble();
                 continue;
             }
             if(!key.compare("VIDEOGAP"))
             {
-                _headVideogap = line.section(':',1,1).replace(',','.').toFloat();
+                _headVideogap = line.section(':',1,1).replace(',','.').toDouble();
                 continue;
             }
             if(!key.compare("BPM"))
             {
-                _headBpm = line.section(':',1,1).replace(',','.').toFloat();
+                _headBpm = line.section(':',1,1).replace(',','.').toDouble();
                 continue;
             }
             if(!key.compare("AUTHOR") || !key.compare("CREATOR"))

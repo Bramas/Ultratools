@@ -53,7 +53,7 @@ public:
     int getPitchMin(void);
     void setGap(qreal in) { modified("setGap"); _gap = (in < 0 ? 0 : in); }
     qreal getGap(void) { return _gap; }
-    void setBpm(float in) { _bpm = in; }
+    void setBpm(double in) { _bpm = in; }
     qreal getBpm(void) { return _bpm; }
 
     Word addSeparator(int time);
@@ -63,17 +63,22 @@ public:
     QMap<int, Word>::const_iterator find(const Word &w);
     bool contains(const Word &w) { return _words.contains(w.getTime(), w); }
 
-     QList<Word> separatorsOfWords(const QList<Word> &list) const;
      QList<Word> sentencesOfWord(const Word &w) const;
 
-     bool setDelay(int delay, quint64 from=0);
+     /*!
+      * \brief setDelay apply a delay to all words after time from
+      * \param delay the delay to apply
+      * \param from the time from which we apply the delay
+      * \return the delay that is effectively applied. It may differ from the given delay because we cannot move words before gap or before a word with a time smaller than from
+      */
+     int setDelay(int delay, quint64 from=0);
      qreal timeToBeat(quint64 time)
      {
-         return (time/1000.0) * _bpm/15.0f;
+         return (time/1000.0) * _bpm/15.0;
      }
      quint64 beatToMsc(int n)
      {
-          return _gap + (n)*1000.0 * 15.0f/_bpm;
+          return _gap + (n)*1000.0 * 15.0/_bpm;
      }
 
 

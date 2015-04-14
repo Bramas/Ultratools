@@ -44,8 +44,8 @@ public slots:
     bool isGapLocked() { return _gapLocked; };
 protected:
     int min, max;
-    float _bpm;
-    float _gap;
+    double _bpm;
+    double _gap;
     quint64 _seek;
      void paintEvent(QPaintEvent * event);
      void mousePressEvent(QMouseEvent * event);
@@ -53,7 +53,7 @@ protected:
      void mouseMoveEvent(QMouseEvent * event);
      bool _gapSelected, _gapOver, _seekSelected, _seekOver, _gapLocked;
      ShowSentenceWidget* _showSentenceWidget;
-     float _lastGap;
+     double _lastGap;
      UEditorWindow * _parent;
 
 };

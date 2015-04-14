@@ -27,7 +27,7 @@ class UFile : public QObject
 
 signals:
 void bpmChanged(int);
-void gapChanged(float);
+void gapChanged(double);
 void hasBeenModified(bool);
 
 public slots:
@@ -75,13 +75,13 @@ public:
     QString _headEdition;
     QString _headLanguage;
     QString _headYear;
-    float _headVideogap;
-    float _headGap;
-    float _headBpm;
-    void setBpm(float n){ lyrics->setBpm(n); _headBpm=n; emit bpmChanged(n); modified(); };
-    void setGap(float n){ lyrics->setGap(n); _headGap=n; emit gapChanged(n); modified(); };
-    float getBpm(){  return _headBpm; }
-    float getGap(){  return _headGap; }
+    double _headVideogap;
+    double _headGap;
+    double _headBpm;
+    void setBpm(double n){ lyrics->setBpm(n); _headBpm=n; emit bpmChanged(n); modified(); };
+    void setGap(double n){ lyrics->setGap(n); _headGap=n; emit gapChanged(n); modified(); };
+    double getBpm(){  return _headBpm; }
+    double getGap(){  return _headGap; }
 
     ~UFile(void);
 private:

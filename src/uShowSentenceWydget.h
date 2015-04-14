@@ -43,7 +43,7 @@ signals:
      void haveToStop(void);
      void singleClik(void);
      void emptyClik(void);
-     void floatSelection(float, float);
+     void floatSelection(double, double);
 
 public slots:
      void onKeyPressEvent(QKeyEvent*);
@@ -110,7 +110,7 @@ protected:
 
     void renderSeparator(QPainter * painter, const Word &w);
     bool _mousePressed, _isPlaying, _mousePressdOnSelectedWord;
-    float _gap;
+    double _gap;
     qreal _seekPosition;
 
     QList<Word> _wordsDisplayed;
@@ -167,12 +167,12 @@ protected:
     quint16 realVEndView;
     quint16 realHStartView;
     quint16 realHEndView;
-    float mouseTime;
-    float mousePitch;
+    double mouseTime;
+    double mousePitch;
     UEditorWindow * parent;
     void updateRangeView(void);
 
-    float _floatSelection[2];
+    double _floatSelection[2];
 
     double _firstBeatDisplayed,_lastBeatDisplayed;
 

@@ -37,7 +37,7 @@ signals:
 
 public slots:
     void setSeekPosition(quint64 seek);
-    void onFloatSelection(float, float);
+    void onFloatSelection(double, double);
 
 protected:
     void paintEvent(QPaintEvent*);
@@ -46,8 +46,8 @@ private:
     QVector<qreal> _rightData;
     QPolygonF _dataPoly, _dataPoly2;
     ShowSentenceWidget* _showSentenceWidget;
-    float _floatSelection[2];
-    float _max;
+    double _floatSelection[2];
+    double _max;
     int _hScroll;
     int _hScale;
     quint64 _seek;

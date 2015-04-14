@@ -127,9 +127,6 @@ void ShowSentenceWidget::mousePressEvent(QMouseEvent *event)
 
     if(_nextClick)
     {
-        //mouseTime=((float)(_lastBeatDisplayed-_firstBeatDisplayed))*(((float)event->x())/((float)width()))+_firstBeatDisplayed;
-        //mousePitch=(((-(float)vScale)/10.0))*(((float)event->y())/((float)height()))+(256-vScroll);
-
         if(_nextClick==ShowSentenceWidget::NEXT_CLICK_ADD_NOTE)
         {
             Word w(NULL,mouseTime,4,mousePitch);
@@ -259,7 +256,7 @@ void ShowSentenceWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void ShowSentenceWidget::emitSeek()
 {
-    quint64 msc=(1000.0f*(_seekPosition+_gap)*15.0f/lyrics->getBpm());
+    quint64 msc=(1000.0f*(_seekPosition+_gap)*15.0/lyrics->getBpm());
 
     emit click(msc);
 }
@@ -663,8 +660,8 @@ bool ShowSentenceWidget::renderWord(QPainter * painter, const Word & w, int octa
     else
     {
         painter->drawRoundedRect(r,
-                                 scaleWidth(10.0/((float)width()/(float)hScale)),
-                                 scaleHeight(10.0/((float)height()/(float)vScale)));
+                                 scaleWidth(10.0/((double)width()/(double)hScale)),
+                                 scaleHeight(10.0/((double)height()/(double)vScale)));
     }
 
 
@@ -792,7 +789,7 @@ int ShowSentenceWidget::expRangeOpacity(int a, int b,int opaque)
     if(hScale < (quint32)b && hScale > (quint32)a)
     {
 
-        return ((float)(opaque))*exp(-(((float)(hScale-a))/(((float)(b-hScale))/3)));
+        return opaque*exp(-(hScale-a)*3.0/(b-hScale));
     }
     if(hScale <= (quint32)a)
     {
@@ -803,12 +800,9 @@ int ShowSentenceWidget::expRangeOpacity(int a, int b,int opaque)
 
 int ShowSentenceWidget::linearRangeOpacity(int a, int b,int op1,int op2)
 {
-   // bool sign=a<b
-
     if(hScale< (quint32)b && hScale> (quint32)a)
     {
-
-        return   op1 + ((float)(op2-op1))*((float)(hScale-a))/((float)(b-a));//(((float)(b-hScale))/3)));
+        return   op1 + (op2-op1)*(hScale-a)/(double)(b-a);
     }
     if(hScale<= (quint32)a)
     {
@@ -823,7 +817,7 @@ void ShowSentenceWidget::setLyrics(Lyrics * lyrics)
     this->lyrics=lyrics;
     _selected = WordSelection(lyrics);
 
-     _gap = (floor(lyrics->getGap())/1000.0)*lyrics->getBpm()/15.0f;
+     _gap = (floor(lyrics->getGap())/1000.0)*lyrics->getBpm()/15.0;
 
 #ifndef UPDATE_BY_TIMER
     update();

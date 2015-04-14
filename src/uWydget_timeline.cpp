@@ -92,16 +92,17 @@ void UWydget_Timeline::mouseMoveEvent(QMouseEvent *event)
         }
         else
         {
-            float diff = _gap-event->x()*_showSentenceWidget->duration()/(qreal)width() - _showSentenceWidget->startTime();
+            double diff = _gap-event->x()*_showSentenceWidget->duration()/(qreal)width() - _showSentenceWidget->startTime();
 
-            diff = (diff/1000.0) * _bpm/15.0f;
+            diff = (diff/1000.0) * _bpm/15.0;
             if(diff>=1 || diff<=-1)
             {
                 if(_parent->getFile())
                 {
-                    if(_parent->getFile()->lyrics->setDelay(diff>=1?floor(diff):ceil(diff)))
+                    int delay = _parent->getFile()->lyrics->setDelay(diff>=1?floor(diff):ceil(diff));
+                    if(delay)
                     {
-                        _gap -= ((diff>=1?floor(diff):ceil(diff))*1000.0 * 15.0f/_bpm);
+                        _gap -= delay*1000.0 * 15.0/_bpm;
                         _parent->getFile()->setGap(_gap);
                         emit gapModified(_gap);
                     }
@@ -111,19 +112,18 @@ void UWydget_Timeline::mouseMoveEvent(QMouseEvent *event)
     }
     if(_seekSelected)
     {
-        float diff = event->x()*_showSentenceWidget->duration()/(qreal)width() + _showSentenceWidget->startTime()-_seek;
-        diff = (diff/1000.0) * _bpm/15.0f;
+        double diff = event->x()*_showSentenceWidget->duration()/(qreal)width() + _showSentenceWidget->startTime()-_seek;
+        diff = (diff/1000.0) * _bpm/15.0;
         if(diff>=1 || diff<=-1)
         {
             if(_parent->getFile())
             {
-               // qDebug()<<floor(diff)<<" - "<<ceil(diff)<<" - "<<(diff>=1?floor(diff):ceil(diff));
-                if(_parent->getFile()->lyrics->setDelay(diff>=1?floor(diff):ceil(diff),_seek))
+                int delay = _parent->getFile()->lyrics->setDelay(diff>=1?floor(diff):ceil(diff),_seek);
+                if(delay)
                 {
-                    _seek+=(diff>=1?floor(diff):ceil(diff))*1000.0 * 15.0f/_bpm;
+                    _seek+=delay*1000.0 * 15.0/_bpm;
                 }
             }
-            //QMessageBox::information(NULL,"lol",QString::number(diff));
         }
     }
 
@@ -134,7 +134,6 @@ void UWydget_Timeline::mouseReleaseEvent(QMouseEvent * /*event*/)
 {
     if(_gapSelected)
     {
-        //_gap = ((((event->x())*fTempsR)+fMin)*1000.0);// + _lastGap;
         _gapSelected = false;
 
         _gap = _gap<0?0:_gap;
@@ -166,7 +165,6 @@ void UWydget_Timeline::mousePressEvent(QMouseEvent *event)
     {
        _gapSelected = true;
        _lastGap = _gap;
-       qDebug()<<"select "<<_gap;
     }
     else
     if( event->x() > gapXPos +10 && event->x() < gapXPos + 35)

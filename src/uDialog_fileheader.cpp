@@ -66,15 +66,15 @@ void UDialog_fileHeader::accept()
     _file->_headArtist = ui->lineEdit_artist->text();
     _file->_headAuthor = ui->lineEdit_author->text();
     _file->_headBackground = ui->lineEdit_background->text();
-    _file->setBpm(ui->lineEdit_bmp->text().replace(',','.').toFloat());
-    _file->setGap(ui->lineEdit_gap->text().replace(',','.').toFloat());
+    _file->setBpm(ui->lineEdit_bmp->text().replace(',','.').toDouble());
+    _file->setGap(ui->lineEdit_gap->text().replace(',','.').toDouble());
 
 
     _file->_headCover = ui->lineEdit_cover->text();
     _file->_headMp3 = ui->lineEdit_mp3->text();
     _file->_headTitle = ui->lineEdit_title->text();
     _file->_headVideo = ui->lineEdit_video->text();
-    _file->_headVideogap = ui->lineEdit_videogap->text().replace(',','.').toFloat();
+    _file->_headVideogap = ui->lineEdit_videogap->text().replace(',','.').toDouble();
     _file->_headYear = ui->lineEdit_year->text();
     _file->_headEdition =  ui->lineEdit_edition->text();
     _file->_headLanguage = ui->lineEdit_language->text();
