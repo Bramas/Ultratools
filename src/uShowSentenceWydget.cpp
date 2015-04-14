@@ -230,20 +230,6 @@ void ShowSentenceWidget::mouseReleaseEvent(QMouseEvent *event)
 
    }
 
-
-   /*if(!_selected.isEmpty() && _selected.first().hasBeenModified())
-   {
-       foreach(const Word &w, _selected) /// FIXME
-       {
-           //w.hold();// finish the modification
-           lyrics->removeWord(w);
-       }
-       foreach(const Word &w,_selected)
-       {
-           lyrics->addWord(w);
-       }
-       emit modified();
-   }*/ //FIXME
     if(_clickAndMoveSelection)
     {
         _seekPosition = posXToBeat(min(_fPointPress.x(),event->x()));
@@ -255,8 +241,8 @@ void ShowSentenceWidget::mouseReleaseEvent(QMouseEvent *event)
     if(!_clickAndMoveSelection && !_selected.isEmpty() && !_isPlaying)
     {
         QPair<int,int> range(_selected.first().getTime(), _selected.last().getTime2());
-        _floatSelection[0] = range.first;// - _gap;
-        _floatSelection[1] = range.second;// - _gap;
+        _floatSelection[0] = range.first;
+        _floatSelection[1] = range.second;
         emit floatSelection(lyrics->beatToMsc(range.first), lyrics->beatToMsc(range.second));
         _seekPosition = range.first;
         emitSeek();
@@ -284,36 +270,22 @@ void ShowSentenceWidget::onKeyPressEvent(QKeyEvent * event)
     {
         return;
     }
-    /*if(event->key() == Qt::Key_Up)
+    if(event->key() == Qt::Key_Up)
     {
-        foreach(Word * w, _selected)
-        {
-            w.setPitch(w.getPitch() + 1);
-        }
+        _selected.translate(0,1);
     }
     else if(event->key() == Qt::Key_Down)
     {
-        foreach(Word * w, _selected)
-        {
-            w.setPitch(w.getPitch() - 1);
-        }
+        _selected.translate(0,-1);
     }
     else if(event->key() == Qt::Key_Left)
     {
-        foreach(const Word &w, _selected)
-        {
-            w.setTime(w.getTime() - 1);
-            lyrics->resortWord(w);
-        }
+        _selected.translate(-1,0);
     }
     else if(event->key() == Qt::Key_Right)
     {
-        foreach(const Word &w, _selected)
-        {
-            w.setTime(w.getTime() + 1);
-            lyrics->resortWord(w);
-        }
-    }*/ //FIXME
+        _selected.translate(1,0);
+    }
     update();
 }
 
@@ -333,7 +305,7 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
     int diffX = fDiffY > 0 ? floor(fDiffX) : ceil(fDiffX);
 
 
-   if(_mousePressed && !_isPlaying && (_fMousePosition-_fPointPress).manhattanLength()<10 && _timePress.msecsTo(QTime::currentTime())<500)// && !_overed.isNull())
+   if(_mousePressed && !_isPlaying && (_fMousePosition-_fPointPress).manhattanLength()<10 && _timePress.msecsTo(QTime::currentTime())<500 && !_mousePressdOnSelectedWord)
     {
         _clickAndMoveSelection = true;
     }
@@ -382,7 +354,6 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
                  && w.getTime()+w.getLength()>_floatSelection[0])
              {
                      _selected << w;
-                     qDebug()<<w.getText();
               }
         }
         if(_selected.isEmpty())
@@ -398,51 +369,7 @@ void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
     else
    if(_mousePressed && !_selected.isEmpty() && (!UInputManager::Instance.isKeyPressed(Qt::Key_Control) || _selected.count()==1))
    {
-       qDebug()<<"2";
-       Word * w;
 
-/* //FIXME
-       if(_selected.count()==1 && _selected.first()->getOver())
-       {
-           w=_selected.first();
-           if(w.getOver() & ShowSentenceWidget::OVER_LEFT )
-           {
-               if(w.getOLength()-diffX>0)
-               {
-                   w.setLength(w.getOLength()-diffX,false);
-                   w.setTime(w.getOTime()+diffX,false);
-               }
-               else
-               {
-                   w.setLength(1,false);
-                   w.setTime(w.getOTime()+w.getOLength()-1,false);
-               }
-
-           }
-           else
-           if(w.getOver() & ShowSentenceWidget::OVER_RIGHT )
-           {
-               if(w.getOLength()+diffX>0)
-               {
-                   w.setLength(w.getOLength()+diffX,false);
-               }
-               else
-               {
-                   w.setLength(1,false);
-               }
-           }
-       }
-       else
-       {
-            foreach(w,_selected)
-            {
-                w.setPitch(w.getOPitch()+diffY,false);
-                if(!_timeLocked)
-                {
-                    w.setTime(w.getOTime()+diffX,false);
-                }
-            }
-       }*/
    }
     else
     if(_isPlaying && _mousePressed)

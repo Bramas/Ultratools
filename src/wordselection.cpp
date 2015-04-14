@@ -10,13 +10,11 @@ WordSelection::WordSelection() : _lyrics(0)
 WordSelection::WordSelection(Lyrics *lyrics) : _lyrics(lyrics)
 {
     _lyrics->_selections.append(this);
-    qDebug()<<" create selection ";
 }
 
 WordSelection::~WordSelection()
 {
     _lyrics->_selections.removeAll(this);
-    qDebug()<<" remove selection ";
 }
 
 void WordSelection::add(const Word & word)
@@ -136,7 +134,7 @@ QPoint WordSelection::translate(int addTime, int addPitch)
     {
         return QPoint(0,0);
     }
-    qDebug()<<"translate "<<addTime<<" "<<addPitch;
+    addTime = std::max(addTime, -_selectedWords.firstKey().getTime());
     foreach(const Word & w, takeSelectedWords().keys())
     {
         _lyrics->removeWord(w);
@@ -166,7 +164,6 @@ int WordSelection::expandRight(int add)
     _selectedWords.clear();
     _lyrics->addWord(w);
     _selectedWords.insert(w, w.getTime());
-    qDebug()<<"expandRight "<<add;
     return add;
 }
 int WordSelection::expandLeft(int add)
@@ -189,6 +186,5 @@ int WordSelection::expandLeft(int add)
     _selectedWords.clear();
     _lyrics->addWord(w);
     _selectedWords.insert(w, w.getTime());
-    qDebug()<<"expandLeft "<<add;
     return add;
 }
