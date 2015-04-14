@@ -42,6 +42,8 @@ _cursorPosition = 0;
 _fontSize = 6;
 _isEditing = false;
 
+this->document()->setUndoRedoEnabled(false);
+
 connect(&UInputManager::Instance, SIGNAL(keyPressEvent(QKeyEvent*)),this, SLOT(onKeyPress(QKeyEvent*)));
 }
 
@@ -64,6 +66,21 @@ void UWydget_Lyrics::insertFromMimeData(const QMimeData *source)
     QString t = source->text();
     t.replace(' ',"\n");
     this->insertPlainText(t);
+}
+
+void UWydget_Lyrics::keyPressEvent(QKeyEvent * e)
+{
+    if(e->matches(QKeySequence::Undo))// || e->matches(QKeySequence::Redo))
+    {
+        _wydgetWords->getLyrics()->undo();
+        return;
+    }
+    if(e->matches(QKeySequence::Redo))
+    {
+        _wydgetWords->getLyrics()->redo();
+        return;
+    }
+    QPlainTextEdit::keyPressEvent(e);
 }
 
 void UWydget_Lyrics::onTextChanged()

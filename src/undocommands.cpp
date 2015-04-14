@@ -183,3 +183,54 @@ bool Lyrics::SetDelay::mergeWith(const QUndoCommand *other)
     _delay += otherC->_delay;
     return true;
 }
+
+
+
+
+
+
+
+Lyrics::ChangeText::ChangeText(Lyrics * lyrics, const Word & word, const QString &text) :
+    QUndoCommand(tr("la modificatin du texte")),
+    _lyrics(lyrics),
+    _editGroup(lyrics->_editGroup)
+{
+    WordText wt;
+    wt.word = word;
+    wt.newText = text;
+    wt.oldText = word.getText();
+    _words << wt;
+}
+void Lyrics::ChangeText::redo()
+{
+    for(ChangeText::WordText & wt: _words)
+    {
+        _lyrics->wordRef(wt.word).setText(wt.newText);
+        wt.word.setText(wt.newText);
+    }
+    _lyrics->emitModified();
+}
+
+void Lyrics::ChangeText::undo()
+{
+    for(int i = _words.size() - 1; i >= 0; --i) // we have to undo in a backward manner
+    {
+        _lyrics->wordRef(_words.at(i).word).setText(_words.at(i).oldText);
+        _words[i].word.setText(_words.at(i).oldText);
+    }
+    _lyrics->emitModified();
+}
+
+bool Lyrics::ChangeText::mergeWith(const QUndoCommand * other)
+{
+    if(other->id() != this->id())
+        return false;
+
+    const ChangeText* otherC = static_cast<const ChangeText*>(other);
+    if(otherC->editGroup() != this->editGroup())
+        return false;
+
+    this->setText(other->text());
+    _words << otherC->_words.last();
+    return true;
+}

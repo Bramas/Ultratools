@@ -47,6 +47,7 @@ public:
 protected:
 
     void insertFromMimeData(const QMimeData * source);
+    void keyPressEvent(QKeyEvent * e);
     virtual void timerEvent(QTimerEvent * event);
 
     int _cursorPosition;

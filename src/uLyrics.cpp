@@ -171,14 +171,14 @@ Word & Lyrics::wordRef(const Word &w)
     return _words.find(w.getTime(), w).value();
 }
 
-WordIterator Lyrics::wordBegin()
+Lyrics::WordIterator Lyrics::wordBegin()
 {
-    return WordIterator(_words.begin());
+    return Lyrics::WordIterator(this, _words.begin());
 }
 
-WordIterator Lyrics::wordEnd()
+Lyrics::WordIterator Lyrics::wordEnd()
 {
-    return WordIterator(_words.end());
+    return Lyrics::WordIterator(this, _words.end());
 }
 int Lyrics::setDelay(int delay, quint64 from)
 {
@@ -203,13 +203,13 @@ int Lyrics::setDelay(int delay, quint64 from)
                 }
 
                 //check if we go before the previous word
-                if(wordIt != _words.begin() && (*wordIt).getTime() + delay < (*(wordIt - 1)).getTime() + (*(wordIt - 1)).getLength())
+                if(wordIt != _words.constBegin() && (*wordIt).getTime() + delay < (*(wordIt - 1)).getTime() + (*(wordIt - 1)).getLength())
                 {
                     delay = -(*wordIt).getTime() + (*(wordIt - 1)).getTime() + (*(wordIt - 1)).getLength();
                 }
 
                 //check if the cursor go before the previous word
-                if(wordIt != _words.begin() && from + delay <= (*(wordIt - 1)).getTime())
+                if(wordIt != _words.constBegin() && from + delay <= (*(wordIt - 1)).getTime())
                 {
                     delay = 1 - from + (*(wordIt - 1)).getTime();
                 }
@@ -225,4 +225,14 @@ int Lyrics::setDelay(int delay, quint64 from)
     }
 
     return delay;
+}
+
+void Lyrics::WordIterator::setText(QString text)
+{
+    if(_it.value().getText() == text)
+    {
+        return;
+    }
+    _lyrics->_history.push(new Lyrics::ChangeText(_lyrics, _it.value(), text));
+    //_it.value().setText(text);
 }
