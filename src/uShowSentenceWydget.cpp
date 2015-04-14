@@ -103,8 +103,6 @@ ShowSentenceWidget::~ShowSentenceWidget()
 }
 void ShowSentenceWidget::mouseDoubleClickEvent(QMouseEvent * /*event*/)
 {
-    //QMessageBox::warning(NULL,"","LOL");
-
     if(_selected.isEmpty())
     {
         emit doubleClik(-1);
