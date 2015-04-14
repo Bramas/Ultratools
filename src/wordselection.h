@@ -29,9 +29,7 @@ public:
 
 
     // functions that modify the lyrics
-    void setGold();
-    void setFree();
-    void setNormal();
+    void setType(Word::Type type);
     void deleteSelectedWords();
     void merge();
     QPoint translate(int addTime, int addPitch);

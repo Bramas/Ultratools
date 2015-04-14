@@ -62,7 +62,8 @@ double min(double a,double b)
 }
 
 
-ShowSentenceWidget::ShowSentenceWidget(UEditorWindow * parent)
+ShowSentenceWidget::ShowSentenceWidget(UEditorWindow * parent) :
+    _previousHistoryState(0)
 {
     hScale=100;// nombre de deciseconds visible sur une fenettre
     vScale=20;
@@ -124,7 +125,11 @@ void ShowSentenceWidget::mousePressEvent(QMouseEvent *event)
     _mousePressed = true;
     _mousePressdOnSelectedWord = !_overed.isNull();
     _overTypeOnMousePressed = _overType;
-
+    if(_previousHistoryState != lyrics->history().index())
+    {
+        _previousHistoryState = lyrics->history().index();
+        lyrics->createEditGroup();
+    }
     if(_nextClick)
     {
         if(_nextClick==ShowSentenceWidget::NEXT_CLICK_ADD_NOTE)
@@ -211,7 +216,12 @@ qreal ShowSentenceWidget::posXToMs(double in_x)
 
 void ShowSentenceWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-     _mousePressed = false;
+    if(_previousHistoryState != lyrics->history().index())
+    {
+        _previousHistoryState = lyrics->history().index();
+        lyrics->createEditGroup();
+    }
+   _mousePressed = false;
    QPointF pointRealease(event->x(),event->y());
 
 
@@ -986,15 +996,15 @@ void ShowSentenceWidget::renderSeparator(QPainter * painter, const Word & w)
 
 void ShowSentenceWidget::setNormal()
 {
-    _selected.setNormal();
+    _selected.setType(Word::Normal);
 }
 void ShowSentenceWidget::setGold()
 {
-    _selected.setGold();
+    _selected.setType(Word::Gold);
 }
 void ShowSentenceWidget::setFree()
 {
-    _selected.setFree();
+    _selected.setType(Word::Free);
 }
 void ShowSentenceWidget::fusion()
 {

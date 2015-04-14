@@ -45,41 +45,15 @@ QMap<Word, int> WordSelection::takeSelectedWords()
 }
 
 
-void WordSelection::setGold()
+void WordSelection::setType(Word::Type type)
 {
     foreach(const Word &w, takeSelectedWords().keys())
     {
         if(!w.isSeparator())
         {
+            _lyrics->_history.push(new Lyrics::SetWordType(_lyrics, w, type));
             Word nw = w;
-            nw.setGold();
-            _lyrics->wordRef(w) = nw;
-            _selectedWords.insert(nw, nw.getTime());
-        }
-    }
-}
-void WordSelection::setFree()
-{
-    foreach(const Word &w, takeSelectedWords().keys())
-    {
-        if(!w.isSeparator())
-        {
-            Word nw = w;
-            nw.setFree();
-            _lyrics->wordRef(w) = nw;
-            _selectedWords.insert(nw, nw.getTime());
-        }
-    }
-}
-void WordSelection::setNormal()
-{
-    foreach(const Word &w, takeSelectedWords().keys())
-    {
-        if(!w.isSeparator())
-        {
-            Word nw = w;
-            nw.setNormal();
-            _lyrics->wordRef(w) = nw;
+            nw.setType(type);
             _selectedWords.insert(nw, nw.getTime());
         }
     }
@@ -143,7 +117,7 @@ QPoint WordSelection::translate(int addTime, int addPitch)
         Word newWord = w;
         newWord.setPitch(w.getPitch() + addPitch);
         newWord.setTime(w.getTime() + addTime);
-        _lyrics->addWord(newWord);
+        _lyrics->addWord(newWord, QObject::tr("le déplacement de la selection"));
         _selectedWords.insert(newWord, newWord.getTime());
     }
     return QPoint(addTime, addPitch);

@@ -4,20 +4,9 @@
 #include <QUndoCommand>
 
 #include "uWord.h"
+#include "uLyrics.h"
 
-class Lyrics;
 
-class AddWordCommand : public QUndoCommand
-{
-public:
-    AddWordCommand(Lyrics * lyrics, const Word & word);
 
-    void undo();
-    void redo();
-
-private:
-    Lyrics * _lyrics;
-    Word _word;
-};
 
 #endif // UNDOCOMMANDS_H

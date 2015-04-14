@@ -29,8 +29,8 @@ Lyrics::Lyrics(QWidget * parent)
     pitchMax=0;
     pitchMin=255;
     _gap=0;
+    _editGroup = 1;
 
-    _modified=false;
 }
 
 void Lyrics::parseLine(QString &line)
@@ -70,7 +70,7 @@ void Lyrics::parseLine(QString &line)
         QString text = in.readLine();
         word.setText(text);
     }
-    this->addWord(word);
+    _words.insert(word.getTime(), word);
     if(word.getPitch() < pitchMin) pitchMin=word.getPitch();
     if(word.getPitch() > pitchMax) pitchMax=word.getPitch();
     this->setModified(false);
@@ -139,13 +139,13 @@ QMap<int, Word>::const_iterator Lyrics::find(const Word &w)
 
 void Lyrics::removeWord(const Word &w)
 {
-    _words.remove(w.getTime(), w);
-    modified("removeWord");
+    _history.push(new Lyrics::AddDeleteWord(this, w, false));
+    emit hasBeenModified();
 }
-void Lyrics::addWord(const Word &w)
+void Lyrics::addWord(const Word &w, QString actionText)
 {
-    _words.insert(w.getTime(), w);
-    modified("addWord");
+    _history.push(new Lyrics::AddDeleteWord(this, w, true, actionText));
+    emit hasBeenModified();
 }
 
 
@@ -162,7 +162,7 @@ void Lyrics::doublePresicion()
         w.setLength(w.getLength()*2);
     }
 
-    modified("doublePresicion");
+    emit hasBeenModified();
 }
 
 
@@ -222,8 +222,9 @@ int Lyrics::setDelay(int delay, quint64 from)
     }
     foreach(const Word & w, toBeInserted)
     {
-        wordIt = _words.insert(wordIt, w.getTime(), w);
+        wordIt = _words.insert(wordIt, w.getTime(), w); //FIXME (use undoactions)
     }
+    emit hasBeenModified();
 
     return delay;
 }

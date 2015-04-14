@@ -137,7 +137,6 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
         connect(ui->actionEnvoyer_une_suggestion_remarque_rapide,SIGNAL(triggered()),this,SLOT(displayFeedback()));
 
 
-
         onUpdateVScrollAndScale();
         changeHScroll(0);
 
@@ -298,6 +297,16 @@ void UEditorWindow::openFile(QString fileName)
 
     this->showSentenceWidget->setLyrics(_currentFile->lyrics);
     UNoteManager::Instance.setLyrics(_currentFile->lyrics);
+
+    QAction * undoAction = _currentFile->lyrics->history().createUndoAction(this->ui->menuEdition, tr("Annuler "));
+    undoAction->setShortcut(QKeySequence::Undo);
+    this->ui->menuEdition->addAction(undoAction);
+
+    QAction * redoAction = _currentFile->lyrics->history().createRedoAction(this->ui->menuEdition, tr("Refaire "));
+    redoAction->setShortcut(QKeySequence::Redo);
+    this->ui->menuEdition->addAction(redoAction);
+
+
 
     _wydget_timeline->setBpm(_currentFile->lyrics->getBpm());
     _wydget_timeline->setGap(_currentFile->lyrics->getGap());

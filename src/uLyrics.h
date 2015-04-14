@@ -20,6 +20,7 @@
 
 #include <QMultiMap>
 #include "uWord.h"
+#include "undocommands.h"
 
 class WordSelection;
 
@@ -88,9 +89,14 @@ public:
     void parseLine(QString &line);
     void parseCode(QString &code);
 
-    void modified(QString sender="") { Q_UNUSED(sender); _modified=true; emit hasBeenModified(); }
-    bool isModified() { return _modified; }
-    void setModified(bool b=true) { if(b==true) modified(); else _modified=false; }
+    void modified(QString sender="") {
+        //Q_UNUSED(sender); _modified=true; emit hasBeenModified();
+    }
+    bool isModified() { //return _modified;
+                      }
+    void setModified(bool b=true) {
+        //if(b==true) modified(); else _modified=false;
+    }
 
 
     const QMultiMap<int, Word>& words(void) const { return _words; }
@@ -104,12 +110,14 @@ public:
 
     Word addSeparator(int time);
     void removeWord(const Word &w);
-    void addWord(const Word &w);
+    void addWord(const Word &w, QString actionText="");
 
     QMap<int, Word>::const_iterator find(const Word &w);
 
     WordIterator wordBegin();
     WordIterator wordEnd();
+
+    const QUndoStack & history() const { return this->_history; }
 
     bool contains(const Word &w) { return _words.contains(w.getTime(), w); }
 
@@ -134,24 +142,78 @@ public:
      }
 
 
-
+    void createEditGroup() { ++_editGroup; }
 
 
 private:
+
+    void emitModified() {
+        emit hasBeenModified();
+    }
+
+     // Undo commands
+     class AddDeleteWord;
+     class SetWordType;
 
      Word & wordRef(const Word & w);
 
     QWidget * parent;
     QMultiMap<int, Word> _words;
 
-    bool _modified;
+    QUndoStack _history;
 
     int  pitchMax, pitchMin;
     qreal _gap;
     qreal _bpm;
 
+    int _editGroup;
+
     QList<WordSelection*> _selections;
     friend class WordSelection;
+};
+
+
+class Lyrics::AddDeleteWord : public QUndoCommand
+{
+public:
+    AddDeleteWord(Lyrics * lyrics, const Word & word, bool add, QString text = "");
+
+    void undo();
+    void redo();
+    int id() const { return 1; }
+    int editGroup() const { return _editGroup; }
+
+    bool mergeWith(const QUndoCommand *other);
+
+private:
+    Lyrics * _lyrics;
+    QList<QPair<bool, Word> > _words;
+    int _editGroup;
+};
+
+
+class Lyrics::SetWordType : public QUndoCommand
+{
+public:
+    SetWordType(Lyrics * lyrics, const Word & word, Word::Type type);
+
+    void undo();
+    void redo();
+    int id() const { return 2; }
+    int editGroup() const { return _editGroup; }
+    bool mergeWith(const QUndoCommand *other);
+
+private:
+
+    typedef struct WordType {
+        Word word;
+        Word::Type oldType;
+        Word::Type newType;
+    } WordType;
+
+    Lyrics * _lyrics;
+    QList<WordType> _words;
+    int _editGroup;
 };
 
 #endif // LYRICS_H

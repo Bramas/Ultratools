@@ -45,12 +45,11 @@ public:
     void setOctaveOffset(int newOctave, bool definitly = true);
     int getOctaveOffset(void) const;
 
-    void setFree();
-    void setGold();
-    void setNormal();
+    void setType(Word::Type type);
     bool isGold(void) const { return _type & Word::Gold; }
     bool isFree(void) const { return _type & Word::Free; }
     bool isNormal(void) const { return _type == Word::Normal; }
+
     Word::Type getType(void) const { return _type; }
     bool isSeparator() const { return _type & Word::Separator; }
     Lyrics * getParent() { return _parent; }

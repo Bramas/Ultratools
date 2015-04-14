@@ -155,6 +155,8 @@ protected:
     bool _clickAndMoveSelection;
     bool _timeLocked;
 
+    int _previousHistoryState;
+
     double posXToBeat(double in_x);
     qreal posXToMs(double in_x);
 
