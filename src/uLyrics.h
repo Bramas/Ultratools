@@ -23,6 +23,53 @@
 
 class WordSelection;
 
+class WordIterator
+{
+public:
+    WordIterator(QMap<int, Word>::iterator it) : _it(it) { }
+
+    // Only expose mutable property that does not change the order within the map
+    void setText(QString text) { _it.value().setText(text); }
+
+
+    // Reimplement operator the same way const_iterator does
+    inline const Word &value() const { return _it.value(); }
+    inline const Word &operator*() const { return _it.value(); }
+    inline const Word *operator->() const { return _it.operator->(); }
+    inline bool operator==(const WordIterator &o) const { return _it == o._it; }
+    inline bool operator!=(const WordIterator &o) const { return _it != o._it; }
+
+    inline WordIterator &operator++() {
+        ++_it;
+        return *this;
+    }
+    inline WordIterator operator++(int) {
+        WordIterator r = *this;
+        ++_it;
+        return r;
+    }
+    inline WordIterator &operator--() {
+        --_it;
+        return *this;
+    }
+    inline WordIterator operator--(int) {
+        WordIterator r = *this;
+        --_it;
+        return r;
+    }
+    inline WordIterator operator+(int j) const
+    { WordIterator r = *this; if (j > 0) while (j--) ++r; else while (j++) --r; return r; }
+    inline WordIterator operator-(int j) const { return operator+(-j); }
+    inline WordIterator &operator+=(int j) { return *this = *this + j; }
+    inline WordIterator &operator-=(int j) { return *this = *this - j; }
+
+
+
+
+private:
+    QMap<int, Word>::iterator _it;
+};
+
 class Lyrics : public QObject
 {
     Q_OBJECT
@@ -47,7 +94,6 @@ public:
 
 
     const QMultiMap<int, Word>& words(void) const { return _words; }
-    QMultiMap<int, Word>& words(void) { return _words; }
 
     int getPitchMax(void);
     int getPitchMin(void);
@@ -61,6 +107,10 @@ public:
     void addWord(const Word &w);
 
     QMap<int, Word>::const_iterator find(const Word &w);
+
+    WordIterator wordBegin();
+    WordIterator wordEnd();
+
     bool contains(const Word &w) { return _words.contains(w.getTime(), w); }
 
      QList<Word> sentencesOfWord(const Word &w) const;
@@ -72,6 +122,8 @@ public:
       * \return the delay that is effectively applied. It may differ from the given delay because we cannot move words before gap or before a word with a time smaller than from
       */
      int setDelay(int delay, quint64 from=0);
+
+
      qreal timeToBeat(quint64 time)
      {
          return (time/1000.0) * _bpm/15.0;

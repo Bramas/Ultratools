@@ -171,6 +171,15 @@ Word & Lyrics::wordRef(const Word &w)
     return _words.find(w.getTime(), w).value();
 }
 
+WordIterator Lyrics::wordBegin()
+{
+    return WordIterator(_words.begin());
+}
+
+WordIterator Lyrics::wordEnd()
+{
+    return WordIterator(_words.end());
+}
 int Lyrics::setDelay(int delay, quint64 from)
 {
     double temp = 0;

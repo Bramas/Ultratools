@@ -73,16 +73,16 @@ void UWydget_Lyrics::onTextChanged()
         return;
     }
     QTextBlock block = this->document()->firstBlock();
-    auto it = _wydgetWords->getLyrics()->words().begin();
+    auto it = _wydgetWords->getLyrics()->wordBegin();
     while(block.isValid())
     {
-        if(it == _wydgetWords->getLyrics()->words().end())
+        if(it == _wydgetWords->getLyrics()->wordEnd())
         {
             break;
         }
         if(!(*it).isSeparator())
         {
-            (*it).setText(block.text());
+            it.setText(block.text());
             block = block.next();
         }
         ++it;
@@ -103,11 +103,11 @@ void UWydget_Lyrics::onTextChanged()
     }
     else
     {
-        while(it != _wydgetWords->getLyrics()->words().end())
+        while(it != _wydgetWords->getLyrics()->wordEnd())
         {
             if(!(*it).isSeparator())
             {
-                (*it).setText("");
+                it.setText("");
             }
             ++it;
         }
