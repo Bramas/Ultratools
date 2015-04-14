@@ -828,7 +828,7 @@ void ShowSentenceWidget::setLyrics(Lyrics * lyrics)
     _selected = WordSelection(lyrics);
 
      _gap = (floor(lyrics->getGap())/1000.0)*lyrics->getBpm()/15.0;
-
+    connect(lyrics, SIGNAL(hasBeenModified()), this, SLOT(update()));
 #ifndef UPDATE_BY_TIMER
     update();
 #endif

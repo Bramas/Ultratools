@@ -92,9 +92,15 @@ public:
     void modified(QString sender="") {
         //Q_UNUSED(sender); _modified=true; emit hasBeenModified();
     }
-    bool isModified() { //return _modified;
+    bool isModified() {
+        return !_history.isClean();
+        //return _modified;
                       }
     void setModified(bool b=true) {
+        if(!b)
+        {
+            _history.setClean();
+        }
         //if(b==true) modified(); else _modified=false;
     }
 
@@ -154,6 +160,7 @@ private:
      // Undo commands
      class AddDeleteWord;
      class SetWordType;
+     class SetDelay;
 
      Word & wordRef(const Word & w);
 
@@ -216,4 +223,28 @@ private:
     int _editGroup;
 };
 
+
+class Lyrics::SetDelay : public QUndoCommand
+{
+public:
+    SetDelay(Lyrics * lyrics, int delay, int from);
+
+    void undo();
+    void redo();
+    int id() const { return 2; }
+    int editGroup() const { return _editGroup; }
+    bool mergeWith(const QUndoCommand *other);
+
+private:
+
+    typedef struct WordType {
+        Word word;
+        Word::Type oldType;
+        Word::Type newType;
+    } WordType;
+
+    Lyrics * _lyrics;
+    int _from, _delay;
+    int _editGroup;
+};
 #endif // LYRICS_H

@@ -12,7 +12,7 @@
 Lyrics::AddDeleteWord::AddDeleteWord(Lyrics * lyrics, const Word & word, bool add, QString text) :
     QUndoCommand(!text.isEmpty() ? text : (add ? tr("ajouter une note") : tr("supprimer une note"))),
     _lyrics(lyrics),
-    _editGroup(_lyrics->_editGroup)
+    _editGroup(lyrics->_editGroup)
 {
     _words << QPair<bool, Word>(add, word);
 }
@@ -65,7 +65,7 @@ bool Lyrics::AddDeleteWord::mergeWith(const QUndoCommand * other)
 Lyrics::SetWordType::SetWordType(Lyrics * lyrics, const Word & word, Word::Type type) :
     QUndoCommand(tr("le changement de type")),
     _lyrics(lyrics),
-    _editGroup(_lyrics->_editGroup)
+    _editGroup(lyrics->_editGroup)
 {
     WordType wt;
     wt.word = word;
@@ -108,3 +108,78 @@ bool Lyrics::SetWordType::mergeWith(const QUndoCommand * other)
 }
 
 
+Lyrics::SetDelay::SetDelay(Lyrics *lyrics, int delay, int from) :
+    _delay(delay),
+    _from(from),
+    _lyrics(lyrics),
+    _editGroup(lyrics->_editGroup)
+{
+
+}
+
+void Lyrics::SetDelay::redo()
+{
+    auto wordIt = _lyrics->_words.begin();
+    QList<Word> toBeInserted;
+    while(wordIt != _lyrics->_words.end())
+    {
+        if(_from <= (*wordIt).getTime())
+        {
+            Word w = (*wordIt);
+            wordIt = _lyrics->_words.erase(wordIt);
+            w.setTime(w.getTime()+_delay);
+            toBeInserted << w;
+        }
+        else
+        {
+            ++wordIt;
+        }
+    }
+    foreach(const Word & w, toBeInserted)
+    {
+        wordIt = _lyrics->_words.insert(wordIt, w.getTime(), w);
+    }
+    _lyrics->emitModified();
+}
+void Lyrics::SetDelay::undo()
+{
+    auto wordIt = _lyrics->_words.begin();
+    QList<Word> toBeInserted;
+    while(wordIt != _lyrics->_words.end())
+    {
+        if(_from+_delay <= (*wordIt).getTime())
+        {
+            Word w = (*wordIt);
+            wordIt = _lyrics->_words.erase(wordIt);
+            w.setTime(w.getTime()-_delay);
+            toBeInserted << w;
+        }
+        else
+        {
+            ++wordIt;
+        }
+    }
+    foreach(const Word & w, toBeInserted)
+    {
+        wordIt = _lyrics->_words.insert(wordIt, w.getTime(), w);
+    }
+    _lyrics->emitModified();
+}
+
+bool Lyrics::SetDelay::mergeWith(const QUndoCommand *other)
+{
+    if(other->id() != this->id())
+        return false;
+
+    const SetDelay* otherC = static_cast<const SetDelay*>(other);
+    if(otherC->editGroup() != this->editGroup())
+        return false;
+
+    if(otherC->_from != _from + _delay)
+    {
+        return false;
+    }
+
+    _delay += otherC->_delay;
+    return true;
+}

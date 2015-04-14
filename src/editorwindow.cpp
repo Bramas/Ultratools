@@ -43,7 +43,9 @@ UEditorWindow::UEditorWindow(QWidget *parent)
     : QMainWindow(parent),
       _spaceNoteGeneration(false),
       ui(new Ui::EditWindowClass),
-      _confirmCloseMessageBox(0)
+      _confirmCloseMessageBox(0),
+      _undoAction(0),
+      _redoAction(0)
 {
 
     this->setFocusPolicy(Qt::StrongFocus);
@@ -144,6 +146,20 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
        // _currentFile = new UFile(this);
         this->showSentenceWidget->setLyrics(_currentFile->lyrics);
         _wydget_lyrics->setWidgetWords(showSentenceWidget);
+
+
+        _undoAction = _currentFile->lyrics->history().createUndoAction(this->ui->menuEdition, tr("Annuler "));
+        _undoAction->setShortcut(QKeySequence::Undo);
+        _undoAction->setIcon(QIcon(":/images/undo.png"));
+        this->ui->menuEdition->addAction(_undoAction);
+        this->ui->toolBar->insertAction(this->ui->actionNode_normale, _undoAction);
+
+        _redoAction = _currentFile->lyrics->history().createRedoAction(this->ui->menuEdition, tr("Refaire "));
+        _redoAction->setShortcut(QKeySequence::Redo);
+        _redoAction->setIcon(QIcon(":/images/redo.png"));
+        this->ui->menuEdition->addAction(_redoAction);
+        this->ui->toolBar->insertAction(this->ui->actionNode_normale, _redoAction);
+
 
         readLastFile();
 
@@ -298,13 +314,23 @@ void UEditorWindow::openFile(QString fileName)
     this->showSentenceWidget->setLyrics(_currentFile->lyrics);
     UNoteManager::Instance.setLyrics(_currentFile->lyrics);
 
-    QAction * undoAction = _currentFile->lyrics->history().createUndoAction(this->ui->menuEdition, tr("Annuler "));
-    undoAction->setShortcut(QKeySequence::Undo);
-    this->ui->menuEdition->addAction(undoAction);
+    if(_undoAction) {
+        _undoAction->deleteLater();
+    }
+    _undoAction = _currentFile->lyrics->history().createUndoAction(this->ui->menuEdition, tr("Annuler "));
+    _undoAction->setShortcut(QKeySequence::Undo);
+    _undoAction->setIcon(QIcon(":/images/undo.png"));
+    this->ui->menuEdition->addAction(_undoAction);
+    this->ui->toolBar->insertAction(this->ui->actionNode_normale, _undoAction);
 
-    QAction * redoAction = _currentFile->lyrics->history().createRedoAction(this->ui->menuEdition, tr("Refaire "));
-    redoAction->setShortcut(QKeySequence::Redo);
-    this->ui->menuEdition->addAction(redoAction);
+    if(_redoAction) {
+        _redoAction->deleteLater();
+    }
+    _redoAction = _currentFile->lyrics->history().createRedoAction(this->ui->menuEdition, tr("Refaire "));
+    _redoAction->setShortcut(QKeySequence::Redo);
+    _redoAction->setIcon(QIcon(":/images/redo.png"));
+    this->ui->menuEdition->addAction(_redoAction);
+    this->ui->toolBar->insertAction(this->ui->actionNode_normale, _redoAction);
 
 
 

@@ -162,7 +162,7 @@ void Lyrics::doublePresicion()
         w.setLength(w.getLength()*2);
     }
 
-    emit hasBeenModified();
+    emit hasBeenModified(); //FIXME (use undocommand)
 }
 
 
@@ -182,49 +182,47 @@ WordIterator Lyrics::wordEnd()
 }
 int Lyrics::setDelay(int delay, quint64 from)
 {
-    double temp = 0;
     if(from > _gap)
-        temp = (((from-qFloor(this->getGap()))/1000.0) * this->getBpm()/15.0);
+        from = ceil((((from-qFloor(this->getGap()))/1000.0) * this->getBpm()/15.0));
+    else
+        from = 0;
 
 
     // check only if the delay is negative
-    bool firstWordChecked=(delay>=0);
-    auto wordIt = _words.begin();
-    QList<Word> toBeInserted;
-    while(wordIt != _words.end())
+    if(delay < 0)
     {
-        if( temp  <= (*wordIt).getTime() && !firstWordChecked)
+        auto wordIt = _words.constBegin();
+        while(wordIt != _words.constEnd())
         {
-            //check if we don't go before the gap
-            if( (*wordIt).getTime() + delay < 0)
+            if( from <= (*wordIt).getTime())
             {
-                delay = -(*wordIt).getTime();
-            }
+                //check if we go before the gap
+                if( (*wordIt).getTime() + delay < 0)
+                {
+                    delay = -(*wordIt).getTime();
+                }
 
-            //check if we don't go before the previous word
-            if(wordIt != _words.begin() && (*wordIt).getTime() + delay < (*(wordIt - 1)).getTime() + (*(wordIt - 1)).getLength())
-            {
-                delay = -(*wordIt).getTime() + (*(wordIt - 1)).getTime() + (*(wordIt - 1)).getLength();
+                //check if we go before the previous word
+                if(wordIt != _words.begin() && (*wordIt).getTime() + delay < (*(wordIt - 1)).getTime() + (*(wordIt - 1)).getLength())
+                {
+                    delay = -(*wordIt).getTime() + (*(wordIt - 1)).getTime() + (*(wordIt - 1)).getLength();
+                }
+
+                //check if the cursor go before the previous word
+                if(wordIt != _words.begin() && from + delay <= (*(wordIt - 1)).getTime())
+                {
+                    delay = 1 - from + (*(wordIt - 1)).getTime();
+                }
+                break;
             }
-            firstWordChecked=true;
-        }
-        if(temp <= (*wordIt).getTime() && firstWordChecked)
-        {
-            Word w = (*wordIt);
-            wordIt = _words.erase(wordIt);
-            w.setTime(w.getTime()+delay);
-            toBeInserted << w;
-        }
-        else
-        {
             ++wordIt;
         }
     }
-    foreach(const Word & w, toBeInserted)
+    if(delay != 0)
     {
-        wordIt = _words.insert(wordIt, w.getTime(), w); //FIXME (use undoactions)
+        _history.push(new Lyrics::SetDelay(this, delay, (int)from));
+        emit hasBeenModified();
     }
-    emit hasBeenModified();
 
     return delay;
 }

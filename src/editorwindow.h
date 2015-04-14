@@ -116,7 +116,8 @@ private:
     QAction *playAction;
     QAction *pauseAction;
     QAction *recordAction;
-
+    QAction * _undoAction;
+    QAction * _redoAction;
     QString _recentFiles;
 
     Ui::EditWindowClass *ui;

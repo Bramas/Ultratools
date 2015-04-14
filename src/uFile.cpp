@@ -49,8 +49,6 @@ UFile::UFile(QMainWindow * parent)
     lyrics->setBpm(_headBpm);
 
 
-    connect(lyrics,SIGNAL(hasBeenModified()),this,SLOT(modified()));
-
     lyrics->setModified(false);
     _modified=false;
 
@@ -76,7 +74,6 @@ UFile::UFile(QMainWindow * parent, QString fileName)
     _headVideogap=0;
 
 
-    connect(lyrics,SIGNAL(hasBeenModified()),this,SLOT(modified()));
 
 
 _fileName=fileName;
