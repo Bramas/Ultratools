@@ -34,7 +34,16 @@ void ShowLines::paintEvent(QPaintEvent * /*event*/)
     qreal tempsR = ((qreal)height())/((qreal)(max-min));
 
     qreal offset = min*tempsR;
-    for(int i=min+1;i<=max;i+=2)
+    int i=min+1 - (((int)min)%2);
+    if(min < 0)
+    {
+        i=min+1 - (((int)min - 1)%2);
+    }
+    if(min <= -1)
+    {
+        i = -1;
+    }
+    for(;i<=max;i+=2)
     {
         qreal y = height() - i*tempsR + offset;
         painter.drawText(QRect(0, y, 50, 50),QString::number(i));
@@ -42,7 +51,12 @@ void ShowLines::paintEvent(QPaintEvent * /*event*/)
         painter.drawLine(0, y, 25, y);
 
     }
-    for(int i=min;i<=max;i+=2)
+    i=min - (((int)min)%2);
+    if(min <= -1)
+    {
+        //i=min - (((int)min - 1)%2);
+    }
+    for(;i<=max;i+=2)
     {
         qreal y = height() - i*tempsR + offset;
          painter.drawText(QRect(30, y, 50, 50),QString::number(i));
@@ -52,7 +66,7 @@ void ShowLines::paintEvent(QPaintEvent * /*event*/)
 
 }
 
-void ShowLines::setMin(int v)
+void ShowLines::setMin(double v)
 {
     min=v;
   //  //qDebug()<<"min: "<<min<<"   max: "<<max;
@@ -60,7 +74,7 @@ update();
 }
 
 
-void ShowLines::setMax(int v)
+void ShowLines::setMax(double v)
 {
     max=v;
     update();

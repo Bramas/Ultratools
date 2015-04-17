@@ -421,7 +421,7 @@ QScrollBar * UEditorWindow::horizontalScrollBar()
 void UEditorWindow::onUpdateVScrollAndScale(int /*s*/)
 {
     // s is now the minimum pitch visible in the editor
-    int vScroll = 70 - ui->vScroll->value();
+    double vScroll = 70 - ui->vScroll->value()/10.0;
 
     // slider value is an integer so this gives more precision
     qreal vScale = ui->vSlider->value()/10.0;
@@ -491,8 +491,8 @@ void UEditorWindow::setupUi()
     //ui->hScroll = new QScrollBar(Qt::Horizontal);
     //ui->vScroll = new QScrollBar(Qt::Vertical);
     ui->hScroll->setRange(0,999);
-    ui->vScroll->setRange(0,71);
-    ui->vScroll->setValue(71);
+    ui->vScroll->setRange(0,710);
+    ui->vScroll->setValue(710);
 
 
         ui->tabEditeurLayMain->setColumnMinimumWidth(0,70);// the minimal width to display the showline wydget

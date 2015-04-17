@@ -63,7 +63,8 @@ double min(double a,double b)
 
 
 ShowSentenceWidget::ShowSentenceWidget(UEditorWindow * parent) :
-    _previousHistoryState(0)
+    _previousHistoryState(0),
+    _verticalScrollBarValue(0)
 {
     hScale=100;// nombre de deciseconds visible sur une fenettre
     vScale=20;
@@ -188,7 +189,11 @@ void ShowSentenceWidget::wheelEvent(QWheelEvent * event)
     else
     {
         int value = parent->verticalScrollBar()->value();
+#ifdef __APPLE__
+        value -= event->delta();
+#else
         value -= event->delta()/30.0;
+#endif
         parent->verticalScrollBar()->setValue(value);
     }
     event->accept();
@@ -453,7 +458,7 @@ void ShowSentenceWidget::paintEvent(QPaintEvent * /*event*/)
     numbreTextOption.setWrapMode(QTextOption::NoWrap);
 
 // RENDER horizontal lines
-    for(int i = vScroll - (vScroll%2); i<=vScroll+vScale; i+=2)
+    for(int i = vScroll - (((int)vScroll)%2); i<=vScroll+vScale; i+=2)
     {
         painter.drawLine(scaledCoordinates(_firstBeatDisplayed,i),scaledCoordinates(_lastBeatDisplayed,i));
     }
@@ -851,7 +856,7 @@ void ShowSentenceWidget::setHScroll(int s)
 #endif
 }
 
-void ShowSentenceWidget::setVScroll(int s)
+void ShowSentenceWidget::setVScroll(double s)
 {
    this->vScroll=s;
 #ifndef UPDATE_BY_TIMER

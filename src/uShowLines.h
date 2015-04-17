@@ -24,11 +24,11 @@ class ShowLines : public QWidget
 
 public:
     ShowLines();
-    void setMin(int);
-    void setMax(int);
+    void setMin(double);
+    void setMax(double);
 
 protected:
-    int min, max;
+    double min, max;
      void paintEvent(QPaintEvent * event);
 };
 

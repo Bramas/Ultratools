@@ -62,7 +62,7 @@ void nextClickAddNote(void);
        void setHScale(int);
        void setVScale(qreal);
        void setHScroll(int);
-       void setVScroll(int);
+       void setVScroll(double);
        void setSeekPosition(qreal);
 
        void deleteNotes();
@@ -125,7 +125,7 @@ protected:
     int hScale;
     qreal vScale;
     int hScroll;
-    int vScroll;
+    double vScroll;
 
     WordSelection _selected;
     Word _overed;
@@ -171,6 +171,7 @@ protected:
     quint16 realHEndView;
     double mouseTime;
     double mousePitch;
+    double _verticalScrollBarValue;
     UEditorWindow * parent;
     void updateRangeView(void);
 
