@@ -22,7 +22,6 @@
 
 Recorder::Recorder(ShowSentenceWidget * showSentenceWidget)
 {
-    _beat=0;
     _isRecording = false;
     _showSentenceWidget = showSentenceWidget;
 
@@ -36,8 +35,8 @@ void Recorder::onKeyPressEvent(QKeyEvent * event)
     {
         return;
     }
-    _beat = _showSentenceWidget->currentBeat();
-    _currentWord = Word(NULL,_beat,1,0);
+    int beat = _showSentenceWidget->currentBeat();
+    _currentWord = Word(NULL,beat,1,0);
     _currentWord.setText("");
 
 }
@@ -47,10 +46,10 @@ void Recorder::onKeyReleaseEvent(QKeyEvent * /*event*/)
 
    // if(UInputManager::Instance.isKeyPressed(Qt::Key_Space))// QMessageBox::warning(NULL,"","lol");
 
-    _beat = _showSentenceWidget->currentBeat();
+    int beat = _showSentenceWidget->currentBeat();
 
-    if(_beat - _currentWord.getTime()>1)
-        _currentWord.setLength(_beat - _currentWord.getTime());
+    if(beat - _currentWord.getTime()>1)
+        _currentWord.setLength(beat - _currentWord.getTime());
 
     _showSentenceWidget->getLyrics()->addWord(_currentWord);
     _currentWord = Word();

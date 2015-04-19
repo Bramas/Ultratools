@@ -39,7 +39,6 @@ public slots:
 private:
 
     Word _currentWord;
-    int _beat;
     ShowSentenceWidget * _showSentenceWidget;
     quint64 _currentTime;
     bool _isRecording;
