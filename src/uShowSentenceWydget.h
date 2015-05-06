@@ -84,6 +84,7 @@ public:
     ~ShowSentenceWidget();
     void renderLyrics(QPainter * painter);
     void renderPreviousSentence(QPainter * painter);
+    void renderSentence(QPainter *painter, const QList<Word> &words, int octave);
     bool renderWord(QPainter * painter, const Word &w, int octave);
     void setLyrics(Lyrics * lyrics);
     Lyrics * getLyrics() { return lyrics; }

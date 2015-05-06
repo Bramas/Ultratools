@@ -27,6 +27,7 @@ ShowLines::ShowLines()
 void ShowLines::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter painter(this);
+    painter.translate(0, -30);//let enough place at the bottom to display the pitch offset of each sentence
 
     painter.setPen(QPen(QColor(0,173,232,170)));
     painter.setBrush(QBrush(QColor(255,255,255,255)));
