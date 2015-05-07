@@ -3,15 +3,25 @@ Author : BRAMAS Quentin [ quentin@bramas.fr ]
 
 *******************************************/
 **
-**  Ultratools - Editor 1.3
+**  Ultratools - Editor 1.5
 **
 **
-**  Date : 06th May 2015
+**  Date : 07th May 2015
 **
 *******************************************/
 
-- Undo/Redo available
-- Improve editor widget	
+- bug fix
+
+*******************************************/
+**
+**  Ultratools - Editor 1.4
+**
+**
+**  Date : 07th May 2015
+**
+*******************************************/
+
+- Improve line widget
 
 *******************************************/
 **
