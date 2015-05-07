@@ -16,5 +16,5 @@ before_install:
 
 script:
     - cd src
-    - qmake "UltraTools Editor.pro"
+    - qmake -qt=qt5 "UltraTools Editor.pro"
     - make -j 4
