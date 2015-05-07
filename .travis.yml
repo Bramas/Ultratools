@@ -5,12 +5,14 @@ compiler:
     - clang
 
 before_install:
+    - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
+    - sudo apt-get update -qq
+    - sudo apt-get install qtbase5-dev
     - wget http://www.fmod.org/download/fmodex/api/Linux/fmodapi44452linux.tar.gz
     - tar xvf fmodapi44452linux.tar.gz
     - sudo cp -r fmodapi44452linux/api/lib/* /usr/local/lib/.
     - sudo mkdir /usr/local/include/fmod/
     - sudo cp -r fmodapi44452linux/api/inc/* /usr/local/include/fmod/.
-    - sudo apt-get install libqt5gui5 qt5-qmake
 
 script:
     - cd src
