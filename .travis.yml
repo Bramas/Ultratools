@@ -1,3 +1,4 @@
+
 language: cpp
 compiler:
     - gcc
@@ -10,8 +11,8 @@ before_install:
     - sudo mkdir /usr/local/include/fmod/
     - sudo cp -r fmodapi44452linux.tar.gz/api/inc/* /usr/local/include/fmod/.
     - sudo apt-get install libqt5gui5 qt5-qmake
-  
-  script:
+
+script:
     - cd src
     - qmake "UltraTools Editor.pro"
     - make -j 4
