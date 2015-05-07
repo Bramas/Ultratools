@@ -19,17 +19,25 @@
 #include <QWidget>
 
 #include "uInputManager.h"
+
+class QPainter;
 class ShowLines : public QWidget
 {
+    Q_OBJECT
 
 public:
     ShowLines();
     void setMin(int);
     void setMax(int);
 
+public slots:
+    void setOctaveOffset(int o) { if(o != _octaveOffset) { _octaveOffset = o; update(); }}
+
 protected:
     int min, max;
      void paintEvent(QPaintEvent * event);
+     void drawPianoNote(QPainter * painter, qreal y, int n);
+     int _octaveOffset;
 };
 
 #endif // SHOWLINES_H

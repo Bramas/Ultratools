@@ -63,7 +63,8 @@ double min(double a,double b)
 
 
 ShowSentenceWidget::ShowSentenceWidget(UEditorWindow * parent) :
-    _previousHistoryState(0)
+    _previousHistoryState(0),
+    _octaveOffset(0)
 {
     hScale=100;// nombre de deciseconds visible sur une fenettre
     vScale=20;
@@ -118,7 +119,7 @@ void ShowSentenceWidget::mousePressEvent(QMouseEvent *event)
 {
     emit singleClik();
     _clickAndMoveSelection = false;
-    _fPointPress = QPointF(event->x(),event->y()+30);
+    _fPointPress = QPointF(event->x(),event->y());
     _timePress = QTime::currentTime();
     _mousePressed = true;
     _mousePressdOnSelectedWord = !_overed.isNull();
@@ -194,6 +195,11 @@ void ShowSentenceWidget::wheelEvent(QWheelEvent * event)
     event->accept();
 }
 
+int ShowSentenceWidget::octaveOffset()
+{
+    return _octaveOffset;
+}
+
 double ShowSentenceWidget::posXToBeat(double in_x)
 {
     return ((in_x)*_lastBeatDisplayed + ((width()-in_x))*_firstBeatDisplayed)/((qreal)width());
@@ -220,7 +226,7 @@ void ShowSentenceWidget::mouseReleaseEvent(QMouseEvent *event)
         lyrics->createEditGroup();
     }
    _mousePressed = false;
-   QPointF pointRealease(event->x(),event->y()+30);
+   QPointF pointRealease(event->x(),event->y());
 
 
    if((pointRealease-_fPointPress).manhattanLength()<10 && _timePress.msecsTo(QTime::currentTime())<500 && _overed.isNull())
@@ -297,11 +303,11 @@ void ShowSentenceWidget::onKeyPressEvent(QKeyEvent * event)
 void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
 {
     _fMousePosition.setX(event->x());
-    _fMousePosition.setY(event->y()+30);
+    _fMousePosition.setY(event->y());
 
 
     mouseTime=(_lastBeatDisplayed-_firstBeatDisplayed)*event->x()/(qreal)width()+_firstBeatDisplayed;
-    mousePitch=vScroll+ (vScale)*((qreal)(height()-event->y()-30))/((qreal)height());
+    mousePitch=vScroll+ (vScale)*((qreal)(height()-event->y()))/((qreal)height());
 
     qreal fDiffY = mousePitch - (vScale*(height()-_fPointPress.y())/(qreal)height()+vScroll);
     qreal fDiffX = mouseTime - ((_lastBeatDisplayed-_firstBeatDisplayed)*_fPointPress.x()/(qreal)width()+_firstBeatDisplayed);
@@ -421,8 +427,6 @@ void ShowSentenceWidget::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-
-    painter.translate(0, -30);//let enough place at the bottom to display the pitch offset of each sentence
 
     _firstBeatDisplayed = hScroll - _gap;
     _lastBeatDisplayed = hScroll + hScale  - _gap;
@@ -584,6 +588,14 @@ void ShowSentenceWidget::renderLyrics(QPainter * painter)
         {
             currentSentence << *wordIt;
             renderSentence(painter, currentSentence, octaveMin);
+            if(_seekPosition >= currentSentence.first().getTime() && _seekPosition < currentSentence.last().getTime())
+            {
+                if(_octaveOffset != octaveMin)
+                {
+                    _octaveOffset = octaveMin;
+                    emit octaveChanged(_octaveOffset);
+                }
+            }
             currentSentence.clear();
             if(wordIt + 1 != lyrics->words().constEnd())
             {
@@ -614,7 +626,7 @@ void ShowSentenceWidget::deselect()
 
 void ShowSentenceWidget::renderSentence(QPainter *painter, const QList<Word> &words, int octave)
 {
-    if(words.count() >= 3)
+    /*if(words.count() >= 3)
     {
         painter->save();
         QFont f = painter->font();
@@ -634,7 +646,7 @@ void ShowSentenceWidget::renderSentence(QPainter *painter, const QList<Word> &wo
         painter->drawText(min(max(0,left), right - QFontMetrics(painter->font()).width(text) - 10), height()+28, text);
 
         painter->restore();
-    }
+    }*/
 
     foreach(const Word & w, words)
     {
@@ -680,10 +692,10 @@ bool ShowSentenceWidget::renderWord(QPainter * painter, const Word & w, int octa
    }
 
 
-   QPointF p = scaledCoordinates(w.getTime(),pitch+HAUTEUR_NOTE/2+1);
-   painter->drawText(p.x(), p.y(),
+   QPointF p = scaledCoordinates(w.getTime(),pitch+HAUTEUR_NOTE/2);
+   painter->drawText(p.x(), p.y()-QFontMetrics(painter->font()).height(),
            200,
-           30,
+           QFontMetrics(painter->font()).height(),
            Qt::TextWordWrap,w.getText());
 
    p = scaledCoordinates(w.getTime(),pitch+HAUTEUR_NOTE/2);

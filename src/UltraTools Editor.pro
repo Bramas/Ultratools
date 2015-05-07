@@ -6,10 +6,10 @@ CONFIG += c++11
 TARGET = "UltraTools Editor"
 TEMPLATE = app
 
-VERSION = \\\"'1.3'\\\"
+VERSION = \\\"'1.4'\\\"
 DEFINES += "VERSION=$${VERSION}"
 
-DEFINES += "VERSION_HEX=0x0103"
+DEFINES += "VERSION_HEX=0x0104"
 
 SOURCES += main.cpp \
     editorwindow.cpp \

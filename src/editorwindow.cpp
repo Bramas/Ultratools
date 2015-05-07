@@ -75,7 +75,7 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
         //connect(ui->vScroll,SIGNAL(actionTriggered(int)),this,SLOT(changeVScroll(int)));
 
         connect(ui->hScroll,SIGNAL(valueChanged(int)),this,SLOT(changeHScroll(int)));
-        connect(ui->hSlider,SIGNAL(sliderMoved(int)),this,SLOT(changeHSlider(int)));
+        connect(ui->hSlider,SIGNAL(valueChanged(int)),this,SLOT(changeHSlider(int)));
         connect(ui->hScroll,SIGNAL(sliderPressed()),this,SLOT(changeHScroll()));
         connect(ui->hSlider,SIGNAL(sliderPressed()),this,SLOT(changeHSlider()));
 
@@ -397,6 +397,7 @@ void UEditorWindow::adaptNewFile()
 
 void UEditorWindow::changeHSlider(int s)
 {
+    s = ui->hSlider->value();
     ui->hScroll->setPageStep(exp(((double)ui->hSlider->value())/100.0));
  //  this->hScroll->setMaximum(*range/10-hSlider->value());
    this->showSentenceWidget->setHScale(s);
@@ -434,11 +435,7 @@ void UEditorWindow::onUpdateVScrollAndScale(int /*s*/)
 }
 void UEditorWindow::changeHScroll(int s)
 {
-if(s!=ui->hScroll->value()) //it's mean that something else that the scroll want to scroll
-{
-    ui->hScroll->setValue(s);//so update the scrollBar
-}
-
+    s = ui->hScroll->value();
 
 _widgetSongData->setHScroll(s);
 this->showSentenceWidget->setHScroll(s);
@@ -550,6 +547,7 @@ void UEditorWindow::setupUi()
         connect(showSentenceWidget, SIGNAL(doubleClik(int)), _wydget_lyrics, SLOT(ondoubleClick(int)));
 
         connect(showSentenceWidget,SIGNAL(autoScroll(int)),this, SLOT(changeHScroll(int)));
+        connect(showSentenceWidget, SIGNAL(octaveChanged(int)), showLines, SLOT(setOctaveOffset(int)));
         
         
 
@@ -591,6 +589,7 @@ void UEditorWindow::tick(quint64 time)
 
 
     showSentenceWidget->setSeekPosition(_currentFile->lyrics->timeToBeat(time));
+
     _wydget_timeline->setSeek(time);
     _widgetSongData->setSeekPosition(time);
     _wydget_timeline->setSeekPosition(time);

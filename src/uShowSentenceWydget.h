@@ -44,6 +44,7 @@ signals:
      void singleClik(void);
      void emptyClik(void);
      void floatSelection(double, double);
+     void octaveChanged(int);
 
 public slots:
      void onKeyPressEvent(QKeyEvent*);
@@ -74,6 +75,8 @@ void nextClickAddNote(void);
 public:
        qreal duration();
        qreal startTime();
+
+       int octaveOffset();
 
        quint32 getHScale(void) { return hScale; }
        int getHScroll(void) { return (int)hScroll; }
@@ -135,6 +138,8 @@ protected:
     QPointF _fPointPress;
     QPointF _fMousePosition;
     QTime _timePress;
+
+    int _octaveOffset;
 
 
     private:
