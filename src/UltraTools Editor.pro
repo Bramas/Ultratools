@@ -6,10 +6,10 @@ CONFIG += c++11
 TARGET = "UltraTools Editor"
 TEMPLATE = app
 
-VERSION = \\\"'1.2'\\\"
+VERSION = \\\"'1.3'\\\"
 DEFINES += "VERSION=$${VERSION}"
 
-DEFINES += "VERSION_HEX=0x0102"
+DEFINES += "VERSION_HEX=0x0103"
 
 SOURCES += main.cpp \
     editorwindow.cpp \
@@ -118,6 +118,12 @@ mac{
     OS_STRING = \\\"'Mac'\\\"
 }
 
+unix:!mac{
+    INCLUDEPATH += \usr\local\fmod
+    RC_FILE = icone/icone.rc
+    LIBS += -L\usr\local\lib -lfmodex
+    OS_STRING = \\\"'Linux'\\\"
+}
 win32{
 
 

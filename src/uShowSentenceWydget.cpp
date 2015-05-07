@@ -119,7 +119,7 @@ void ShowSentenceWidget::mousePressEvent(QMouseEvent *event)
 {
     emit singleClik();
     _clickAndMoveSelection = false;
-    _fPointPress = QPointF(event->x(),event->y());
+    _fPointPress = QPointF(event->x(),event->y()+30);
     _timePress = QTime::currentTime();
     _mousePressed = true;
     _mousePressdOnSelectedWord = !_overed.isNull();
@@ -225,7 +225,7 @@ void ShowSentenceWidget::mouseReleaseEvent(QMouseEvent *event)
         lyrics->createEditGroup();
     }
    _mousePressed = false;
-   QPointF pointRealease(event->x(),event->y());
+   QPointF pointRealease(event->x(),event->y()+30);
 
 
    if((pointRealease-_fPointPress).manhattanLength()<10 && _timePress.msecsTo(QTime::currentTime())<500 && _overed.isNull())
@@ -302,11 +302,11 @@ void ShowSentenceWidget::onKeyPressEvent(QKeyEvent * event)
 void ShowSentenceWidget::mouseMoveEvent ( QMouseEvent * event )
 {
     _fMousePosition.setX(event->x());
-    _fMousePosition.setY(event->y());
+    _fMousePosition.setY(event->y()+30);
 
 
     mouseTime=(_lastBeatDisplayed-_firstBeatDisplayed)*event->x()/(qreal)width()+_firstBeatDisplayed;
-    mousePitch=vScroll+ (vScale)*((qreal)(height()-event->y()))/((qreal)height());
+    mousePitch=vScroll+ (vScale)*((qreal)(height()-event->y()-30))/((qreal)height());
 
     qreal fDiffY = mousePitch - (vScale*(height()-_fPointPress.y())/(qreal)height()+vScroll);
     qreal fDiffX = mouseTime - ((_lastBeatDisplayed-_firstBeatDisplayed)*_fPointPress.x()/(qreal)width()+_firstBeatDisplayed);
@@ -426,10 +426,15 @@ void ShowSentenceWidget::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
+
+    painter.translate(0, -30);//let enough place at the bottom to display the pitch offset of each sentence
+
     _firstBeatDisplayed = hScroll - _gap;
     _lastBeatDisplayed = hScroll + hScale  - _gap;
 
     _hSplitHCursor=_hSizeCursor=_sizeAllCursor=false;
+
+
 
 
 
@@ -580,14 +585,10 @@ void ShowSentenceWidget::renderLyrics(QPainter * painter)
     QList<Word> currentSentence;
     while(wordIt != lyrics->words().constEnd())
     {
-        painter->setPen(QPen(QColor(0,0,0,170)));
-        painter->setBrush(QBrush(QColor(0,173,232,170)));
         if((*wordIt).isSeparator())
         {
-            foreach(const Word & w, currentSentence)
-            {
-                renderWord(painter, w, octaveMin);
-            }
+            currentSentence << *wordIt;
+            renderSentence(painter, currentSentence, octaveMin);
             currentSentence.clear();
             if(wordIt + 1 != lyrics->words().constEnd())
             {
@@ -601,21 +602,14 @@ void ShowSentenceWidget::renderLyrics(QPainter * painter)
         }
         if((*wordIt).getTime()+(*wordIt).getLength()>=_firstBeatDisplayed && (*wordIt).getTime()<_lastBeatDisplayed)
         {
-            if(!(*wordIt).isSeparator())
-                currentSentence << *wordIt;
-
+            currentSentence << *wordIt;
             _wordsDisplayed << *wordIt;
-            if((*wordIt).isSeparator())
-            {
-                renderSeparator(painter, (*wordIt));
-            }
         }
+        else if(wordIt->isSeparator())
+              currentSentence << *wordIt; // awlays add the first separator of the sentence even if it is not displayed
         ++wordIt;
     }
-    foreach(const Word & w, currentSentence)
-    {
-        renderWord(painter,w, octaveMin);
-    }
+    renderSentence(painter, currentSentence, octaveMin);
 }
 
 void ShowSentenceWidget::deselect()
@@ -623,11 +617,44 @@ void ShowSentenceWidget::deselect()
     _selected = WordSelection(lyrics);
 }
 
+void ShowSentenceWidget::renderSentence(QPainter *painter, const QList<Word> &words, int octave)
+{
+    if(words.count() >= 3)
+    {
+        painter->save();
+        QFont f = painter->font();
+        f.setPixelSize(13);
+        painter->setFont(f);
+        qreal left = 0;
+        if(words.first().isSeparator()) //if it is not the first sentence
+            left = scaledCoordinates(words.first().getTime1(),0).x();
+        qreal right = scaledCoordinates(words.last().getTime1(),0).x();
+
+        painter->setPen(QPen(QColor(100,100,100)));
+        //painter->setPen(Qt::NoPen);
+        painter->setBrush(QBrush(QColor(200,200,200)));
+        //painter->drawRect(scaledCoordinates(left,0).x(), height(),scaleWidth(right-left), 30);
+
+        QString text = tr("Octave offset %1 (pitch + %2)").arg(QString::number(octave)).arg(QString::number(octave*12));
+        painter->drawText(min(max(0,left), right - QFontMetrics(painter->font()).width(text) - 10), height()+28, text);
+
+        painter->restore();
+    }
+
+    foreach(const Word & w, words)
+    {
+        if(w.isSeparator()){
+            renderSeparator(painter, w);
+        } else {
+            renderWord(painter, w, octave);
+        }
+    }
+}
 
 bool ShowSentenceWidget::renderWord(QPainter * painter, const Word & w, int octave)
 {
 
-
+    painter->setPen(QPen(QColor(0,0,0,170)));
     painter->setBrush(QBrush(QColor(0,173,232,170)));
 
     int pitch = -octave*12 + w.getPitch();
