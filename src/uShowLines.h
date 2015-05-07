@@ -27,14 +27,14 @@ class ShowLines : public QWidget
 
 public:
     ShowLines();
-    void setMin(int);
-    void setMax(int);
+    void setMin(double);
+    void setMax(double);
 
 public slots:
     void setOctaveOffset(int o) { if(o != _octaveOffset) { _octaveOffset = o; update(); }}
 
 protected:
-    int min, max;
+    double min, max;
      void paintEvent(QPaintEvent * event);
      void drawPianoNote(QPainter * painter, qreal y, int n);
      int _octaveOffset;

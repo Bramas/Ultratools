@@ -36,6 +36,18 @@ void ShowLines::paintEvent(QPaintEvent * /*event*/)
 
     qreal offset = min*tempsR;
    /* for(int i=min+1;i<=max;i+=2)
+=======
+    int i=min+1 - (((int)min)%2);
+    if(min < 0)
+    {
+        i=min+1 - (((int)min - 1)%2);
+    }
+    if(min <= -1)
+    {
+        i = -1;
+    }
+    for(;i<=max;i+=2)
+>>>>>>> 82deaa2b090bee16fdca95a4d52c218a49a080d4
     {
         qreal y = height() - i*tempsR + offset;
         painter.drawText(QRect(0, y, 50, 50),QString::number(i));
@@ -43,7 +55,12 @@ void ShowLines::paintEvent(QPaintEvent * /*event*/)
         painter.drawLine(0, y, 25, y);
 
     }
-    for(int i=min;i<=max;i+=2)
+    i=min - (((int)min)%2);
+    if(min <= -1)
+    {
+        //i=min - (((int)min - 1)%2);
+    }
+    for(;i<=max;i+=2)
     {
         qreal y = height() - i*tempsR + offset;
          painter.drawText(QRect(30, y, 50, 50),QString::number(i));
@@ -51,7 +68,7 @@ void ShowLines::paintEvent(QPaintEvent * /*event*/)
         painter.drawLine(25, y, 50, y);
     }*/
 
-    for(int i=min;i<=max;i++)
+    for(int i=(int)min;i<=max;i++)
     {
         qreal y = height() - i*tempsR + offset;
         painter.drawText(55, y + QFontMetrics(painter.font()).height()/2.0-1, QString::number(i+_octaveOffset*12));
@@ -98,7 +115,7 @@ void ShowLines::drawPianoNote(QPainter *painter, qreal y, int n)
     painter->restore();
 }
 
-void ShowLines::setMin(int v)
+void ShowLines::setMin(double v)
 {
     min=v;
   //  //qDebug()<<"min: "<<min<<"   max: "<<max;
@@ -106,7 +123,7 @@ update();
 }
 
 
-void ShowLines::setMax(int v)
+void ShowLines::setMax(double v)
 {
     max=v;
     update();
