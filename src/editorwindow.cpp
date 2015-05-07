@@ -377,7 +377,7 @@ void UEditorWindow::adaptNewFile()
     //ui->vScroll->setRange((245-_currentFile->lyrics->getPitchMax()),(255-_currentFile->lyrics->getPitchMin()));
 
 
-
+/*
     if((_currentFile->lyrics->getPitchMin()+_currentFile->lyrics->getPitchMax())/2+20>_currentFile->lyrics->getPitchMax())
     {
          ui->vScroll->setValue(255-_currentFile->lyrics->getPitchMax());
@@ -386,6 +386,7 @@ void UEditorWindow::adaptNewFile()
     {
          ui->vScroll->setValue((235-(_currentFile->lyrics->getPitchMin()+_currentFile->lyrics->getPitchMax())/2));
      }
+     */
     onUpdateVScrollAndScale();
 
 
@@ -546,7 +547,7 @@ void UEditorWindow::setupUi()
         connect(showSentenceWidget, SIGNAL(selection(int,int)), _wydget_lyrics, SLOT(onSelectionChange(int,int)));
         connect(showSentenceWidget, SIGNAL(doubleClik(int)), _wydget_lyrics, SLOT(ondoubleClick(int)));
 
-        connect(showSentenceWidget,SIGNAL(autoScroll(int)),this, SLOT(changeHScroll(int)));
+        connect(showSentenceWidget, &ShowSentenceWidget::autoScroll,[this](int v) { this->ui->hScroll->setValue(v);} );
         connect(showSentenceWidget, SIGNAL(octaveChanged(int)), showLines, SLOT(setOctaveOffset(int)));
         
         
@@ -841,7 +842,7 @@ void UEditorWindow::centerView()
     int time = UAudioManager::Instance.currentTime();
     if(ui->hScroll->value()>_currentFile->lyrics->timeToBeat(time) || ui->hScroll->value() + showSentenceWidget->getHScale()<_currentFile->lyrics->timeToBeat(time))
     {
-        changeHScroll(max(0.0,_currentFile->lyrics->timeToBeat(time)-showSentenceWidget->getHScale()/2));
+        this->ui->hScroll->setValue(max(0.0,_currentFile->lyrics->timeToBeat(time)-showSentenceWidget->getHScale()/2));
         //QMessageBox::warning(NULL,"","ok");
     }
 }
@@ -859,11 +860,11 @@ void UEditorWindow::onConnected()
     {
         return;
     }
-    QMenu * m = new QMenu(tr("Envoyer une suggestion/remarque rapide"),NULL);
-    QList<QAction*> l;
-    l.append(ui->actionEnvoyer_une_suggestion_remarque_rapide);
-    m->addActions(l);
-    ui->menubar->addMenu(m);
+    //QMenu * m = new QMenu(tr("Envoyer une suggestion/remarque rapide"),NULL);
+    //QList<QAction*> l;
+    //l.append(ui->actionEnvoyer_une_suggestion_remarque_rapide);
+    //m->addActions(l);
+    //ui->menubar->addMenu(m);
  // ui->menuEnvoyer_une_suggestion_remarque_rapide->setEnabled(true);
 }
 void UEditorWindow::displayFeedback()

@@ -191,7 +191,7 @@ void ShowSentenceWidget::wheelEvent(QWheelEvent * event)
     {
         int value = parent->verticalScrollBar()->value();
 #ifdef __APPLE__
-        value -= event->delta();
+        value -= event->delta()/20.0;
 #else
         value -= event->delta()/30.0;
 #endif

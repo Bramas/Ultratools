@@ -17,6 +17,7 @@
 #include "uShowLines.h"
 #include <QPainter>
 #include <QDebug>
+#include <math.h>
 
 ShowLines::ShowLines()
 {
