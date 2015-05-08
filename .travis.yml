@@ -5,9 +5,12 @@ compiler:
     - clang
 
 before_install:
-    - wget http://download.qt.io/archive/qt/5.2/5.2.0/qt-linux-opensource-5.2.0-x86-offline.run
-    - sudo chmod +x qt-linux-opensource-5.2.0-x86-offline.run
-    - sudo ./qt-linux-opensource-5.2.0-x86-offline.run
+    - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu trusty universe"
+    - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu trusty main"
+    - sudo apt-get install debian-keyring debian-archive-keyring
+    - sudo apt-key update
+    - sudo apt-get update
+    - sudo apt-get install qtbase5-dev qttools5-dev-tools
     - wget http://www.fmod.org/download/fmodex/api/Linux/fmodapi44452linux.tar.gz
     - tar xvf fmodapi44452linux.tar.gz
     - sudo cp -r fmodapi44452linux/api/lib/* /usr/local/lib/.
