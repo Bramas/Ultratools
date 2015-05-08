@@ -17,6 +17,37 @@ WordSelection::~WordSelection()
     _lyrics->_selections.removeAll(this);
 }
 
+int WordSelection::firstIndex()
+{
+    Q_ASSERT(!_selectedWords.isEmpty());
+    Word firstWord = _selectedWords.begin().key();
+    int i = 0;
+    foreach(const Word & w, _lyrics->words())
+    {
+        if(w == firstWord)
+        {
+            return i;
+        }
+        ++i;
+    }
+
+}
+int WordSelection::lastIndex()
+{
+    Q_ASSERT(!_selectedWords.isEmpty());
+    Word lastWord = _selectedWords.lastKey();
+    int i = 0;
+    foreach(const Word & w, _lyrics->words())
+    {
+        if(w == lastWord)
+        {
+            return i;
+        }
+        ++i;
+    }
+
+}
+
 void WordSelection::add(const Word & word)
 {
     Q_ASSERT_X(_lyrics->contains(word), "When adding a word to the selection",

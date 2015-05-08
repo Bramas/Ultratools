@@ -85,7 +85,7 @@ void UWydget_Lyrics::keyPressEvent(QKeyEvent * e)
 
 void UWydget_Lyrics::onTextChanged()
 {
-    if(!_wydgetWords)
+    if(!_wydgetWords || _wydgetWords->getLyrics()->words().isEmpty())
     {
         return;
     }

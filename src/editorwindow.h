@@ -59,7 +59,7 @@ public slots:
    void displayHelpScreen(void);
    void hoverAction(QAction*);
    void autoSave(void);
-    void editHeader(void);
+   void editHeader(void);
    void changeHSlider(int s = 0);
    void onUpdateVScrollAndScale(int s = 0);
    void changeHScroll(int s =0);

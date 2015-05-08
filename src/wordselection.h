@@ -24,8 +24,8 @@ public:
     Word last() { return (_selectedWords.end() - 1).key(); }
     const QMap<Word, int> & words() const { return _selectedWords; }
 
-    int firstIndex() { return _selectedWords.begin().value(); }
-    int lastIndex() { return (_selectedWords.end() - 1).value(); }
+    int firstIndex();
+    int lastIndex();
 
 
     // functions that modify the lyrics

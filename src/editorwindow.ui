@@ -124,52 +124,52 @@
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFichier">
+   <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>Fichier</string>
     </property>
-    <addaction name="actionNouveau"/>
-    <addaction name="actionOuvrir"/>
-    <addaction name="actionSauvegarder"/>
-    <addaction name="actionEnregistrer_sous"/>
+    <addaction name="actionNew"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSaveAs"/>
     <addaction name="separator"/>
-    <addaction name="actionFichiers_r_cents"/>
+    <addaction name="actionRecentFiles"/>
     <addaction name="separator"/>
-    <addaction name="actionPr_f_rences"/>
+    <addaction name="actionPreferences"/>
     <addaction name="separator"/>
-    <addaction name="actionQuitter"/>
+    <addaction name="actionQuit"/>
    </widget>
-   <widget class="QMenu" name="menuAide">
+   <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Aide</string>
     </property>
-    <addaction name="actionAide"/>
+    <addaction name="actionHelp"/>
     <addaction name="actionAbout"/>
    </widget>
-   <widget class="QMenu" name="menuEdition">
+   <widget class="QMenu" name="menuEdit">
     <property name="title">
      <string>Edition</string>
     </property>
-    <addaction name="actionEditer_les_ent_tes"/>
+    <addaction name="actionEditHeaders"/>
     <addaction name="separator"/>
-    <addaction name="actionScinder_une_note"/>
-    <addaction name="actionFusionner_deux_notes"/>
+    <addaction name="actionSplitNote"/>
+    <addaction name="actionMergeNotes"/>
     <addaction name="separator"/>
-    <addaction name="actionNode_normale"/>
-    <addaction name="actionNote_freestyle"/>
-    <addaction name="actionNote_Gold"/>
+    <addaction name="actionSetNormalNote"/>
+    <addaction name="actionSetFreeNote"/>
+    <addaction name="actionSetGoldNote"/>
     <addaction name="separator"/>
-    <addaction name="actionAjouter_une_note"/>
-    <addaction name="actionAjouter_un_s_parateur"/>
-    <addaction name="actionSupprimer_une_note"/>
+    <addaction name="actionAddNote"/>
+    <addaction name="actionAddSeparator"/>
+    <addaction name="actionDeleteNote"/>
     <addaction name="separator"/>
     <addaction name="actionMorphe"/>
-    <addaction name="actionVerrouiller_les_timings"/>
+    <addaction name="actionLockTimings"/>
     <addaction name="actionDoublePrecision"/>
    </widget>
-   <addaction name="menuFichier"/>
-   <addaction name="menuEdition"/>
-   <addaction name="menuAide"/>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="minimumSize">
@@ -199,30 +199,30 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionNouveau"/>
-   <addaction name="actionOuvrir"/>
-   <addaction name="actionSauvegarder"/>
+   <addaction name="actionNew"/>
+   <addaction name="actionOpen"/>
+   <addaction name="actionSave"/>
    <addaction name="separator"/>
-   <addaction name="actionNode_normale"/>
-   <addaction name="actionNote_freestyle"/>
-   <addaction name="actionNote_Gold"/>
+   <addaction name="actionSetNormalNote"/>
+   <addaction name="actionSetFreeNote"/>
+   <addaction name="actionSetGoldNote"/>
    <addaction name="separator"/>
-   <addaction name="actionFusionner_deux_notes"/>
-   <addaction name="actionScinder_une_note"/>
+   <addaction name="actionMergeNotes"/>
+   <addaction name="actionSplitNote"/>
    <addaction name="separator"/>
-   <addaction name="actionAjouter_une_note"/>
-   <addaction name="actionAjouter_un_s_parateur"/>
+   <addaction name="actionAddNote"/>
+   <addaction name="actionAddSeparator"/>
    <addaction name="separator"/>
-   <addaction name="actionSupprimer_une_note"/>
+   <addaction name="actionDeleteNote"/>
    <addaction name="separator"/>
    <addaction name="actionMorphe"/>
-   <addaction name="actionVerrouiller_les_timings"/>
+   <addaction name="actionLockTimings"/>
    <addaction name="actionDoublePrecision"/>
-   <addaction name="actionCentrer"/>
-   <addaction name="actionD_caler_les_notes"/>
+   <addaction name="actionCenter"/>
+   <addaction name="actionApplyOffset"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionNouveau">
+  <action name="actionNew">
    <property name="icon">
     <iconset resource="data.qrc">
      <normaloff>:/Images/images/new.png</normaloff>:/Images/images/new.png</iconset>
@@ -237,7 +237,7 @@
     <string comment="nouveau" extracomment="com"/>
    </property>
   </action>
-  <action name="actionOuvrir">
+  <action name="actionOpen">
    <property name="icon">
     <iconset resource="data.qrc">
      <normaloff>:/Images/images/open.png</normaloff>:/Images/images/open.png</iconset>
@@ -252,7 +252,7 @@
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="actionSauvegarder">
+  <action name="actionSave">
    <property name="icon">
     <iconset resource="data.qrc">
      <normaloff>:/Images/images/save.png</normaloff>:/Images/images/save.png</iconset>
@@ -267,7 +267,7 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="actionQuitter">
+  <action name="actionQuit">
    <property name="icon">
     <iconset resource="data.qrc">
      <normaloff>:/Images/images/exit.png</normaloff>:/Images/images/exit.png</iconset>
@@ -282,12 +282,12 @@
     <string>Ctrl+Q</string>
    </property>
   </action>
-  <action name="actionAide">
+  <action name="actionHelp">
    <property name="text">
     <string>Aide</string>
    </property>
   </action>
-  <action name="actionEditer_les_ent_tes">
+  <action name="actionEditHeaders">
    <property name="text">
     <string>Editer les entêtes</string>
    </property>
@@ -295,12 +295,12 @@
     <string comment="Edition">Editer les entêtes (Titre, Auteur, Background...)</string>
    </property>
   </action>
-  <action name="actionFichiers_r_cents">
+  <action name="actionRecentFiles">
    <property name="text">
     <string>Fichiers récents</string>
    </property>
   </action>
-  <action name="actionScinder_une_note">
+  <action name="actionSplitNote">
    <property name="icon">
     <iconset resource="data.qrc">
      <normaloff>:/Images/images/scinder.png</normaloff>:/Images/images/scinder.png</iconset>
@@ -312,7 +312,7 @@
     <string>Scinder la note en 2</string>
    </property>
   </action>
-  <action name="actionFusionner_deux_notes">
+  <action name="actionMergeNotes">
    <property name="icon">
     <iconset resource="data.qrc">
      <normaloff>:/Images/images/fusion.png</normaloff>:/Images/images/fusion.png</iconset>
@@ -324,7 +324,7 @@
     <string>Fusionner les notes sélectionnées</string>
    </property>
   </action>
-  <action name="actionNode_normale">
+  <action name="actionSetNormalNote">
    <property name="icon">
     <iconset resource="data.qrc">
      <normaloff>:/Images/images/nodeNormal.png</normaloff>:/Images/images/nodeNormal.png</iconset>
@@ -339,7 +339,7 @@
     <string>N</string>
    </property>
   </action>
-  <action name="actionNote_freestyle">
+  <action name="actionSetFreeNote">
    <property name="icon">
     <iconset resource="data.qrc">
      <normaloff>:/Images/images/nodeFree.png</normaloff>:/Images/images/nodeFree.png</iconset>
@@ -354,7 +354,7 @@
     <string>F</string>
    </property>
   </action>
-  <action name="actionNote_Gold">
+  <action name="actionSetGoldNote">
    <property name="icon">
     <iconset resource="data.qrc">
      <normaloff>:/Images/images/nodeGold.png</normaloff>:/Images/images/nodeGold.png</iconset>
@@ -369,7 +369,7 @@
     <string>G</string>
    </property>
   </action>
-  <action name="actionAjouter_une_note">
+  <action name="actionAddNote">
    <property name="icon">
     <iconset resource="data.qrc">
      <normaloff>:/Images/images/addNote.png</normaloff>:/Images/images/addNote.png</iconset>
@@ -381,7 +381,7 @@
     <string>Ajouter une note</string>
    </property>
   </action>
-  <action name="actionAjouter_un_s_parateur">
+  <action name="actionAddSeparator">
    <property name="icon">
     <iconset resource="data.qrc">
      <normaloff>:/Images/images/addSep.png</normaloff>:/Images/images/addSep.png</iconset>
@@ -393,7 +393,7 @@
     <string>Ajouter un séparateur (pour coupé une phrase en 2)</string>
    </property>
   </action>
-  <action name="actionEnregistrer_sous">
+  <action name="actionSaveAs">
    <property name="icon">
     <iconset resource="data.qrc">
      <normaloff>:/Images/images/save.png</normaloff>:/Images/images/save.png</iconset>
@@ -405,7 +405,7 @@
     <string>Enregistrer sous</string>
    </property>
   </action>
-  <action name="actionSupprimer_une_note">
+  <action name="actionDeleteNote">
    <property name="icon">
     <iconset resource="data.qrc">
      <normaloff>:/Images/images/supp.png</normaloff>:/Images/images/supp.png</iconset>
@@ -420,7 +420,7 @@
     <string>Del</string>
    </property>
   </action>
-  <action name="actionPr_f_rences">
+  <action name="actionPreferences">
    <property name="text">
     <string>Préférences</string>
    </property>
@@ -446,7 +446,7 @@
     <string>Calquer les notes sélectionnées sur les notes des phrases d'avant (qui sont affiché en gris)</string>
    </property>
   </action>
-  <action name="actionVerrouiller_les_timings">
+  <action name="actionLockTimings">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -473,7 +473,7 @@
     <string>Doubler la précision</string>
    </property>
   </action>
-  <action name="actionCentrer">
+  <action name="actionCenter">
    <property name="text">
     <string>Centrer</string>
    </property>
@@ -484,7 +484,7 @@
     <string>C</string>
    </property>
   </action>
-  <action name="actionEnvoyer_une_suggestion_remarque_rapide">
+  <action name="actionSendFeedback">
    <property name="enabled">
     <bool>true</bool>
    </property>
@@ -492,7 +492,7 @@
     <string>Envoyer une suggestion/remarque rapide</string>
    </property>
   </action>
-  <action name="actionD_caler_les_notes">
+  <action name="actionApplyOffset">
    <property name="text">
     <string>Décaler les notes</string>
    </property>

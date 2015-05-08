@@ -53,7 +53,7 @@ public slots:
      void setNormal(void);
 
      void fusion(void);
-     void scinder(void);
+     void split(void);
      void setPreviousDisplayed(int n);
      void calquer(void);
 

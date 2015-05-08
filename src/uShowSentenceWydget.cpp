@@ -1062,7 +1062,7 @@ void ShowSentenceWidget::fusion()
     update();
 #endif
 }
-void ShowSentenceWidget::scinder()
+void ShowSentenceWidget::split()
 {
     if(_selected.count()>1 || _selected.isEmpty())
     {
@@ -1078,26 +1078,35 @@ void ShowSentenceWidget::scinder()
         return;
     }
 
-    Word newW(w.getParent(),w.getTime()+floor(w.getLength()/2),floor(w.getLength()/2),w.getPitch());
+    lyrics->createEditGroup();
+    int length = floor(w.getLength()/2);
+
+    lyrics->removeWord(w);
+
 
     QRegExp reg("[, -:!.]");
-
     QStringList strlist = w.getText().split(reg,QString::SkipEmptyParts);
 
-    w.setLength(ceil(w.getLength()/2));
+    w.setLength(w.getLength() - length);
 
+
+    Word newW(w.getParent(),w.getTime2(),length,w.getPitch());
     if(strlist.count()<2)
     {
-        lyrics->addWord(newW);
         newW.setText("~");
-        return;
+    }
+    else
+    {
+        newW.setText(w.getText().section(reg,-2,-1,QString::SectionSkipEmpty | QString::SectionIncludeLeadingSep));
+        w.setText(w.getText().section(reg,0,-3,QString::SectionSkipEmpty | QString::SectionIncludeLeadingSep));
     }
 
-    newW.setText(w.getText().section(reg,-2,-1,QString::SectionSkipEmpty | QString::SectionIncludeLeadingSep));
 
-    w.setText(w.getText().section(reg,0,-3,QString::SectionSkipEmpty | QString::SectionIncludeLeadingSep));
+
+    lyrics->addWord(w);
     lyrics->addWord(newW);
 
+    lyrics->createEditGroup();
 #ifndef UPDATE_BY_TIMER
     update();
 #endif

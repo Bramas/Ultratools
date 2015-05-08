@@ -83,10 +83,10 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
 
 
 
-        connect(ui->actionOuvrir,SIGNAL(triggered()),this,SLOT(openFile()));
+        connect(ui->actionOpen,SIGNAL(triggered()),this,SLOT(openFile()));
 
-        connect(ui->actionEditer_les_ent_tes,SIGNAL(triggered()),this,SLOT(editHeader()));
-        connect(ui->actionD_caler_les_notes,SIGNAL(triggered()),this,SLOT(openTiming()));
+        connect(ui->actionEditHeaders,SIGNAL(triggered()),this,SLOT(editHeader()));
+        connect(ui->actionApplyOffset,SIGNAL(triggered()),this,SLOT(openTiming()));
         connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     connect(playAction, SIGNAL(triggered()), this, SLOT(tooglePlay()));
     connect(pauseAction, SIGNAL(triggered()), this, SLOT(tooglePlay()));
@@ -104,39 +104,39 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
 */
         connect(this->ui->offsetSpinBox, SIGNAL(valueChanged(int)), showSentenceWidget, SLOT(setPreviousDisplayed(int)));
         this->ui->offsetSpinBox->setValue(2);
-        connect(ui->actionNode_normale,SIGNAL(triggered()),showSentenceWidget, SLOT(setNormal()));
-        connect(ui->actionNote_freestyle,SIGNAL(triggered()),showSentenceWidget, SLOT(setFree()));
-        connect(ui->actionNote_Gold,SIGNAL(triggered()),showSentenceWidget, SLOT(setGold()));
+        connect(ui->actionSetNormalNote,SIGNAL(triggered()),showSentenceWidget, SLOT(setNormal()));
+        connect(ui->actionSetFreeNote,SIGNAL(triggered()),showSentenceWidget, SLOT(setFree()));
+        connect(ui->actionSetGoldNote,SIGNAL(triggered()),showSentenceWidget, SLOT(setGold()));
 
-        connect(ui->actionFusionner_deux_notes,SIGNAL(triggered()),showSentenceWidget, SLOT(fusion()));
-        connect(ui->actionScinder_une_note,SIGNAL(triggered()),showSentenceWidget, SLOT(scinder()));
+        connect(ui->actionMergeNotes,SIGNAL(triggered()),showSentenceWidget, SLOT(fusion()));
+        connect(ui->actionSplitNote,SIGNAL(triggered()),showSentenceWidget, SLOT(split()));
 
-        connect(ui->actionAjouter_une_note,SIGNAL(triggered()),showSentenceWidget, SLOT(nextClickAddNote()));
-        connect(ui->actionAjouter_un_s_parateur,SIGNAL(triggered()),showSentenceWidget, SLOT(nextClickAddSeparator()));
+        connect(ui->actionAddNote,SIGNAL(triggered()),showSentenceWidget, SLOT(nextClickAddNote()));
+        connect(ui->actionAddSeparator,SIGNAL(triggered()),showSentenceWidget, SLOT(nextClickAddSeparator()));
 
-        connect(ui->actionSauvegarder,SIGNAL(triggered()),this,SLOT(save()));
-        connect(ui->actionEnregistrer_sous,SIGNAL(triggered()),this,SLOT(saveAs()));
-        connect(ui->actionNouveau,SIGNAL(triggered()),this,SLOT(newSong()));
+        connect(ui->actionSave,SIGNAL(triggered()),this,SLOT(save()));
+        connect(ui->actionSaveAs,SIGNAL(triggered()),this,SLOT(saveAs()));
+        connect(ui->actionNew,SIGNAL(triggered()),this,SLOT(newSong()));
 
-        connect(ui->actionQuitter,SIGNAL(triggered()),this,SLOT(close()));
+        connect(ui->actionQuit,SIGNAL(triggered()),this,SLOT(close()));
 
         connect(&UInputManager::Instance,SIGNAL(spacePressEvent(void)),this,SLOT(tooglePlay()));
 
         connect(_wydget_timeline, SIGNAL(gapModified(double)),this, SLOT(gapModified(double)));
 
-         connect(ui->actionSupprimer_une_note,SIGNAL(triggered()),showSentenceWidget,SLOT(deleteNotes()));
+         connect(ui->actionDeleteNote,SIGNAL(triggered()),showSentenceWidget,SLOT(deleteNotes()));
 
-        connect(ui->actionPr_f_rences,SIGNAL(triggered()),&USetting::Instance,SLOT(showDialog()));
+        connect(ui->actionPreferences,SIGNAL(triggered()),&USetting::Instance,SLOT(showDialog()));
 
         connect(ui->actionMorphe,SIGNAL(triggered()),showSentenceWidget,SLOT(calquer()));
 
 
-        connect(ui->actionVerrouiller_les_timings,SIGNAL(toggled(bool)),showSentenceWidget,SLOT(lockTime(bool)));
+        connect(ui->actionLockTimings,SIGNAL(toggled(bool)),showSentenceWidget,SLOT(lockTime(bool)));
 
-        connect(ui->actionCentrer,SIGNAL(triggered()),this,SLOT(centerView()));
+        connect(ui->actionCenter,SIGNAL(triggered()),this,SLOT(centerView()));
 
-        connect(ui->actionAide,SIGNAL(triggered()),this,SLOT(displayHelpScreen()));
-        connect(ui->actionEnvoyer_une_suggestion_remarque_rapide,SIGNAL(triggered()),this,SLOT(displayFeedback()));
+        connect(ui->actionHelp,SIGNAL(triggered()),this,SLOT(displayHelpScreen()));
+        connect(ui->actionSendFeedback,SIGNAL(triggered()),this,SLOT(displayFeedback()));
 
 
         onUpdateVScrollAndScale();
@@ -148,22 +148,22 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
         _wydget_lyrics->setWidgetWords(showSentenceWidget);
 
 
-        _undoAction = _currentFile->lyrics->history().createUndoAction(this->ui->menuEdition, tr("Annuler "));
+        _undoAction = _currentFile->lyrics->history().createUndoAction(this->ui->menuEdit, tr("Annuler "));
         _undoAction->setShortcut(QKeySequence::Undo);
         _undoAction->setIcon(QIcon(":/images/undo.png"));
-        this->ui->menuEdition->addAction(_undoAction);
-        this->ui->toolBar->insertAction(this->ui->actionNode_normale, _undoAction);
+        this->ui->menuEdit->addAction(_undoAction);
+        this->ui->toolBar->insertAction(this->ui->actionSetNormalNote, _undoAction);
 
-        _redoAction = _currentFile->lyrics->history().createRedoAction(this->ui->menuEdition, tr("Refaire "));
+        _redoAction = _currentFile->lyrics->history().createRedoAction(this->ui->menuEdit, tr("Refaire "));
         _redoAction->setShortcut(QKeySequence::Redo);
         _redoAction->setIcon(QIcon(":/images/redo.png"));
-        this->ui->menuEdition->addAction(_redoAction);
-        this->ui->toolBar->insertAction(this->ui->actionNode_normale, _redoAction);
+        this->ui->menuEdit->addAction(_redoAction);
+        this->ui->toolBar->insertAction(this->ui->actionSetNormalNote, _redoAction);
 
 
         readLastFile();
 
-        connect(ui->actionFichiers_r_cents,SIGNAL(triggered()),this,SLOT(openLastFile()));
+        connect(ui->actionRecentFiles,SIGNAL(triggered()),this,SLOT(openLastFile()));
 
 
 
@@ -205,9 +205,9 @@ void UEditorWindow::readLastFile()
         QAction * a = new QAction(info.baseName(), 0);
         a->setProperty("absolutePath", info.absoluteFilePath());
         connect(a, SIGNAL(triggered()), this, SLOT(openLastFile()));
-        ui->menuFichier->insertAction(ui->actionFichiers_r_cents, a);
+        ui->menuFile->insertAction(ui->actionRecentFiles, a);
     }
-    ui->menuFichier->removeAction(ui->actionFichiers_r_cents);
+    ui->menuFile->removeAction(ui->actionRecentFiles);
 }
 void UEditorWindow::openLastFile()
 {
@@ -317,20 +317,20 @@ void UEditorWindow::openFile(QString fileName)
     if(_undoAction) {
         _undoAction->deleteLater();
     }
-    _undoAction = _currentFile->lyrics->history().createUndoAction(this->ui->menuEdition, tr("Annuler "));
+    _undoAction = _currentFile->lyrics->history().createUndoAction(this->ui->menuEdit, tr("Annuler "));
     _undoAction->setShortcut(QKeySequence::Undo);
     _undoAction->setIcon(QIcon(":/images/undo.png"));
-    this->ui->menuEdition->addAction(_undoAction);
-    this->ui->toolBar->insertAction(this->ui->actionNode_normale, _undoAction);
+    this->ui->menuEdit->addAction(_undoAction);
+    this->ui->toolBar->insertAction(this->ui->actionSetNormalNote, _undoAction);
 
     if(_redoAction) {
         _redoAction->deleteLater();
     }
-    _redoAction = _currentFile->lyrics->history().createRedoAction(this->ui->menuEdition, tr("Refaire "));
+    _redoAction = _currentFile->lyrics->history().createRedoAction(this->ui->menuEdit, tr("Refaire "));
     _redoAction->setShortcut(QKeySequence::Redo);
     _redoAction->setIcon(QIcon(":/images/redo.png"));
-    this->ui->menuEdition->addAction(_redoAction);
-    this->ui->toolBar->insertAction(this->ui->actionNode_normale, _redoAction);
+    this->ui->menuEdit->addAction(_redoAction);
+    this->ui->toolBar->insertAction(this->ui->actionSetNormalNote, _redoAction);
 
 
 
