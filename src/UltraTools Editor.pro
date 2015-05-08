@@ -80,13 +80,15 @@ RESOURCES = data.qrc \
 linux{
     INCLUDEPATH += /usr/local/include/fmod
     TARGET = ultratools-editor
-    CONFIG(libfmodex64) {
+
+    linux-g++-64 {
         release:LIBS += -lfmodex64
         debug:LIBS += -lfmodexL64
     } else {
         release:LIBS += -lfmodex
         debug:LIBS += -lfmodexL
     }
+
     OS_STRING = \\\"'Linux'\\\"
 
     isEmpty(PREFIX):PREFIX = "/usr/local"

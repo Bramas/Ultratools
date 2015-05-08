@@ -20,5 +20,5 @@ before_install:
 
 script:
     - cd src
-    - qmake -qt=qt5 CONFIG+=libfmodex64 "UltraTools Editor.pro"
+    - qmake -qt=qt5 "UltraTools Editor.pro"
     - make -j 4
