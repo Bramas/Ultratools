@@ -6,6 +6,7 @@ compiler:
 
 before_install:
     - wget http://download.qt.io/archive/qt/5.2/5.2.0/qt-linux-opensource-5.2.0-x86-offline.run
+    - sudo chmod a+x qt-linux-opensource-5.2.0-x86-offline.run
     - sudo ./qt-linux-opensource-5.2.0-x86-offline.run
     - wget http://www.fmod.org/download/fmodex/api/Linux/fmodapi44452linux.tar.gz
     - tar xvf fmodapi44452linux.tar.gz
