@@ -21,7 +21,6 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QDebug>
-#include <QtMath>
 
 Lyrics::Lyrics(QWidget * parent)
 {
@@ -183,7 +182,7 @@ Lyrics::WordIterator Lyrics::wordEnd()
 int Lyrics::setDelay(int delay, int from)
 {
     if(from > _gap)
-        from = ceil((((from-qFloor(this->getGap()))/1000.0) * this->getBpm()/15.0));
+        from = ceil((((from-floor(this->getGap()))/1000.0) * this->getBpm()/15.0));
     else
         from = 0;
 
