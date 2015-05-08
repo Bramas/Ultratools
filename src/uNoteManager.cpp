@@ -46,7 +46,11 @@ QString UNoteManager::violonFile(int i)
 #ifdef _WIN32
     QFileInfo f(QApplication::applicationDirPath()+"/violon/"+QString::number(i)+".mp3");
 #else
+#if QT_VERSION < QT_VERSION_CHECK(5,4,0)
+    QStringList dirs(QStandardPaths::standardLocations(QStandardPaths::DataLocation));
+#else
     QStringList dirs(QStandardPaths::standardLocations(QStandardPaths::AppDataLocation));
+#endif
     QFileInfo f;
     foreach(const QString &d, dirs) {
         f.setFile(d+"/violon/"+QString::number(i)+".mp3");
