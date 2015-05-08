@@ -106,21 +106,22 @@ private:
     void setupUi(void);
     void setupAudio(void);
     bool fileCanBeClosed(void);
-    bool _playViolon;
+    Ui::EditWindowClass *ui;
 
+
+    bool _playViolon;
     bool _isPlaying;
-    bool _spaceNoteGeneration;
     WidgetSongData * _widgetSongData;
+    QMessageBox * _confirmCloseMessageBox;
 
     qint64 _startTime;
     QAction *playAction;
     QAction *pauseAction;
     QAction *recordAction;
-    QAction * _undoAction;
     QAction * _redoAction;
+    QAction * _undoAction;
     QString _recentFiles;
 
-    Ui::EditWindowClass *ui;
 
     UFile * _currentFile;
 
@@ -133,8 +134,8 @@ private:
     Recorder * _spaceNote;
 
     QTimer * _autoSaveTimer;
+    bool _spaceNoteGeneration;
 
-    QMessageBox * _confirmCloseMessageBox;
 
 };
 

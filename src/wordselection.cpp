@@ -33,7 +33,7 @@ void WordSelection::remove(const Word & word)
 
 void WordSelection::insertAndSelect(const Word &w)
 {
-
+    Q_UNUSED(w);
 }
 
 // not optimized function but so much clearer for the next functions

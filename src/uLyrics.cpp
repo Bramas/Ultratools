@@ -180,7 +180,7 @@ Lyrics::WordIterator Lyrics::wordEnd()
 {
     return Lyrics::WordIterator(this, _words.end());
 }
-int Lyrics::setDelay(int delay, quint64 from)
+int Lyrics::setDelay(int delay, int from)
 {
     if(from > _gap)
         from = ceil((((from-qFloor(this->getGap()))/1000.0) * this->getBpm()/15.0));

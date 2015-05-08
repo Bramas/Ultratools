@@ -111,8 +111,8 @@ bool Lyrics::SetWordType::mergeWith(const QUndoCommand * other)
 Lyrics::SetDelay::SetDelay(Lyrics *lyrics, int delay, int from) :
     _delay(delay),
     _from(from),
-    _lyrics(lyrics),
-    _editGroup(lyrics->_editGroup)
+    _editGroup(lyrics->_editGroup),
+    _lyrics(lyrics)
 {
 
 }

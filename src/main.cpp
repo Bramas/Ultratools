@@ -23,6 +23,7 @@
 #include <QInputDialog>
 #include <QDir>
 #include <QFileInfo>
+#include <QDebug>
 
 void setLang(QApplication& app, const QString& idl){
         qWarning("Lang is %s", idl.toLatin1().data());

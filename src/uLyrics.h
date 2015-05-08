@@ -45,8 +45,9 @@ public:
     void parseLine(QString &line);
     void parseCode(QString &code);
 
-    void modified(QString sender="") {
-        //Q_UNUSED(sender); _modified=true; emit hasBeenModified();
+    void modified(QString sender) {
+        Q_UNUSED(sender);
+        //_modified=true; emit hasBeenModified();
     }
     bool isModified() {
         return !_history.isClean();
@@ -91,7 +92,7 @@ public:
       * \param from the time from which we apply the delay
       * \return the delay that is effectively applied. It may differ from the given delay because we cannot move words before gap or before a word with a time smaller than from
       */
-     int setDelay(int delay, quint64 from=0);
+     int setDelay(int delay, int from=0);
 
 
      qreal timeToBeat(quint64 time)
@@ -185,8 +186,8 @@ public:
 
 
 private:
-    Lyrics * _lyrics;
     QMap<int, Word>::iterator _it;
+    Lyrics * _lyrics;
 };
 
 
@@ -247,9 +248,10 @@ public:
 
 private:
 
-    Lyrics * _lyrics;
-    int _from, _delay;
+    int _delay, _from;
     int _editGroup;
+
+    Lyrics * _lyrics;
 };
 
 class Lyrics::ChangeText : public QUndoCommand

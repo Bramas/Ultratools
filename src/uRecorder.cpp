@@ -23,7 +23,6 @@
 Recorder::Recorder(ShowSentenceWidget * showSentenceWidget)
 {
     _beat=0;
-    _currentWord;
     _isRecording = false;
     _showSentenceWidget = showSentenceWidget;
 

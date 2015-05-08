@@ -41,11 +41,11 @@
 
 UEditorWindow::UEditorWindow(QWidget *parent)
     : QMainWindow(parent),
-      _spaceNoteGeneration(false),
       ui(new Ui::EditWindowClass),
       _confirmCloseMessageBox(0),
+      _redoAction(0),
       _undoAction(0),
-      _redoAction(0)
+      _spaceNoteGeneration(false)
 {
 
     this->setFocusPolicy(Qt::StrongFocus);

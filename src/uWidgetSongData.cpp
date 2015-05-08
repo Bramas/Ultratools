@@ -107,7 +107,6 @@ void WidgetSongData::paintEvent(QPaintEvent * /*event*/)
     poly.append(QPointF(width(), height()/2.0));
     polyI.append(QPointF(width(), height()/2.0));
     QPainter painter(this);
-    quint64 ms = _showSentenceWidget->getLyrics()->beatToMsc(_hScroll) - (quint64)_showSentenceWidget->getLyrics()->getGap();
     QPen pen(QColor(100,0,0,150));
     painter.setPen(pen);
     pen.setWidth(1);

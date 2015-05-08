@@ -63,8 +63,8 @@ double min(double a,double b)
 
 
 ShowSentenceWidget::ShowSentenceWidget(UEditorWindow * parent) :
-    _previousHistoryState(0),
     _octaveOffset(0),
+    _previousHistoryState(0),
     _verticalScrollBarValue(0)
 {
     hScale=100;// nombre de deciseconds visible sur une fenettre
@@ -838,12 +838,12 @@ void ShowSentenceWidget::setVScale(qreal s)
 
 int ShowSentenceWidget::expRangeOpacity(int a, int b,int opaque)
 {
-    if(hScale < (quint32)b && hScale > (quint32)a)
+    if(hScale < b && hScale > a)
     {
 
         return opaque*exp(-(hScale-a)*3.0/(b-hScale));
     }
-    if(hScale <= (quint32)a)
+    if(hScale <= a)
     {
         return  opaque;
     }
@@ -852,11 +852,11 @@ int ShowSentenceWidget::expRangeOpacity(int a, int b,int opaque)
 
 int ShowSentenceWidget::linearRangeOpacity(int a, int b,int op1,int op2)
 {
-    if(hScale< (quint32)b && hScale> (quint32)a)
+    if(hScale< b && hScale> a)
     {
         return   op1 + (op2-op1)*(hScale-a)/(double)(b-a);
     }
-    if(hScale<= (quint32)a)
+    if(hScale<= a)
     {
         return  op1;
     }
