@@ -20,6 +20,7 @@
 #include <QStatusBar>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QTextStream>
 #include "editorwindow.h"
 #include "uShowSentenceWydget.h"
 #define DEFAULT_GAP 0
