@@ -26,7 +26,7 @@
 #include <QDebug>
 
 void setLang(QApplication& app, const QString& idl){
-        qWarning("Lang is %s", idl.toLatin1().data());
+        qDebug("Lang is %s", idl.toLatin1().data());
 
         QTranslator* translator = new QTranslator();
         translator->load("UltraTools_Editor_" + idl,":/lang");

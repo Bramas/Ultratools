@@ -25,6 +25,7 @@
 #include "uDialogAbout.h"
 #include "uWidgetSongData.h"
 #include "uShowSentenceWydget.h"
+#include "richhscrollbar.h"
 #include <math.h>
 #include <QUrl>
 #include <QMimeData>
@@ -74,9 +75,9 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
         connect(ui->vSlider,SIGNAL(sliderPressed()),this,SLOT(onUpdateVScrollAndScale()));
         //connect(ui->vScroll,SIGNAL(actionTriggered(int)),this,SLOT(changeVScroll(int)));
 
-        connect(ui->hScroll,SIGNAL(valueChanged(int)),this,SLOT(changeHScroll(int)));
+        connect(_hScroll,SIGNAL(valueChanged(int)),this,SLOT(changeHScroll(int)));
         connect(ui->hSlider,SIGNAL(valueChanged(int)),this,SLOT(changeHSlider(int)));
-        connect(ui->hScroll,SIGNAL(sliderPressed()),this,SLOT(changeHScroll()));
+        connect(_hScroll,SIGNAL(sliderPressed()),this,SLOT(changeHScroll()));
         connect(ui->hSlider,SIGNAL(sliderPressed()),this,SLOT(changeHSlider()));
 
 
@@ -369,7 +370,7 @@ void UEditorWindow::adaptNewFile()
         return;
     }
 
-    ui->hScroll->setMaximum(_currentFile->getMax()+_currentFile->lyrics->timeToBeat(_currentFile->lyrics->getGap()));
+    _hScroll->setMaximum(_currentFile->getMax()+_currentFile->lyrics->timeToBeat(_currentFile->lyrics->getGap()));
 
 
     UNoteManager::Instance.setMaxPitch(_currentFile->lyrics->getPitchMax());
@@ -391,7 +392,7 @@ void UEditorWindow::adaptNewFile()
 
 
     this->changeHScroll((_currentFile->lyrics->getGap()>2000?_currentFile->lyrics->getGap()-2000:0)*_currentFile->lyrics->getBpm()/15000.0);
-      ui->hScroll->setValue((_currentFile->lyrics->getGap()>2000?_currentFile->lyrics->getGap()-2000:0)*_currentFile->lyrics->getBpm()/15000.0);
+      _hScroll->setValue((_currentFile->lyrics->getGap()>2000?_currentFile->lyrics->getGap()-2000:0)*_currentFile->lyrics->getBpm()/15000.0);
 
       onFileModified(false);
 }
@@ -399,14 +400,14 @@ void UEditorWindow::adaptNewFile()
 void UEditorWindow::changeHSlider(int s)
 {
     s = ui->hSlider->value();
-    ui->hScroll->setPageStep(exp(((double)ui->hSlider->value())/100.0));
+    _hScroll->setPageStep(exp(ui->hSlider->value()/100.0));
  //  this->hScroll->setMaximum(*range/10-hSlider->value());
    this->showSentenceWidget->setHScale(s);
    _widgetSongData->setHScale(s);
 
-    _wydget_timeline->setMin(ui->hScroll->value());
-    // _wydget_timeline->setMax(exp(((double)_lastHSlideValue)/100.0) + ui->hScroll->value());
-    _wydget_timeline->setMax(exp(((double)ui->hSlider->value())/100.0) + ui->hScroll->value());
+    _wydget_timeline->setMin(_hScroll->value());
+    // _wydget_timeline->setMax(exp(((double)_lastHSlideValue)/100.0) + _hScroll->value());
+    _wydget_timeline->setMax(exp(((double)ui->hSlider->value())/100.0) + _hScroll->value());
 
     _wydget_lyrics->onScroll();
 }
@@ -415,9 +416,9 @@ QScrollBar * UEditorWindow::verticalScrollBar()
 {
     return this->ui->vScroll;
 }
-QScrollBar * UEditorWindow::horizontalScrollBar()
+QAbstractSlider * UEditorWindow::horizontalScrollBar()
 {
-    return this->ui->hScroll;
+    return this->_hScroll;
 }
 
 void UEditorWindow::onUpdateVScrollAndScale(int /*s*/)
@@ -436,7 +437,7 @@ void UEditorWindow::onUpdateVScrollAndScale(int /*s*/)
 }
 void UEditorWindow::changeHScroll(int s)
 {
-    s = ui->hScroll->value();
+    s = _hScroll->value();
 
 _widgetSongData->setHScroll(s);
 this->showSentenceWidget->setHScroll(s);
@@ -464,6 +465,7 @@ void UEditorWindow::setupUi()
 {
 
     ui->setupUi(this);
+    _hScroll = new RichHScrollBar();
        // QScrollArea *sa = new QScrollArea( ui->tab );
 
         showLines = new  ShowLines();
@@ -486,9 +488,7 @@ void UEditorWindow::setupUi()
     _widgetSongData->setWidgetSentence(this->showSentenceWidget);
     UAudioManager::Instance.setWidgetSongData(_widgetSongData);
 
-    //ui->hScroll = new QScrollBar(Qt::Horizontal);
-    //ui->vScroll = new QScrollBar(Qt::Vertical);
-    ui->hScroll->setRange(0,999);
+    _hScroll->setRange(0,999);
     ui->vScroll->setRange(0,710);
     ui->vScroll->setValue(710);
 
@@ -498,12 +498,14 @@ void UEditorWindow::setupUi()
         ui->tabEditeurLayMain->addWidget(_wydget_timeline,1,1);
         ui->tabEditeurLayMain->addWidget(showLines,2,0);
         ui->tabEditeurLayMain->addWidget(showSentenceWidget,2,1);
+        ui->tabEditeurLayMain->addWidget(_hScroll,3,1);
+        ui->hScroll->deleteLater();
         ui->tabEditeurLayMain->addWidget(_widgetSongData,0,1);
         ui->mainHorizontalLayout->addWidget(_wydget_lyrics);
         //ui->tabEditeurLayMain->setRowMinimumHeight(2,40);
         //ui->tabEditeurLayMain->setColumnMinimumWidth(4,100);
 
-     //ui->tabEditeurLayMain->addWidget(ui->hScroll,1,1);
+     //ui->tabEditeurLayMain->addWidget(_hScroll,1,1);
     // ui->tabEditeurLayMain->addWidget(ui->vScroll,0,2);
 
      //ui->tabEditeurLayMain->addWidget(ui->vSlider,0,3);
@@ -547,7 +549,7 @@ void UEditorWindow::setupUi()
         connect(showSentenceWidget, SIGNAL(selection(int,int)), _wydget_lyrics, SLOT(onSelectionChange(int,int)));
         connect(showSentenceWidget, SIGNAL(doubleClik(int)), _wydget_lyrics, SLOT(ondoubleClick(int)));
 
-        connect(showSentenceWidget, &ShowSentenceWidget::autoScroll,[this](int v) { this->ui->hScroll->setValue(v);} );
+        connect(showSentenceWidget, &ShowSentenceWidget::autoScroll,[this](int v) { this->_hScroll->setValue(v);} );
         connect(showSentenceWidget, SIGNAL(octaveChanged(int)), showLines, SLOT(setOctaveOffset(int)));
         
         
@@ -840,9 +842,9 @@ void UEditorWindow::dragEnterEvent(QDragEnterEvent *event)
 void UEditorWindow::centerView()
 {
     int time = UAudioManager::Instance.currentTime();
-    if(ui->hScroll->value()>_currentFile->lyrics->timeToBeat(time) || ui->hScroll->value() + showSentenceWidget->getHScale()<_currentFile->lyrics->timeToBeat(time))
+    if(_hScroll->value()>_currentFile->lyrics->timeToBeat(time) || _hScroll->value() + showSentenceWidget->getHScale()<_currentFile->lyrics->timeToBeat(time))
     {
-        this->ui->hScroll->setValue(max(0.0,_currentFile->lyrics->timeToBeat(time)-showSentenceWidget->getHScale()/2));
+        this->_hScroll->setValue(max(0.0,_currentFile->lyrics->timeToBeat(time)-showSentenceWidget->getHScale()/2));
         //QMessageBox::warning(NULL,"","ok");
     }
 }

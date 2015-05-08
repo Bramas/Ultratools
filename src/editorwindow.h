@@ -35,6 +35,8 @@ class Recorder;
 class QScrollBar;
 class WidgetSongData;
 class QMessageBox;
+class RichHScrollBar;
+class QAbstractSlider;
 namespace Ui
 {
     class EditWindowClass;
@@ -96,7 +98,7 @@ public:
 
 
     QScrollBar * verticalScrollBar();
-    QScrollBar * horizontalScrollBar();
+    QAbstractSlider *horizontalScrollBar();
     UFile * getFile() { return _currentFile; }
 
 private:
@@ -111,6 +113,7 @@ private:
 
     bool _playViolon;
     bool _isPlaying;
+    RichHScrollBar * _hScroll;
     WidgetSongData * _widgetSongData;
     QMessageBox * _confirmCloseMessageBox;
 

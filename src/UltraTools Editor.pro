@@ -36,7 +36,8 @@ SOURCES += main.cpp \
     uDialogAbout.cpp \
     uWidgetSongData.cpp \
     undocommands.cpp \
-    wordselection.cpp
+    wordselection.cpp \
+    richhscrollbar.cpp
 HEADERS += editorwindow.h \
     uWord.h \
     uLyrics.h \
@@ -61,7 +62,8 @@ HEADERS += editorwindow.h \
     uDialogAbout.h \
     uWidgetSongData.h \
     undocommands.h \
-    wordselection.h
+    wordselection.h \
+    richhscrollbar.h
 FORMS += editorwindow.ui \
     udialog_fileheader.ui \
     uNewSongForm_Browse.ui \
