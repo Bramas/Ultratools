@@ -76,10 +76,12 @@ FORMS += editorwindow.ui \
 RESOURCES = data.qrc \
     Lang.qrc
 
+
 linux{
+    INCLUDEPATH += /usr/local/include/fmod
     TARGET = ultratools-editor
-    release:LIBS += -lfmodex
-    debug:LIBS += -lfmodexL
+    release:LIBS += -L\usr\local\lib -lfmodex
+    debug:LIBS += -L\usr\local\lib -lfmodexL
     OS_STRING = \\\"'Linux'\\\"
 
     isEmpty(PREFIX):PREFIX = "/usr/local"
@@ -116,13 +118,6 @@ mac{
     LIBS += -L/usr/local/lib -lfmodex
     INCLUDEPATH += /usr/local/include/fmod
     OS_STRING = \\\"'Mac'\\\"
-}
-
-unix:!mac{
-    INCLUDEPATH += /usr/local/include/fmod
-    RC_FILE = icone/icone.rc
-    LIBS += -L\usr\local\lib -lfmodex
-    OS_STRING = \\\"'Linux'\\\"
 }
 win32{
 
