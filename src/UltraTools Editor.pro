@@ -119,7 +119,7 @@ mac{
 }
 
 unix:!mac{
-    INCLUDEPATH += \usr\local\fmod
+    INCLUDEPATH += /usr/local/include/fmod
     RC_FILE = icone/icone.rc
     LIBS += -L\usr\local\lib -lfmodex
     OS_STRING = \\\"'Linux'\\\"
