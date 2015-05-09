@@ -165,6 +165,13 @@ void UAudioManager::changeVolume(int i)
 
 }
 
+quint32 UAudioManager::length()
+{
+    quint32 l=0;
+    FMOD_Sound_GetLength(_sound, &l, FMOD_TIMEUNIT_MS);
+    return l;
+}
+
 void UAudioManager::play()
 {
     FMOD_Channel_SetPaused(_channel,false);

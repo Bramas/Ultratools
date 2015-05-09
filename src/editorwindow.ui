@@ -27,9 +27,40 @@
          <widget class="QLCDNumber" name="lcd_music"/>
         </item>
         <item>
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Durée:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBoxMinute"/>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>min</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBoxSecond">
+          <property name="maximum">
+           <number>59</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>sec |</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>Musique :</string>
+           <string>Volume Musique :</string>
           </property>
          </widget>
         </item>
@@ -43,7 +74,7 @@
         <item>
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Note :</string>
+           <string>Volume Note :</string>
           </property>
          </widget>
         </item>

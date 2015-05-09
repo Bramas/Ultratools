@@ -55,6 +55,12 @@ public:
     void lol();
     FMOD_SYSTEM * getSystem() { return _system; }
 
+    /*!
+     * \brief length
+     * \return return the length of the current sound in millisecond
+     */
+    quint32 length();
+
 protected:
     QTimer * _tickTimer;
     bool _initialised;
