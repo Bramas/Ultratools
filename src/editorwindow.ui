@@ -103,24 +103,19 @@
       </item>
       <item>
        <layout class="QGridLayout" name="tabEditeurLayMain">
+        <item row="1" column="2">
+         <widget class="QWidget" name="widget_2" native="true"/>
+        </item>
+        <item row="0" column="2">
+         <widget class="QWidget" name="widget_3" native="true"/>
+        </item>
+        <item row="3" column="0">
+         <widget class="QWidget" name="widget" native="true"/>
+        </item>
         <item row="2" column="3">
          <widget class="QSlider" name="vSlider">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QScrollBar" name="hScroll">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QSlider" name="hSlider">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
@@ -131,14 +126,21 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
-         <widget class="QWidget" name="widget" native="true"/>
+        <item row="3" column="2">
+         <widget class="QWidget" name="widget_4" native="true"/>
         </item>
-        <item row="1" column="2">
-         <widget class="QWidget" name="widget_2" native="true"/>
-        </item>
-        <item row="0" column="2">
-         <widget class="QWidget" name="widget_3" native="true"/>
+        <item row="3" column="1">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>

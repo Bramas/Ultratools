@@ -817,7 +817,7 @@ void ShowSentenceWidget::renderPreviousSentence(QPainter * painter)
 void ShowSentenceWidget::setHScale(int s)
 {
 
-        this->hScale=exp(s/100.0);
+        this->hScale=s;//exp(s/100.0);
 
 
     updateRangeView();
@@ -828,7 +828,7 @@ void ShowSentenceWidget::setHScale(int s)
 void ShowSentenceWidget::setVScale(qreal s)
 {
 
-    this->vScale=s;
+    this->vScale = max(1, s);
 
 #ifndef UPDATE_BY_TIMER
     update();

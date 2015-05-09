@@ -76,9 +76,10 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
         //connect(ui->vScroll,SIGNAL(actionTriggered(int)),this,SLOT(changeVScroll(int)));
 
         connect(_hScroll,SIGNAL(valueChanged(int)),this,SLOT(changeHScroll(int)));
-        connect(ui->hSlider,SIGNAL(valueChanged(int)),this,SLOT(changeHSlider(int)));
+        //connect(ui->hSlider,SIGNAL(valueChanged(int)),this,SLOT(changeHSlider(int)));
         connect(_hScroll,SIGNAL(sliderPressed()),this,SLOT(changeHScroll()));
-        connect(ui->hSlider,SIGNAL(sliderPressed()),this,SLOT(changeHSlider()));
+        //connect(ui->hSlider,SIGNAL(sliderPressed()),this,SLOT(changeHSlider()));
+        connect(_hScroll,SIGNAL(pageStepChanged(int)),this,SLOT(changeHSlider(int)));
 
 
 
@@ -313,6 +314,7 @@ void UEditorWindow::openFile(QString fileName)
 
 
     this->showSentenceWidget->setLyrics(_currentFile->lyrics);
+    this->_hScroll->setLyrics(_currentFile->lyrics);
     UNoteManager::Instance.setLyrics(_currentFile->lyrics);
 
     if(_undoAction) {
@@ -387,11 +389,11 @@ void UEditorWindow::adaptNewFile()
     else
     {
         quint32 l = UAudioManager::Instance.length();
-        qDebug()<<"length "<<l;
         ui->spinBoxMinute->setValue(l/60000);
         ui->spinBoxSecond->setValue((l/1000) % 60000);
         ui->spinBoxMinute->setEnabled(false);
         ui->spinBoxSecond->setEnabled(false);
+        _hScroll->setMaximum(l*_currentFile->lyrics->getBpm()/15000.0);
     }
 
 /*
@@ -415,16 +417,14 @@ void UEditorWindow::adaptNewFile()
 
 void UEditorWindow::changeHSlider(int s)
 {
-    s = ui->hSlider->value();
-    _hScroll->setPageStep(exp(ui->hSlider->value()/100.0));
- //  this->hScroll->setMaximum(*range/10-hSlider->value());
+    //s = ui->hSlider->value();
+    //_hScroll->setPageStep(exp(ui->hSlider->value()/100.0));
    this->showSentenceWidget->setHScale(s);
    _widgetSongData->setHScale(s);
 
-    _wydget_timeline->setMin(_hScroll->value());
-    // _wydget_timeline->setMax(exp(((double)_lastHSlideValue)/100.0) + _hScroll->value());
-    _wydget_timeline->setMax(exp(((double)ui->hSlider->value())/100.0) + _hScroll->value());
-
+    //_wydget_timeline->setMin(_hScroll->value());
+    //_wydget_timeline->setMax(exp(((double)ui->hSlider->value())/100.0) + _hScroll->value());
+    _wydget_timeline->setMax(s + _hScroll->value());
     _wydget_lyrics->onScroll();
 }
 
@@ -492,8 +492,9 @@ void UEditorWindow::setupUi()
 
 
    // hSlider=new QSlider(Qt::Horizontal,this);
-    ui->hSlider->setRange((log(30)*100.0),(log(10000)*100.0));// 30 beats to 10000 beats
-    ui->hSlider->setValue((log(100)*100.0));
+    //ui->hSlider->setRange((log(30)*100.0),(log(10000)*100.0));// 30 beats to 10000 beats
+    //ui->hSlider->setValue((log(100)*100.0));
+    _hScroll->setPageStep(100);
 
     //vSlider=new QSlider(Qt::Vertical,this);
     ui->vSlider->setRange(100,400);
@@ -515,7 +516,6 @@ void UEditorWindow::setupUi()
         ui->tabEditeurLayMain->addWidget(showLines,2,0);
         ui->tabEditeurLayMain->addWidget(showSentenceWidget,2,1);
         ui->tabEditeurLayMain->addWidget(_hScroll,3,1);
-        ui->hScroll->deleteLater();
         ui->tabEditeurLayMain->addWidget(_widgetSongData,0,1);
         ui->mainHorizontalLayout->addWidget(_wydget_lyrics);
         //ui->tabEditeurLayMain->setRowMinimumHeight(2,40);
