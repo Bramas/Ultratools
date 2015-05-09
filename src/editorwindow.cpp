@@ -342,23 +342,23 @@ void UEditorWindow::openFile(QString fileName)
 
     _autoSaveTimer->start(USetting::Instance.getAutoSaveInterval()*60000);
 
-adaptNewFile();
-if(!_currentFile->_headMp3.compare(""))
-{
-    QMessageBox::warning(this,tr("Attention"),tr("Pensez à indiquer où se trouve le fichier mp3 (menu Edition >> Edtiter les Entêtes)"));
-}
-else
-if(!QFile::exists(fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3))
-{
-    QMessageBox::warning(this,tr("Attention"),tr("Le fichier mp3 n'a pas été trouvé."));
-}
-else
-{
-    if(!UAudioManager::Instance.setSource(fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3))
+    if(!_currentFile->_headMp3.compare(""))
     {
-        QMessageBox::warning(this,tr("Attention"),tr("Il y a eu un problème lors de la lecture du fichier son")+" : "+fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3);
+        QMessageBox::warning(this,tr("Attention"),tr("Pensez à indiquer où se trouve le fichier mp3 (menu Edition >> Edtiter les Entêtes)"));
     }
-}
+    else
+    if(!QFile::exists(fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3))
+    {
+        QMessageBox::warning(this,tr("Attention"),tr("Le fichier mp3 n'a pas été trouvé."));
+    }
+    else
+    {
+        if(!UAudioManager::Instance.setSource(fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3))
+        {
+            QMessageBox::warning(this,tr("Attention"),tr("Il y a eu un problème lors de la lecture du fichier son")+" : "+fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3);
+        }
+    }
+    adaptNewFile();
 
  }
 
@@ -377,6 +377,22 @@ void UEditorWindow::adaptNewFile()
 
     //ui->vScroll->setRange((245-_currentFile->lyrics->getPitchMax()),(255-_currentFile->lyrics->getPitchMin()));
 
+    if(_currentFile->getMp3Location().isEmpty())
+    {
+        ui->spinBoxMinute->setValue(5);
+        ui->spinBoxSecond->setValue(0);
+        ui->spinBoxMinute->setEnabled(true);
+        ui->spinBoxSecond->setEnabled(true);
+    }
+    else
+    {
+        quint32 l = UAudioManager::Instance.length();
+        qDebug()<<"length "<<l;
+        ui->spinBoxMinute->setValue(l/60000);
+        ui->spinBoxSecond->setValue((l/1000) % 60000);
+        ui->spinBoxMinute->setEnabled(false);
+        ui->spinBoxSecond->setEnabled(false);
+    }
 
 /*
     if((_currentFile->lyrics->getPitchMin()+_currentFile->lyrics->getPitchMax())/2+20>_currentFile->lyrics->getPitchMax())
