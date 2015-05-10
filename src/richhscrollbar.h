@@ -8,6 +8,7 @@
 class QPaintEvent;
 class QMouseEvent;
 class Lyrics;
+class QEvent;
 class RichHScrollBar : public QAbstractSlider
 {
     Q_OBJECT
@@ -27,6 +28,8 @@ protected:
     void mousePressEvent(QMouseEvent * event);
     void mouseReleaseEvent(QMouseEvent * event);
     void mouseMoveEvent(QMouseEvent * event);
+    void leaveEvent(QEvent * e) { _overType = OverNothing; update(); QAbstractSlider::leaveEvent(e); }
+    void enterEvent(QEvent * e) { _overType = OverNothing; update(); QAbstractSlider::enterEvent(e); }
 
 private:
     bool _mousePressed;

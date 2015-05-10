@@ -102,7 +102,7 @@ void WidgetSongData::paintEvent(QPaintEvent * /*event*/)
             binRightMax = fmax(binRightMax, _rightData[i + idm]);
         }
         poly.append(QPointF((i-startBytes)/byteDensity, height()/2.0 - binLeftMax * height()/2.0));
-        polyI.append(QPointF((i-startBytes)/byteDensity, height()/2.0 + binRightMax * height()/2.0));
+        polyI.append(QPointF((i-startBytes)/byteDensity, height()/2.0 + binRightMax * height()/2.0 - 1));
     }
     poly.append(QPointF(width(), height()/2.0));
     polyI.append(QPointF(width(), height()/2.0));

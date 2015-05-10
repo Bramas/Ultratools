@@ -32,6 +32,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QCloseEvent>
+#include <QSpinBox>
 
 #define USEMEMLOAD
 #define USEFMOD TRUE
@@ -139,6 +140,8 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
 
         connect(ui->actionHelp,SIGNAL(triggered()),this,SLOT(displayHelpScreen()));
         connect(ui->actionSendFeedback,SIGNAL(triggered()),this,SLOT(displayFeedback()));
+
+
 
 
         onUpdateVScrollAndScale();
@@ -311,7 +314,7 @@ void UEditorWindow::openFile(QString fileName)
     fileConnect();
 
     USetting::Instance.addOpenFile(fileName);
-
+    UAudioManager::Instance.clear();
 
     this->showSentenceWidget->setLyrics(_currentFile->lyrics);
     this->_hScroll->setLyrics(_currentFile->lyrics);
@@ -366,35 +369,36 @@ void UEditorWindow::openFile(QString fileName)
 
 void UEditorWindow::adaptNewFile()
 {
-
-    if(_currentFile->lyrics->words().isEmpty())
-    {
-        return;
-    }
-
-    _hScroll->setMaximum(_currentFile->getMax()+_currentFile->lyrics->timeToBeat(_currentFile->lyrics->getGap()));
-
-
-    UNoteManager::Instance.setMaxPitch(_currentFile->lyrics->getPitchMax());
-
-    //ui->vScroll->setRange((245-_currentFile->lyrics->getPitchMax()),(255-_currentFile->lyrics->getPitchMin()));
-
-    if(_currentFile->getMp3Location().isEmpty())
-    {
-        ui->spinBoxMinute->setValue(5);
-        ui->spinBoxSecond->setValue(0);
-        ui->spinBoxMinute->setEnabled(true);
-        ui->spinBoxSecond->setEnabled(true);
-    }
-    else
+    if(UAudioManager::Instance.length() > 0)
     {
         quint32 l = UAudioManager::Instance.length();
         ui->spinBoxMinute->setValue(l/60000);
         ui->spinBoxSecond->setValue((l/1000) % 60000);
         ui->spinBoxMinute->setEnabled(false);
         ui->spinBoxSecond->setEnabled(false);
-        _hScroll->setMaximum(l*_currentFile->lyrics->getBpm()/15000.0);
+        _hScroll->setMaximum(_currentFile->lyrics->timeToBeat(l));
     }
+    else
+    {
+        ui->spinBoxMinute->setValue(4);
+        ui->spinBoxSecond->setValue(0);
+        ui->spinBoxMinute->setEnabled(true);
+        ui->spinBoxSecond->setEnabled(true);
+        _hScroll->setMaximum(_currentFile->lyrics->timeToBeat(4*60*1000));
+    }
+
+    if(_currentFile->lyrics->words().isEmpty())
+    {
+        return;
+    }
+
+    //_hScroll->setMaximum(_currentFile->getMax()+_currentFile->lyrics->timeToBeat(_currentFile->lyrics->getGap()));
+
+
+    UNoteManager::Instance.setMaxPitch(_currentFile->lyrics->getPitchMax());
+
+    //ui->vScroll->setRange((245-_currentFile->lyrics->getPitchMax()),(255-_currentFile->lyrics->getPitchMin()));
+
 
 /*
     if((_currentFile->lyrics->getPitchMin()+_currentFile->lyrics->getPitchMax())/2+20>_currentFile->lyrics->getPitchMax())
@@ -497,8 +501,8 @@ void UEditorWindow::setupUi()
     _hScroll->setPageStep(100);
 
     //vSlider=new QSlider(Qt::Vertical,this);
-    ui->vSlider->setRange(100,400);
-    ui->vSlider->setValue(200);
+    ui->vSlider->setRange(120,500);
+    ui->vSlider->setValue(290);
 
 
     _widgetSongData = new WidgetSongData(this);
@@ -567,9 +571,17 @@ void UEditorWindow::setupUi()
 
         connect(showSentenceWidget, &ShowSentenceWidget::autoScroll,[this](int v) { this->_hScroll->setValue(v);} );
         connect(showSentenceWidget, SIGNAL(octaveChanged(int)), showLines, SLOT(setOctaveOffset(int)));
-        
-        
 
+
+        connect(ui->spinBoxMinute, SIGNAL(valueChanged(int)), this, SLOT(onSongLengthChanged(int)));
+        connect(ui->spinBoxSecond, SIGNAL(valueChanged(int)), this, SLOT(onSongLengthChanged(int)));
+
+}
+
+void UEditorWindow::onSongLengthChanged(int v)
+{
+    _hScroll->setMaximum(_currentFile->lyrics->timeToBeat(
+        (ui->spinBoxMinute->value()*60 + ui->spinBoxSecond->value()) * 1000));
 }
 void UEditorWindow::changeSeek(quint64 time)
 {

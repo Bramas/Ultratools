@@ -49,6 +49,7 @@ public slots:
 
 public:
     void init();
+    void clear();
     bool setSource(QString);
     quint64 currentTime();
     void setWidgetSongData(WidgetSongData * widgetSongData) { _widgetSongData = widgetSongData; }

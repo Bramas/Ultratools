@@ -705,7 +705,7 @@ bool ShowSentenceWidget::renderWord(QPainter * painter, const Word & w, int octa
 
    p = scaledCoordinates(w.getTime(),pitch+HAUTEUR_NOTE/2);
    QRectF r(p.x(), p.y(), scaleWidth(w.getLength()), scaleHeight(HAUTEUR_NOTE));
-    if(80<this->hScale)
+    if(150<this->hScale)
     {
           painter->drawRect(r);
     }
@@ -961,7 +961,7 @@ QList<Word>&  ShowSentenceWidget::getWordsDisplayedPtr()
 void ShowSentenceWidget::renderSeparator(QPainter * painter, const Word & w)
 {
     painter->setPen(QPen(QColor(100,255,100,210)));
-    painter->setBrush(QBrush(QColor(100,255,100,210)));
+    painter->setBrush(QBrush(QColor(100,255,100,60)));
     QRectF rect[3];
 
 
@@ -982,13 +982,13 @@ void ShowSentenceWidget::renderSeparator(QPainter * painter, const Word & w)
      (_overed.isNull() || (_overed == w && _overType == 0)) // if it's currently selected
      )
     {
-        painter->setBrush(QBrush(QColor(255,100,100,210)));
+        painter->setBrush(QBrush(QColor(255,100,100,60)));
         _hSplitHCursor=true;
         _overed = w;
     }
     else
     {
-        painter->setBrush(QBrush(QColor(100,255,100,210)));
+        painter->setBrush(QBrush(QColor(100,255,100,60)));
     }
 
     painter->drawRect(rect[0]);
@@ -1000,14 +1000,14 @@ void ShowSentenceWidget::renderSeparator(QPainter * painter, const Word & w)
       _fMousePosition.y() < rect[1].bottom() + 1 &&
      (_overed.isNull() || (_overed == w && _overType & ShowSentenceWidget::OVER_LEFT)) )
     {
-        painter->setBrush(QBrush(QColor(255,100,100,210)));
+        painter->setBrush(QBrush(QColor(255,100,100,60)));
         _hSizeCursor=true;
         _overed = w;
         _overType = ShowSentenceWidget::OVER_LEFT;
     }
     else
     {
-        painter->setBrush(QBrush(QColor(100,255,100,210)));
+        painter->setBrush(QBrush(QColor(100,255,100,60)));
     }
 
     painter->drawRect(rect[1]);
@@ -1018,20 +1018,20 @@ void ShowSentenceWidget::renderSeparator(QPainter * painter, const Word & w)
             _fMousePosition.y() < rect[2].bottom() &&
      (_overed.isNull() || (_overed == w && _overType & ShowSentenceWidget::OVER_RIGHT)))
     {
-        painter->setBrush(QBrush(QColor(255,100,100,210)));
+        painter->setBrush(QBrush(QColor(255,100,100,60)));
         _hSizeCursor=true;
         _overed = w;
         _overType = ShowSentenceWidget::OVER_RIGHT;
     }
     else
     {
-        painter->setBrush(QBrush(QColor(100,255,100,210)));
+        painter->setBrush(QBrush(QColor(100,255,100,60)));
     }
 
 
     painter->drawRect(rect[2]);
 
-    painter->setBrush(QBrush(QColor(100,255,100,210)));
+    painter->setBrush(QBrush(QColor(100,255,100,60)));
     painter->drawRect(scaledCoordinates(w.getTime1(),0).x(),35,scaleWidth(w.getLength()+0.1),height()-30);
 
 }

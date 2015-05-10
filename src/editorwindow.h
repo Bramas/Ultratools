@@ -73,6 +73,7 @@ public slots:
    void bpmChanged(int);
    void gapChanged(double);
    void changeSeek(quint64);
+   void onSongLengthChanged(int);
    void gapModified(double d);
    void saveAs(void);
    bool save(void);

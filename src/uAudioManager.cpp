@@ -49,15 +49,22 @@ FMOD_RESULT F_CALLBACK endCallback(FMOD_CHANNEL */*channel*/, FMOD_CHANNEL_CALLB
 
 typedef signed short pcm16;
 
-bool UAudioManager::setSource(QString source)
+void UAudioManager::clear()
 {
-    _source=source;
-
+    this->pause();
     if(_sound)
     {
         FMOD_Sound_Release(_sound);
     }
+    _widgetSongData->clearData();
+    _source = "";
+}
 
+bool UAudioManager::setSource(QString source)
+{
+    clear();
+
+    _source=source;
     _result = FMOD_System_CreateSound(_system,_source.toStdString().c_str(), FMOD_LOOP_NORMAL | FMOD_2D | FMOD_SOFTWARE , 0, &_sound);		// FMOD_DEFAULT uses the defaults.  These are the same as FMOD_LOOP_OFF | FMOD_2D | FMOD_HARDWARE.
     //ERRCHECK(result);
 
@@ -167,8 +174,14 @@ void UAudioManager::changeVolume(int i)
 
 quint32 UAudioManager::length()
 {
+    if(_source.isEmpty())
+        return 0;
     quint32 l=0;
-    FMOD_Sound_GetLength(_sound, &l, FMOD_TIMEUNIT_MS);
+    FMOD_RESULT ok = FMOD_Sound_GetLength(_sound, &l, FMOD_TIMEUNIT_MS);
+    if(ok != FMOD_OK)
+    {
+        return 0;
+    }
     return l;
 }
 
