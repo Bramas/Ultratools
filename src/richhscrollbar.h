@@ -41,7 +41,7 @@ private:
     qreal _left, _right;
     Lyrics * _lyrics;
     int _overType;
-    enum {OverNothing, OverLeft, OverRight, OverCenter};
+    enum {OverNothing, OverLeft, OverRight, OverCenter, OverScaleCenter};
 };
 
 #endif // RICHHSCROLLBAR_H

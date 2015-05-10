@@ -93,6 +93,8 @@ void RichHScrollBar::mousePressEvent(QMouseEvent *event)
     _mousePressPoint = event->pos();
     _mousePressSliderValue = this->value();
     _mousePressPageStep = this->pageStep();
+    if(_overType == OverCenter && event->button() == Qt::RightButton)
+        _overType = OverScaleCenter;
 }
 
 void RichHScrollBar::mouseReleaseEvent(QMouseEvent *event)
@@ -116,6 +118,27 @@ void RichHScrollBar::mouseMoveEvent(QMouseEvent *event)
             this->setValue(v);
             this->setCursor(Qt::ClosedHandCursor);
             break;
+        case OverScaleCenter:
+        {
+            int clickValue = _mousePressPoint.x()*maximum()/width();
+            qreal diff = event->y() - _mousePressPoint.y();
+
+            if(diff > 0) // zoomOut
+            {
+                diff /= 0.1;
+            }
+            else
+            {
+                diff /= 100.0/_mousePressPageStep;
+            }
+            if(_mousePressPageStep + diff < 15)
+            {
+                diff = 15 - _mousePressPageStep;
+            }
+            setValue(_mousePressSliderValue - diff * (clickValue - _mousePressSliderValue) / _mousePressPageStep);
+            setPageStep(_mousePressPageStep + diff);
+            break;
+        }
         case OverRight:
             v = _mousePressPageStep + valueDiff;
             v = qMin(v, maximum()-value());
@@ -190,7 +213,7 @@ void RichHScrollBar::setValue(int v)
 }
 void RichHScrollBar::setPageStep(int p)
 {
-    p = p < 1 ? 1 : p;
+    p = p < 10 ? 10 : p;
     QAbstractSlider::setPageStep(p);
     updateLeftRight();
     emit pageStepChanged(pageStep());

@@ -179,6 +179,8 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
         _autoSaveTimer = new QTimer(this);
           connect(_autoSaveTimer, SIGNAL(timeout()), this, SLOT(autoSave()));
 
+          adaptNewFile();
+
 
 }
 
