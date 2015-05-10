@@ -10,7 +10,7 @@ DirExistsWarning=no
 ;DisableDirPage=yes
 UsePreviousAppDir=yes
 AppName=Ultratools Editor          
-AppVersion=1.5
+AppVersion=1.6
 DefaultDirName={pf}\Ultratools
 ; Since no icons will be created in "{group}", we don't need the wizard
 ; to ask for a Start Menu folder name:
