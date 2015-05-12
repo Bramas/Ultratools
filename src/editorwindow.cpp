@@ -33,6 +33,7 @@
 #include <QFileDialog>
 #include <QCloseEvent>
 #include <QSpinBox>
+#include <QMacToolBar>
 
 #define USEMEMLOAD
 #define USEFMOD TRUE
@@ -577,6 +578,23 @@ void UEditorWindow::setupUi()
 
         connect(ui->spinBoxMinute, SIGNAL(valueChanged(int)), this, SLOT(onSongLengthChanged(int)));
         connect(ui->spinBoxSecond, SIGNAL(valueChanged(int)), this, SLOT(onSongLengthChanged(int)));
+
+/*
+#ifdef __APPLE__
+        QMacToolBar *toolBar = new QMacToolBar(this);
+
+        foreach(QAction * action, ui->toolBar->actions())
+        {
+            QMacToolBarItem *toolBarItem = toolBar->addItem(action->icon(),action->text());
+            connect(toolBarItem, SIGNAL(activated()), action, SLOT(trigger()));
+        }
+
+        this->window()->winId();
+        toolBar->attachToWindow(this->window()->windowHandle());
+#endif
+*/
+
+
 
 }
 

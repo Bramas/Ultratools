@@ -21,6 +21,7 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QDebug>
+#include <math.h>
 
 Lyrics::Lyrics(QWidget * parent)
 {

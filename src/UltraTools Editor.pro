@@ -121,6 +121,7 @@ lrelease.CONFIG += no_link target_predeps
 
 
 mac{
+    QT += macextras
     ICON = ultratools.icns
     CONFIG += ppc \
         x86
