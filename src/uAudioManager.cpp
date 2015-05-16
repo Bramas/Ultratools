@@ -132,24 +132,6 @@ void UAudioManager::timerOut()
 {
     FMOD_System_Update(_system);
 
-    int sampleSize = 64;
-    float *specLeft, *specRight;
-
-    specLeft = new float[sampleSize];
-    specRight = new float[sampleSize];
-
-    // Get spectrum for left and right stereo channels
-    FMOD_Channel_GetSpectrum(_channel, specLeft, sampleSize, 0, FMOD_DSP_FFT_WINDOW_RECT);
-    FMOD_Channel_GetSpectrum(_channel, specRight, sampleSize, 1, FMOD_DSP_FFT_WINDOW_RECT);
-
-    float *spec;
-    spec = new float[sampleSize];
-    for (int i = 0; i < sampleSize; i++)
-        spec[i] = (specLeft[i] + specRight[i]) / 2.0;
-
-    //qDebug()<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10);
-
-
     emit tick(currentTime());
 
 }
