@@ -86,11 +86,11 @@ linux{
     TARGET = ultratools-editor
 
     linux-g++-64 {
-        release:LIBS += -lfmodex64
-        debug:LIBS += -lfmodexL64
+        CONFIG(release, debug|release):LIBS += -lfmodex64
+        CONFIG(debug, debug|release):LIBS += -lfmodexL64
     } else {
-        release:LIBS += -lfmodex
-        debug:LIBS += -lfmodexL
+        CONFIG(release, debug|release):LIBS += -lfmodex
+        CONFIG(debug, debug|release):LIBS += -lfmodexL
     }
 
     OS_STRING = \\\"'Linux'\\\"
