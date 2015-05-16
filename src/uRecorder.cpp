@@ -16,6 +16,7 @@
 #include <cmath>
 #include <QKeyEvent>
 
+#include "uAudioManager.h"
 #include "uRecorder.h"
 #include "uShowSentenceWydget.h"
 #include "editorwindow.h"
@@ -25,28 +26,35 @@ Recorder::Recorder(ShowSentenceWidget * showSentenceWidget)
     _isRecording = false;
     _showSentenceWidget = showSentenceWidget;
 
-    connect(&UInputManager::Instance,SIGNAL(keyPressEvent(QKeyEvent *)),this,SLOT(onKeyPressEvent(QKeyEvent *)));
-    connect(&UInputManager::Instance,SIGNAL(keyReleaseEvent(QKeyEvent *)),this,SLOT(onKeyReleaseEvent(QKeyEvent *)));
+    connect(&UInputManager::Instance,SIGNAL(keyPressEvent(QKeyEvent *, ulong)),this,SLOT(onKeyPressEvent(QKeyEvent *, ulong)));
+    connect(&UInputManager::Instance,SIGNAL(keyReleaseEvent(QKeyEvent *, ulong)),this,SLOT(onKeyReleaseEvent(QKeyEvent *, ulong)));
 }
 
-void Recorder::onKeyPressEvent(QKeyEvent * event)
+int Recorder::getBeat(ulong time)
+{
+    if(UAudioManager::Instance.timestampToPosition(time))
+        return std::lround(_showSentenceWidget->getLyrics()->timeToBeat(time));
+    return _showSentenceWidget->currentBeat();
+}
+
+void Recorder::onKeyPressEvent(QKeyEvent * event, ulong time)
 {
     if(!_isRecording || event->key() == Qt::Key_Space)
     {
         return;
     }
-    int beat = _showSentenceWidget->currentBeat();
+    int beat = getBeat(time);
     _currentWord = Word(NULL,beat,1,0);
     _currentWord.setText("");
 
 }
-void Recorder::onKeyReleaseEvent(QKeyEvent * /*event*/)
+void Recorder::onKeyReleaseEvent(QKeyEvent * /*event*/, ulong time)
 {
     if(_currentWord.getText().isNull()) return;
 
    // if(UInputManager::Instance.isKeyPressed(Qt::Key_Space))// QMessageBox::warning(NULL,"","lol");
 
-    int beat = _showSentenceWidget->currentBeat();
+    int beat = getBeat(time);
 
     if(beat - _currentWord.getTime()>1)
         _currentWord.setLength(beat - _currentWord.getTime());

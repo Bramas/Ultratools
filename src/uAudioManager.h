@@ -52,6 +52,7 @@ public:
     void clear();
     bool setSource(QString);
     quint64 currentTime();
+    bool timestampToPosition(ulong &);
     void setWidgetSongData(WidgetSongData * widgetSongData) { _widgetSongData = widgetSongData; }
     void lol();
     FMOD_SYSTEM * getSystem() { return _system; }

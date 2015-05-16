@@ -179,6 +179,14 @@ void UAudioManager::pause()
     _tickTimer->stop();
 }
 
+bool UAudioManager::timestampToPosition(ulong &time)
+{
+    if(!_tickTimer->isActive() || time < _delta)
+        return false;
+    time -= _delta;
+    return true;
+}
+
 quint64 UAudioManager::currentTime()
 {
     unsigned int time;
