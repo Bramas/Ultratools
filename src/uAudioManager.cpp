@@ -24,6 +24,7 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <limits>
+#include <algorithm>
 
 
 UAudioManager UAudioManager::Instance;
@@ -78,10 +79,8 @@ bool UAudioManager::setSource(QString source)
 
 
 
-    pcm16  *pointer1 = 0;
-    pcm16  *pointer2 = 0;
-    unsigned int length1;
-    unsigned int length2;
+    pcm16  *pointer[2] = {0, 0};
+    unsigned int length[2];
     unsigned int totalLength;
     unsigned int totalMscLength;
 
@@ -96,34 +95,31 @@ bool UAudioManager::setSource(QString source)
     qDebug()<<"totalLength? "<<totalLength<<" bytes "<<totalMscLength<<" Ms";
 
     // lock the buffer
-    FMOD_Sound_Lock(sound, 0, totalLength, (void**)&pointer1, (void**)&pointer2, &length1, &length2);
+    FMOD_Sound_Lock(sound, 0, totalLength, (void**)&pointer[0], (void**)&pointer[1], &length[0], &length[1]);
 
-    totalLength/=2;
-    int sizeOfBin = 100;
+    int sizeOfBin = 100, nSamples = 0;
+    pcm16 channelMax[2];
     _widgetSongData->clearData();
-    for(unsigned int i = 0; i < totalLength; i += 2*sizeOfBin)
-    {
 
-        pcm16 leftMax = *pointer1;
-        ++pointer1;
-        pcm16 rightMax = *pointer1;
-        ++pointer1;
-        for(int m = 0; m < sizeOfBin-1; ++m)
+    for(int part = 0; part < 2; part++)
+    {
+        pcm16 *end = pointer[part] + length[part] / sizeof(pcm16);
+        for(pcm16 *p = pointer[part]; p < end; p++)
         {
-            if(leftMax < *pointer1)
+            if(nSamples >> 1)
+                channelMax[nSamples & 1] = std::max(channelMax[nSamples & 1], *p);
+            else
+                channelMax[nSamples & 1] = *p;
+            if(++nSamples == sizeOfBin << 1)
             {
-                leftMax = *pointer1;
+                nSamples = 0;
+                _widgetSongData->addData((qreal)channelMax[0]/(qreal)SHRT_MAX, (qreal)channelMax[1]/(qreal)SHRT_MAX);
             }
-            ++pointer1;
-            if(rightMax < *pointer1)
-            {
-                rightMax = *pointer1;
-            }
-            ++pointer1;
         }
-        _widgetSongData->addData((qreal)leftMax/(qreal)SHRT_MAX, (qreal)rightMax/(qreal)SHRT_MAX);
     }
-    FMOD_Sound_Unlock(sound, pointer1, pointer2, length1, length2);
+    if(nSamples)
+        _widgetSongData->addData((qreal)channelMax[0]/(qreal)SHRT_MAX, (qreal)channelMax[1]/(qreal)SHRT_MAX);
+    FMOD_Sound_Unlock(sound, pointer[0], pointer[1], length[0], length[1]);
     _widgetSongData->show();
 
     return true;
