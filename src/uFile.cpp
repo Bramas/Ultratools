@@ -113,7 +113,10 @@ if(QFile::exists(getBAK()))
 
         lyrics->parseCode(sourceCode);
 
-        _hMax = lyrics->words().last().getTime2() + 10;
+        if(lyrics->words().isEmpty())
+            _hMax = 0;
+        else
+            _hMax = lyrics->words().last().getTime2() + 10;
         extractHead();
         lyrics->setGap(_headGap);
         lyrics->setBpm(_headBpm);
