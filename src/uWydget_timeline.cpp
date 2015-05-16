@@ -22,7 +22,7 @@
 #include <QMouseEvent>
 #include "uNoteManager.h"
 #include <QPainter>
-#include <math.h>
+#include <cmath>
 
 UWydget_Timeline::UWydget_Timeline(UEditorWindow *parent)
 {

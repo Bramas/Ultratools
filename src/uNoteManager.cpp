@@ -15,7 +15,7 @@
 
 #include <QApplication>
 #include <QFileInfo>
-#include <math.h>
+#include <cmath>
 #include <QDebug>
 #include <QMessageBox>
 #include <QStandardPaths>

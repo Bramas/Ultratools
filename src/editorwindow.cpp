@@ -26,7 +26,7 @@
 #include "uWidgetSongData.h"
 #include "uShowSentenceWydget.h"
 #include "richhscrollbar.h"
-#include <math.h>
+#include <cmath>
 #include <QUrl>
 #include <QMimeData>
 #include <QMessageBox>

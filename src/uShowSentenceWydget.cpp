@@ -19,7 +19,7 @@
 #include <QMoveEvent>
 #include <QMessageBox>
 #include <QPainter>
-#include <math.h>
+#include <cmath>
 #include <QDebug>
 #include <QScrollBar>
 #include <QMenu>
