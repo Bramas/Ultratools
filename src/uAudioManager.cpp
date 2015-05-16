@@ -17,6 +17,7 @@
 
 
 
+#include "timebase.h"
 #include "uAudioManager.h"
 #include "uWidgetSongData.h"
 #include <QTimer>
@@ -27,7 +28,7 @@
 
 UAudioManager UAudioManager::Instance;
 
-UAudioManager::UAudioManager() : _sound(NULL), _channel(NULL), _widgetSongData(0)
+UAudioManager::UAudioManager() : _sound(NULL), _channel(NULL), _widgetSongData(0), _lastPosition(0), _granularity(0), _delta(0)
 {
     _initialised=false;
 
@@ -181,13 +182,26 @@ void UAudioManager::pause()
 quint64 UAudioManager::currentTime()
 {
     unsigned int time;
+    unsigned long pre, delta;
+
+    pre = now();
     FMOD_Channel_GetPosition(
       _channel,
      &time,
       FMOD_TIMEUNIT_MS
     );
+    if (time > _lastPosition)
+    {
+        delta = time - _lastPosition;
+        if (_granularity > delta || !_granularity)
+            _granularity = delta;
+    }
+    _lastPosition = time;
+    delta = pre - time;
+    if (_delta > delta || _delta + _granularity + 2 < delta)
+        _delta = delta;
 
-    return (quint64)time;
+    return (quint64)(pre - _delta);
 }
 
 void UAudioManager::init()

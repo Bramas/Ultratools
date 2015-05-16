@@ -77,6 +77,9 @@ private:
 
     UAudioManager();
     WidgetSongData * _widgetSongData;
+    unsigned int _lastPosition;
+    unsigned long _granularity;
+    unsigned long _delta;
 };
 
 #endif // UAUDIOMANAGER_H
