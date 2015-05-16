@@ -13,6 +13,7 @@ DEFINES += "VERSION_HEX=0x0106"
 
 SOURCES += main.cpp \
     editorwindow.cpp \
+    timebase.cpp \
     uWord.cpp \
     uLyrics.cpp \
     uShowSentenceWydget.cpp \
@@ -39,6 +40,7 @@ SOURCES += main.cpp \
     wordselection.cpp \
     richhscrollbar.cpp
 HEADERS += editorwindow.h \
+    timebase.h \
     uWord.h \
     uLyrics.h \
     uShowSentenceWydget.h \
