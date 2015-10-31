@@ -29,6 +29,7 @@ UNoteManager::UNoteManager()
 {
     _lyrics = NULL;
 _maxPitch = 18;
+_pitchOffset = 0;
 _isPlaying= false;
 
 }
@@ -133,7 +134,7 @@ void UNoteManager::play(const Word & w)
 
 int UNoteManager::pitchToNote(int note)
 {
-    int noteOffset = _maxPitch;
+    int noteOffset = _maxPitch + _pitchOffset;
     while(noteOffset > 0) { noteOffset -= 12; }
     while(noteOffset < -10) { noteOffset += 12; }
     noteOffset = noteOffset - _maxPitch;
@@ -161,6 +162,40 @@ void UNoteManager::setVolume(int v)
     float f=v;
     f/=100;
     FMOD_ChannelGroup_SetVolume(_notesGroup, f);
+}
+
+void UNoteManager::changePitch(int offset)
+{
+    if (_pitchOffset == offset)
+        return;
+
+    QSet<int> playing;
+
+    foreach(const Word & w, _played)
+    {
+        playing |= pitchToNote(w.getPitch());
+    }
+
+    _pitchOffset = offset;
+
+    foreach(const Word & w, _played)
+    {
+        int note = pitchToNote(w.getPitch());
+        if (playing.contains(note))
+        {
+            playing -= note;
+        }
+        else
+        {
+            FMOD_Channel_SetPaused(_channels[note],false);
+        }
+    }
+
+    foreach(int note, playing)
+    {
+        FMOD_Channel_SetPaused(_channels[note],true);
+        FMOD_Channel_SetPosition(_channels[note],0,FMOD_TIMEUNIT_MS);
+    }
 }
 
 void UNoteManager::tick(quint64 time)

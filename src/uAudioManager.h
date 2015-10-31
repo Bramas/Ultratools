@@ -45,6 +45,7 @@ public slots:
     void seek(quint64 startTime);
     void timerOut();
     void changeVolume(int);
+    void changeSpeed(double);
     void emitEndOfSong() { emit endOfSong(); }
 
 public:
@@ -81,6 +82,8 @@ private:
     unsigned int _lastPosition;
     unsigned long _granularity;
     unsigned long _delta;
+    double _speedFactor;
+    float _frequency;
 };
 
 #endif // UAUDIOMANAGER_H

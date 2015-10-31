@@ -78,6 +78,11 @@
         <translation>Note volume :</translation>
     </message>
     <message>
+        <location filename="editorwindow.ui" line="91"/>
+        <source>Vitesse :</source>
+        <translation>Speed :</translation>
+    </message>
+    <message>
         <location filename="editorwindow.ui" line="60"/>
         <source>prévisualiser avec un décalage de</source>
         <translation>Preview sentence with offset</translation>

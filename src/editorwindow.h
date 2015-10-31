@@ -70,6 +70,7 @@ public slots:
    void openTiming(void);
    void readLastFile(void);
    void writeSettings();
+   void setSpeed(int);
    void bpmChanged(int);
    void gapChanged(double);
    void changeSeek(quint64);

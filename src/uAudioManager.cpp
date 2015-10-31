@@ -29,7 +29,7 @@
 
 UAudioManager UAudioManager::Instance;
 
-UAudioManager::UAudioManager() : _sound(NULL), _channel(NULL), _widgetSongData(0), _lastPosition(0), _granularity(0), _delta(0)
+UAudioManager::UAudioManager() : _sound(NULL), _channel(NULL), _widgetSongData(0), _lastPosition(0), _granularity(0), _delta(0), _speedFactor(1)
 {
     _initialised=false;
 
@@ -70,7 +70,9 @@ bool UAudioManager::setSource(QString source)
     _result = FMOD_System_CreateSound(_system,_source.toStdString().c_str(), FMOD_LOOP_NORMAL | FMOD_2D | FMOD_SOFTWARE , 0, &_sound);		// FMOD_DEFAULT uses the defaults.  These are the same as FMOD_LOOP_OFF | FMOD_2D | FMOD_HARDWARE.
     //ERRCHECK(result);
 
+    _result = FMOD_Sound_GetDefaults(_sound, &_frequency, NULL, NULL, NULL);
     _result = FMOD_System_PlaySound(_system,FMOD_CHANNEL_FREE, _sound, true, &_channel);
+    _result = FMOD_Channel_SetFrequency(_channel,_frequency * _speedFactor);
     FMOD_Channel_SetCallback(_channel, endCallback);
 
 
@@ -164,6 +166,13 @@ quint32 UAudioManager::length()
     return l;
 }
 
+void UAudioManager::changeSpeed(double factor)
+{
+    _granularity = 0;
+    _speedFactor = factor;
+    FMOD_Channel_SetFrequency(_channel,_frequency * factor);
+}
+
 void UAudioManager::play()
 {
     FMOD_Channel_SetPaused(_channel,false);
@@ -179,7 +188,7 @@ bool UAudioManager::timestampToPosition(ulong &time)
 {
     if(!_tickTimer->isActive() || time < _delta)
         return false;
-    time -= _delta;
+    time = (ulong)(time * _speedFactor) - _delta;
     return true;
 }
 
@@ -201,6 +210,7 @@ quint64 UAudioManager::currentTime()
             _granularity = delta;
     }
     _lastPosition = time;
+    pre *= _speedFactor;
     delta = pre - time;
     if (_delta > delta || _delta + _granularity + 2 < delta)
         _delta = delta;

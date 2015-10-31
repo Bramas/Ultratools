@@ -471,6 +471,13 @@ _wydget_lyrics->onScroll();
 
 }
 
+void UEditorWindow::setSpeed(int n)
+{
+    n -= 24;
+    UNoteManager::Instance.changePitch(n);
+    UAudioManager::Instance.changeSpeed(pow(2, n / 12.0));
+}
+
 void UEditorWindow::bpmChanged(int n)
 {
     _wydget_timeline->setBpm(n);
@@ -551,6 +558,9 @@ void UEditorWindow::setupUi()
         ui->Slider_NoteVolume->setRange(0,100);
         ui->Slider_NoteVolume->setValue(100);
         connect( ui->Slider_NoteVolume, SIGNAL(sliderMoved(int)), &UNoteManager::Instance, SLOT(setVolume(int)));
+        ui->Slider_NoteVolume->setRange(0,48);
+        ui->Slider_NoteVolume->setValue(24);
+        connect( ui->Slider_Speed, SIGNAL(valueChanged(int)), this, SLOT(setSpeed(int)));
 
 
 
