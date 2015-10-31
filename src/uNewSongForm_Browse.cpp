@@ -67,7 +67,7 @@ void UNewSongForm_Browse::changeEvent(QEvent *e)
 
 void UNewSongForm_Browse::browse(void)
 {
-    _baseLocation = QFileDialog::getExistingDirectory(this,"Dossier de création",USetting::Instance.getSongsLocation());
+    _baseLocation = QFileDialog::getExistingDirectory(this,tr("Dossier de création"),USetting::Instance.getSongsLocation());
     ui->lineEdit_folder->setText(_baseLocation);
     _edited = false;
 

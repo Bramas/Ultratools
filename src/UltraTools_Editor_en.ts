@@ -906,6 +906,11 @@ Let&apos;s go!!!</translation>
         <translation>Mp3 file :</translation>
     </message>
     <message>
+        <location filename="uNewSongForm_Browse.cpp" line="70"/>
+        <source>Dossier de création</source>
+        <translation>Parent folder for new project</translation>
+    </message>
+    <message>
         <location filename="uNewSongForm_Browse.cpp" line="78"/>
         <source>Le fichier mp3</source>
         <translation>The mp3 file</translation>
