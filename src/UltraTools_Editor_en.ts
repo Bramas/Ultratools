@@ -28,12 +28,12 @@
     <message>
         <location filename="editorwindow.ui" line="32"/>
         <source>Musique :</source>
-        <translation>Song :</translation>
+        <translation type="vanished">Song :</translation>
     </message>
     <message>
         <location filename="editorwindow.ui" line="46"/>
         <source>Note :</source>
-        <translation>Note :</translation>
+        <translation type="vanished">Note :</translation>
     </message>
     <message>
         <source>affichage de la phrase avec un retard de :</source>
@@ -53,9 +53,34 @@
         <translation type="obsolete">Refresh</translation>
     </message>
     <message>
+        <location filename="editorwindow.ui" line="32"/>
+        <source>Durée:</source>
+        <translation>Duration:</translation>
+    </message>
+    <message>
+        <location filename="editorwindow.ui" line="42"/>
+        <source>min</source>
+        <translation>min</translation>
+    </message>
+    <message>
+        <location filename="editorwindow.ui" line="56"/>
+        <source>sec |</source>
+        <translation>sec |</translation>
+    </message>
+    <message>
+        <location filename="editorwindow.ui" line="63"/>
+        <source>Volume Musique :</source>
+        <translation>Music volume :</translation>
+    </message>
+    <message>
+        <location filename="editorwindow.ui" line="77"/>
+        <source>Volume Note :</source>
+        <translation>Note volume :</translation>
+    </message>
+    <message>
         <location filename="editorwindow.ui" line="60"/>
         <source>prévisualiser avec un décalage de</source>
-        <translation>preview sentence with the offset</translation>
+        <translation>Preview sentence with offset</translation>
     </message>
     <message>
         <location filename="editorwindow.ui" line="129"/>
@@ -136,12 +161,12 @@
     <message>
         <location filename="editorwindow.ui" line="309"/>
         <source>Scinder une note</source>
-        <translation>split a note</translation>
+        <translation>Split a note</translation>
     </message>
     <message>
         <location filename="editorwindow.ui" line="312"/>
         <source>Scinder la note en 2</source>
-        <translation>split the note</translation>
+        <translation>Split the note</translation>
     </message>
     <message>
         <location filename="editorwindow.ui" line="321"/>
@@ -156,12 +181,12 @@
     <message>
         <location filename="editorwindow.ui" line="333"/>
         <source>Node normale</source>
-        <translation>normal</translation>
+        <translation>Normal</translation>
     </message>
     <message>
         <location filename="editorwindow.ui" line="336"/>
         <source>Transformer les notes sélectionnées en notes Normales</source>
-        <translation>Convert selected notes in normale notes</translation>
+        <translation>Convert the selected notes to normal notes</translation>
     </message>
     <message>
         <location filename="editorwindow.ui" line="339"/>
@@ -176,7 +201,7 @@
     <message>
         <location filename="editorwindow.ui" line="351"/>
         <source>Transformer les notes sélectionnées en notes libres</source>
-        <translation>Convert the selected notes in free notes</translation>
+        <translation>Convert the selected notes to free notes</translation>
     </message>
     <message>
         <location filename="editorwindow.ui" line="354"/>
@@ -191,7 +216,7 @@
     <message>
         <location filename="editorwindow.ui" line="366"/>
         <source>Transformer les notes sélectionnées en notes Gold</source>
-        <translation>Convert the selected notes in Gold notes</translation>
+        <translation>Convert the selected notes to Gold notes</translation>
     </message>
     <message>
         <location filename="editorwindow.ui" line="369"/>
@@ -202,17 +227,17 @@
         <location filename="editorwindow.ui" line="378"/>
         <location filename="editorwindow.ui" line="381"/>
         <source>Ajouter une note</source>
-        <translation>Add Note</translation>
+        <translation>Add note</translation>
     </message>
     <message>
         <location filename="editorwindow.ui" line="390"/>
         <source>Ajouter un séparateur</source>
-        <translation>Add page break</translation>
+        <translation>Add separator</translation>
     </message>
     <message>
         <location filename="editorwindow.ui" line="393"/>
         <source>Ajouter un séparateur (pour coupé une phrase en 2)</source>
-        <translation>Add page break (split the sentence in two sentences)</translation>
+        <translation>Add separator (split the sentence in two sentences)</translation>
     </message>
     <message>
         <location filename="editorwindow.ui" line="402"/>
@@ -248,7 +273,7 @@
     <message>
         <location filename="editorwindow.ui" line="440"/>
         <source>Calquer les notes sélectionnées</source>
-        <translation>Tracing selected notes</translation>
+        <translation>Trace selected notes</translation>
     </message>
     <message>
         <location filename="editorwindow.ui" line="443"/>
@@ -273,7 +298,7 @@
     <message>
         <location filename="editorwindow.ui" line="458"/>
         <source>Verrouiller les timings</source>
-        <translation>lock times</translation>
+        <translation>Lock times</translation>
     </message>
     <message>
         <location filename="editorwindow.ui" line="461"/>
@@ -284,7 +309,7 @@
         <location filename="editorwindow.ui" line="470"/>
         <location filename="editorwindow.ui" line="473"/>
         <source>Doubler la précision</source>
-        <translation>double times precision</translation>
+        <translation>Double time precision</translation>
     </message>
     <message>
         <location filename="editorwindow.ui" line="478"/>
@@ -304,7 +329,7 @@
     <message>
         <location filename="editorwindow.ui" line="492"/>
         <source>Envoyer une suggestion/remarque rapide</source>
-        <translation>Send a quick feedBack/suggestion</translation>
+        <translation>Send quick feedback/a suggestion</translation>
     </message>
 </context>
 <context>
@@ -317,7 +342,7 @@
     <message>
         <location filename="uLyrics.cpp" line="155"/>
         <source>le BPM est déjà bien assez grand</source>
-        <translation>The BPM is already too hight</translation>
+        <translation>The BPM is already too high</translation>
     </message>
     <message>
         <location filename="undocommands.cpp" line="13"/>
@@ -337,7 +362,7 @@
     <message>
         <location filename="undocommands.cpp" line="194"/>
         <source>la modificatin du texte</source>
-        <translation>changing the texte</translation>
+        <translation>changing the text</translation>
     </message>
 </context>
 <context>
@@ -378,7 +403,7 @@ line begining from : </translation>
     <message>
         <location filename="uSetting.cpp" line="39"/>
         <source>Choisir le dossier d&apos;installation d&apos;Ultrastar</source>
-        <translation>Choose theUltrastar install folder</translation>
+        <translation>Choose the Ultrastar install folder</translation>
     </message>
     <message>
         <location filename="wordselection.cpp" line="120"/>
@@ -413,7 +438,7 @@ line begining from : </translation>
     <message>
         <location filename="uShowSentenceWydget.cpp" line="1060"/>
         <source>La note doit avoir une longueur d&apos;au moin 2</source>
-        <translation>the length note must be at least 2</translation>
+        <translation>the length of the note must be at least 2</translation>
     </message>
 </context>
 <context>
@@ -436,7 +461,7 @@ line begining from : </translation>
     <message>
         <location filename="uCheckUpdate.cpp" line="122"/>
         <source>Une nouvelle version est disponnible. Elle est disponible sur le site officiel</source>
-        <translation>A new Version Is available. go to the website</translation>
+        <translation>A new Version Is available. It is available on the official website.</translation>
     </message>
 </context>
 <context>
@@ -444,7 +469,7 @@ line begining from : </translation>
     <message>
         <location filename="uDialogFeedback.ui" line="14"/>
         <source>Dialog</source>
-        <translation>Seed Feedback</translation>
+        <translation>Send Feedback</translation>
     </message>
     <message>
         <location filename="uDialogFeedback.ui" line="35"/>
@@ -529,7 +554,7 @@ line begining from : </translation>
     <message>
         <location filename="udialog_fileheader.ui" line="29"/>
         <source>Option du fichier</source>
-        <translation>File option</translation>
+        <translation>File options</translation>
     </message>
     <message>
         <location filename="udialog_fileheader.ui" line="49"/>
@@ -710,7 +735,7 @@ line begining from : </translation>
     <message>
         <location filename="editorwindow.cpp" line="347"/>
         <source>Pensez à indiquer où se trouve le fichier mp3 (menu Edition &gt;&gt; Edtiter les Entêtes)</source>
-        <translation>Remember to indicate where is the mp3 file (Edition &gt;&gt; Edit headers)</translation>
+        <translation>Remember to indicate where the mp3 file is (Edition &gt;&gt; Edit headers)</translation>
     </message>
     <message>
         <location filename="editorwindow.cpp" line="358"/>
@@ -725,7 +750,7 @@ line begining from : </translation>
     <message>
         <location filename="editorwindow.cpp" line="516"/>
         <source>Crl+P</source>
-        <translation>Crl+P</translation>
+        <translation>Ctrl+P</translation>
     </message>
     <message>
         <location filename="editorwindow.cpp" line="517"/>
@@ -750,7 +775,7 @@ line begining from : </translation>
     <message>
         <location filename="editorwindow.cpp" line="863"/>
         <source>Envoyer une suggestion/remarque rapide</source>
-        <translation>Send a quick feedBack/suggestion</translation>
+        <translation type="vanished">Send a quick feedBack/suggestion</translation>
     </message>
     <message>
         <source>Fatal Error</source>
@@ -782,10 +807,10 @@ line begining from : </translation>
 
 Utilisez votre feeling et appuyer sur la bar d&apos;espace un peu comme si vous chantiez. Si vous avez l&apos;impression d&apos;avoir ratez une partie ne vous arretez pas et essayer de rester calé, cela vous fera gagner beaucoup de temps lors de l&apos;édition.
  c&apos;est partie.</source>
-        <translation>Now you&apos;re going to listen to the music and press on the space bar for each note. See an example on http://www.ultratools.org.
+        <translation>Now you&apos;re going to listen to the music and press on the space bar for each note. You can see an example on http://www.ultratools.org.
 
-use your feeling to press the space bar and even if you think you&apos;ve done a mistake, don&apos;t matter and continue, the following edition will be faster!!
-let&apos;s go!!!</translation>
+Use your feeling to press the space bar and even if you think you&apos;ve made a mistake, don&apos;t stop, the following edition will be faster!!
+Let&apos;s go!!!</translation>
     </message>
 </context>
 <context>
@@ -793,12 +818,12 @@ let&apos;s go!!!</translation>
     <message>
         <location filename="uFile.cpp" line="86"/>
         <source>Une version Backup du fichier est disponnible (probablement du a un plantage ou a une mauvaise fermeture)</source>
-        <translation>A Backup of the file is available (due to bug or wrong closure of the program)</translation>
+        <translation>A Backup of the file is available (due to a bug or an unexpected termination of the program)</translation>
     </message>
     <message>
         <location filename="uFile.cpp" line="87"/>
         <source>Voullez-vous récupéré la version Backup?</source>
-        <translation>Do you want to us the backup the file?</translation>
+        <translation>Do you want to use the backup file?</translation>
     </message>
     <message>
         <location filename="uFile.cpp" line="103"/>
@@ -810,7 +835,7 @@ let&apos;s go!!!</translation>
         <location filename="uFile.cpp" line="103"/>
         <location filename="uFile.cpp" line="154"/>
         <source>Impossible d&apos;ouvrir le fichier : </source>
-        <translation>Can&apos;t Open the file : </translation>
+        <translation>Can&apos;t open the file : </translation>
     </message>
     <message>
         <location filename="uFile.cpp" line="142"/>
@@ -825,7 +850,7 @@ let&apos;s go!!!</translation>
     <message>
         <location filename="uFile.cpp" line="214"/>
         <source>Musique sauvegardée avec succés</source>
-        <translation>Saved with success</translation>
+        <translation>Successfully saved</translation>
     </message>
     <message>
         <source>Problème pour parser le fichier</source>
@@ -862,13 +887,13 @@ let&apos;s go!!!</translation>
     <message>
         <location filename="uNewSongForm_Browse.ui" line="97"/>
         <source>Dossier de création :</source>
-        <translation>create folder:</translation>
+        <translation>Create folder:</translation>
     </message>
     <message>
         <location filename="uNewSongForm_Browse.ui" line="108"/>
         <location filename="uNewSongForm_Browse.ui" line="165"/>
         <source>Parcourir</source>
-        <translation>browse</translation>
+        <translation>Browse</translation>
     </message>
     <message>
         <location filename="uNewSongForm_Browse.ui" line="139"/>
@@ -883,7 +908,7 @@ let&apos;s go!!!</translation>
     <message>
         <location filename="uNewSongForm_Browse.cpp" line="78"/>
         <source>Le fichier mp3</source>
-        <translation>the mp3 file</translation>
+        <translation>The mp3 file</translation>
     </message>
 </context>
 <context>
@@ -896,7 +921,7 @@ let&apos;s go!!!</translation>
     <message>
         <location filename="uNewSongForm_Lyrics.ui" line="36"/>
         <source>Veuillez copier les paroles de la musique en mettant bien : une phrase karaoké = une ligne</source>
-        <translation>Paste the lyicics of the musique with : one sentence in the karaoke = one line</translation>
+        <translation>Paste the lyrics of the song with : one sentence in the karaoke = one line</translation>
     </message>
     <message>
         <location filename="uNewSongForm_Lyrics.ui" line="52"/>
@@ -932,7 +957,7 @@ let&apos;s go!!!</translation>
     <message>
         <location filename="uSettingDialog.ui" line="41"/>
         <source>Interval entre 2 autoSave  (minutes)</source>
-        <translation>Interval between 2 autoSave  (minutes)</translation>
+        <translation>Interval between 2 autoSaves  (minutes)</translation>
     </message>
     <message>
         <location filename="uSettingDialog.ui" line="81"/>
@@ -960,7 +985,7 @@ let&apos;s go!!!</translation>
     <message>
         <location filename="uDialog_timing.ui" line="68"/>
         <source>à toute les notes</source>
-        <translation>to every notes</translation>
+        <translation>to every note</translation>
     </message>
     <message>
         <location filename="uDialog_timing.ui" line="81"/>
