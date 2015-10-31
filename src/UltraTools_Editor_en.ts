@@ -920,6 +920,16 @@ Let&apos;s go!!!</translation>
         <source>Le fichier mp3</source>
         <translation>The mp3 file</translation>
     </message>
+    <message>
+        <location filename="uNewSongForm_Browse.cpp" line="79"/>
+        <source>MP3</source>
+        <translation>MP3</translation>
+    </message>
+    <message>
+        <location filename="uNewSongForm_Browse.cpp" line="79"/>
+        <source>Toutes fiches</source>
+        <translation>All files</translation>
+    </message>
 </context>
 <context>
     <name>UNewSongForm_Lyrics</name>
