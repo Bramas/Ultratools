@@ -21,11 +21,14 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#ifdef QT_NETWORK_LIB
 #include "uCheckUpdate.h"
-#include "uDialogHelp.h"
 #include "uDialogFeedback.h"
+#endif
+#include "uDialogHelp.h"
 #include "uInputManager.h"
 #include "uFile.h"
+#include "uNewSongForm_Lyrics.h"
 
 class ShowSentenceWidget;
 class ShowLines;

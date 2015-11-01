@@ -28,10 +28,8 @@ SOURCES += main.cpp \
     uSetting.cpp \
     uNewSongForm_Lyrics.cpp \
     uSettingDialog.cpp \
-    uCheckUpdate.cpp \
     uAudioManager.cpp \
     uDialogHelp.cpp \
-    uDialogFeedback.cpp \
     uRecorder.cpp \
     uDialog_timing.cpp \
     uDialogAbout.cpp \
@@ -55,10 +53,8 @@ HEADERS += editorwindow.h \
     uSetting.h \
     uNewSongForm_Lyrics.h \
     uSettingDialog.h \
-    uCheckUpdate.h \
     uAudioManager.h \
     uDialogHelp.h \
-    uDialogFeedback.h \
     uRecorder.h \
     uDialog_timing.h \
     uDialogAbout.h \
@@ -72,10 +68,16 @@ FORMS += editorwindow.ui \
     uNewSongForm_Lyrics.ui \
     uSettingDialog.ui \
     uDialogHelp.ui \
-    uDialogFeedback.ui \
     uDialog_timing.ui \
     uDialogAbout.ui
 
+contains(QT, network) {
+    SOURCES += uCheckUpdate.cpp \
+        uDialogFeedback.cpp
+    HEADERS += uCheckUpdate.h \
+        uDialogFeedback.h
+    FORMS += uDialogFeedback.ui
+}
 
 RESOURCES = data.qrc \
     Lang.qrc

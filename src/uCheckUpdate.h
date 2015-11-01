@@ -17,8 +17,6 @@
 #ifndef UCHECKUPDATE_H
 #define UCHECKUPDATE_H
 
-#include "uNewSongForm_Lyrics.h"
-
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QFile>

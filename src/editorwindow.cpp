@@ -57,8 +57,11 @@ _startTime=0;
     _isPlaying=false;
 setAcceptDrops(true);
 USetting::Instance.init();
+
+#ifdef QT_MODULE_NETWORK
 UCheckUpdate * check = new UCheckUpdate(QUrl(URL_VERSION));
 connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
+#endif
 
 
     setupAudio();
@@ -912,8 +915,10 @@ void UEditorWindow::onConnected()
 void UEditorWindow::displayFeedback()
 {
    // QMessageBox::information(NULL,"","lol");
+#ifdef QT_MODULE_NETWORK
     UDialogFeedback f(NULL);
     f.exec();
+#endif
 }
 void UEditorWindow::openTiming(void)
 {
