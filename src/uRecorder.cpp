@@ -29,8 +29,10 @@ Recorder::Recorder(ShowSentenceWidget * showSentenceWidget)
 
     connect(&UInputManager::Instance,SIGNAL(keyPressEvent(QKeyEvent *, ulong)),this,SLOT(onKeyPressEvent(QKeyEvent *, ulong)));
     connect(&UInputManager::Instance,SIGNAL(keyReleaseEvent(QKeyEvent *, ulong)),this,SLOT(onKeyReleaseEvent(QKeyEvent *, ulong)));
+#ifdef USE_MIDI
     connect(UMidiManager::getInstance(),SIGNAL(noteOnEvent(ulong,int)),this,SLOT(startNote(ulong,int)));
     connect(UMidiManager::getInstance(),SIGNAL(noteOffEvent(ulong,int)),this,SLOT(stopNote(ulong,int)));
+#endif
 }
 
 int Recorder::getBeat(ulong time)

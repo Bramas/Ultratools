@@ -97,7 +97,9 @@ int main(int argc, char *argv[])
     qDebug()<<"Ultratools Editor " VERSION;
 
     initializeTimebase();
+#ifdef USE_MIDI
     UMidiManager::getInstance();
+#endif
     manageLang(a);
 
     UEditorWindow w;

@@ -22,7 +22,6 @@ SOURCES += main.cpp \
     uDialog_fileheader.cpp \
     uWydget_timeline.cpp \
     uInputManager.cpp \
-    uMidiManager.cpp \
     uWydget_lyrics.cpp \
     uNoteManager.cpp \
     uNewSongForm_Browse.cpp \
@@ -50,7 +49,6 @@ HEADERS += editorwindow.h \
     uDialog_fileheader.h \
     uWydget_timeline.h \
     uInputManager.h \
-    uMidiManager.h \
     uWydget_lyrics.h \
     uNoteManager.h \
     uNewSongForm_Browse.h \
@@ -142,7 +140,13 @@ win32{
 }
 DEFINES += "OS_STRING=$${OS_STRING}"
 
-LIBS += -lportmidi
+load(configure)
+qtCompileTest(portmidi) {
+    LIBS += -lportmidi
+    DEFINES += USE_MIDI
+    SOURCES += uMidiManager.cpp
+    HEADERS += uMidiManager.h
+}
 
 DISTFILES += \
     qt_licence.txt
