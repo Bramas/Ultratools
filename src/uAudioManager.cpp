@@ -67,7 +67,7 @@ bool UAudioManager::setSource(QString source)
     clear();
 
     _source=source;
-    _result = FMOD_System_CreateSound(_system,_source.toStdString().c_str(), FMOD_LOOP_NORMAL | FMOD_2D | FMOD_SOFTWARE , 0, &_sound);		// FMOD_DEFAULT uses the defaults.  These are the same as FMOD_LOOP_OFF | FMOD_2D | FMOD_HARDWARE.
+    _result = FMOD_System_CreateSound(_system,_source.toStdString().c_str(), FMOD_LOOP_NORMAL | FMOD_2D | FMOD_SOFTWARE | FMOD_CREATESAMPLE, 0, &_sound);		// FMOD_DEFAULT uses the defaults.  These are the same as FMOD_LOOP_OFF | FMOD_2D | FMOD_HARDWARE.
     //ERRCHECK(result);
 
     _result = FMOD_Sound_GetDefaults(_sound, &_frequency, NULL, NULL, NULL);
@@ -76,8 +76,6 @@ bool UAudioManager::setSource(QString source)
     FMOD_Channel_SetCallback(_channel, endCallback);
 
 
-    FMOD_SOUND * sound;
-    FMOD_System_CreateSound(_system,_source.toStdString().c_str(), FMOD_LOOP_NORMAL | FMOD_2D | FMOD_SOFTWARE | FMOD_CREATESAMPLE, 0, &sound);
 
 
 
@@ -88,16 +86,16 @@ bool UAudioManager::setSource(QString source)
 
 
     FMOD_SOUND_FORMAT format = FMOD_SOUND_FORMAT_NONE;
-    FMOD_Sound_GetFormat(sound, 0, &format, 0, 0);
+    FMOD_Sound_GetFormat(_sound, 0, &format, 0, 0);
     qDebug()<<"format:"<<format;
     qDebug()<<"PCM16? "<<(format == FMOD_SOUND_FORMAT_PCM16);
 
-    FMOD_Sound_GetLength(sound, &totalLength, FMOD_TIMEUNIT_PCMBYTES);
-    FMOD_Sound_GetLength(sound, &totalMscLength, FMOD_TIMEUNIT_MS);
+    FMOD_Sound_GetLength(_sound, &totalLength, FMOD_TIMEUNIT_PCMBYTES);
+    FMOD_Sound_GetLength(_sound, &totalMscLength, FMOD_TIMEUNIT_MS);
     qDebug()<<"totalLength? "<<totalLength<<" bytes "<<totalMscLength<<" Ms";
 
     // lock the buffer
-    FMOD_Sound_Lock(sound, 0, totalLength, (void**)&pointer[0], (void**)&pointer[1], &length[0], &length[1]);
+    FMOD_Sound_Lock(_sound, 0, totalLength, (void**)&pointer[0], (void**)&pointer[1], &length[0], &length[1]);
 
     int sizeOfBin = 100, nSamples = 0;
     pcm16 channelMax[2];
@@ -121,7 +119,7 @@ bool UAudioManager::setSource(QString source)
     }
     if(nSamples)
         _widgetSongData->addData((qreal)channelMax[0]/(qreal)SHRT_MAX, (qreal)channelMax[1]/(qreal)SHRT_MAX);
-    FMOD_Sound_Unlock(sound, pointer[0], pointer[1], length[0], length[1]);
+    FMOD_Sound_Unlock(_sound, pointer[0], pointer[1], length[0], length[1]);
     _widgetSongData->show();
 
     return true;
