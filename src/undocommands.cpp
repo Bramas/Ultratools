@@ -22,10 +22,10 @@ void Lyrics::AddDeleteWord::redo()
     foreach(const auto & p, _words)
     {
         if(p.first){ // if we want to add
-            _lyrics->_words.insert(p.second.getTime(), p.second);
+            _lyrics->reallyAddWord(p.second);
         }
         else {
-            _lyrics->_words.remove(p.second.getTime(), p.second);
+            _lyrics->reallyRemoveWord(p.second);
         }
     }
     _lyrics->emitModified();
@@ -37,10 +37,10 @@ void Lyrics::AddDeleteWord::undo()
     {
         auto p = _words.at(i);
         if(p.first){ // if we want to undo add
-            _lyrics->_words.remove(p.second.getTime(), p.second);
+            _lyrics->reallyRemoveWord(p.second);
         }
         else {
-            _lyrics->_words.insert(p.second.getTime(), p.second);
+            _lyrics->reallyAddWord(p.second);
         }
     }
     _lyrics->emitModified();

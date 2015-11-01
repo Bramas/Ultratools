@@ -69,7 +69,7 @@ void Lyrics::parseLine(QString &line)
         QString text = in.readLine();
         word.setText(text);
     }
-    _words.insert(word.getTime(), word);
+    reallyAddWord(word);
     if(word.getPitch() < pitchMin) pitchMin=word.getPitch();
     if(word.getPitch() > pitchMax) pitchMax=word.getPitch();
     this->setModified(false);
@@ -147,6 +147,16 @@ void Lyrics::addWord(const Word &w, QString actionText)
     emit hasBeenModified();
 }
 
+void Lyrics::reallyRemoveWord(const Word &w)
+{
+    _words.remove(w.getTime(), w);
+}
+
+void Lyrics::reallyAddWord(const Word &w)
+{
+    auto it = _words.insert(w.getTime(), w);
+    it.value().setParent(this);
+}
 
 void Lyrics::doublePresicion()
 {

@@ -116,6 +116,8 @@ private:
         emit hasBeenModified();
     }
 
+    void reallyRemoveWord(const Word &w);
+    void reallyAddWord(const Word &w);
 
      // Undo commands
      class AddDeleteWord;
