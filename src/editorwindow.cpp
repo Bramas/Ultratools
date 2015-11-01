@@ -809,6 +809,8 @@ void UEditorWindow::newSong(void)
     }
 
     UAudioManager::Instance.setSource(_currentFile->getMp3Location());
+    adaptNewFile();
+
       QMessageBox::information(this,tr("Prochaine étape"),
 
 tr("Maintenant Votre musique va se lancez et vous devrez appuyer la barre "
