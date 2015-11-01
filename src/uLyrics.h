@@ -112,10 +112,7 @@ public:
 
 private:
 
-    void emitModified() {
-        emit hasBeenModified();
-    }
-
+    void emitModified();
     void reallyRemoveWord(const Word &w);
     void reallyAddWord(const Word &w);
 
@@ -133,6 +130,7 @@ private:
     QUndoStack _history;
 
     int  pitchMax, pitchMin;
+    bool _recalcMinMax;
     qreal _gap;
     qreal _bpm;
 
