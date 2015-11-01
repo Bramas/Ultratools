@@ -913,6 +913,8 @@ void UEditorWindow::openTiming(void)
 }
 void UEditorWindow::onFileModified(bool k)
 {
+    UNoteManager::Instance.setMaxPitch(_currentFile->lyrics->getPitchMax());
+
        if(k)
             setWindowTitle(USetting::Instance.getWindowTitle(this->windowTitle()," - "+_currentFile->getFileName().section('/',-1,-1)+"*"));
         else
