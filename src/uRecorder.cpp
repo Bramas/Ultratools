@@ -43,7 +43,7 @@ void Recorder::onKeyPressEvent(QKeyEvent * event)
 }
 void Recorder::onKeyReleaseEvent(QKeyEvent * /*event*/)
 {
-    if(_currentWord.isNull()) return;
+    if(_currentWord.getText().isNull()) return;
 
    // if(UInputManager::Instance.isKeyPressed(Qt::Key_Space))// QMessageBox::warning(NULL,"","lol");
 
