@@ -379,16 +379,12 @@ void UEditorWindow::adaptNewFile()
         quint32 l = UAudioManager::Instance.length();
         ui->spinBoxMinute->setValue(l/60000);
         ui->spinBoxSecond->setValue((l/1000) % 60000);
-        ui->spinBoxMinute->setEnabled(false);
-        ui->spinBoxSecond->setEnabled(false);
         _hScroll->setMaximum(_currentFile->lyrics->timeToBeat(l));
     }
     else
     {
         ui->spinBoxMinute->setValue(4);
         ui->spinBoxSecond->setValue(0);
-        ui->spinBoxMinute->setEnabled(true);
-        ui->spinBoxSecond->setEnabled(true);
         _hScroll->setMaximum(_currentFile->lyrics->timeToBeat(4*60*1000));
     }
 
