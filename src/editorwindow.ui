@@ -53,7 +53,14 @@
         <item>
          <widget class="QLabel" name="label_6">
           <property name="text">
-           <string>sec |</string>
+           <string>sec</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
          </widget>
         </item>

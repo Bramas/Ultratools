@@ -64,8 +64,8 @@
     </message>
     <message>
         <location filename="editorwindow.ui" line="56"/>
-        <source>sec |</source>
-        <translation>sec |</translation>
+        <source>sec</source>
+        <translation>sec</translation>
     </message>
     <message>
         <location filename="editorwindow.ui" line="63"/>
