@@ -21,6 +21,7 @@
 
 #include "editorwindow.h"
 #include "timebase.h"
+#include "uMidiManager.h"
 #include <QInputDialog>
 #include <QDir>
 #include <QFileInfo>
@@ -96,6 +97,7 @@ int main(int argc, char *argv[])
     qDebug()<<"Ultratools Editor " VERSION;
 
     initializeTimebase();
+    UMidiManager::getInstance();
     manageLang(a);
 
     UEditorWindow w;

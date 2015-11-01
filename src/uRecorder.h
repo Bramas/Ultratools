@@ -33,6 +33,8 @@ public:
 public slots:
     void onKeyPressEvent(QKeyEvent * event, ulong time);
     void onKeyReleaseEvent(QKeyEvent * event, ulong time);
+    void startNote(ulong time, int pitch);
+    void stopNote(ulong time, int pitch);
     void start();
     void stop();
 
