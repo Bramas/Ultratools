@@ -54,9 +54,15 @@ typedef signed short pcm16;
 void UAudioManager::clear()
 {
     this->pause();
+    if (_channel)
+    {
+        FMOD_Channel_Stop(_channel);
+        _channel = NULL;
+    }
     if(_sound)
     {
         FMOD_Sound_Release(_sound);
+        _sound = NULL;
     }
     _widgetSongData->clearData();
     _source = "";
@@ -68,15 +74,19 @@ bool UAudioManager::setSource(QString source)
 
     _source=source;
     _result = FMOD_System_CreateSound(_system,_source.toStdString().c_str(), FMOD_LOOP_NORMAL | FMOD_2D | FMOD_SOFTWARE | FMOD_CREATESAMPLE, 0, &_sound);		// FMOD_DEFAULT uses the defaults.  These are the same as FMOD_LOOP_OFF | FMOD_2D | FMOD_HARDWARE.
-    //ERRCHECK(result);
+    if (_result != FMOD_OK) return false;
 
     _result = FMOD_Sound_GetDefaults(_sound, &_frequency, NULL, NULL, NULL);
+    if (_result != FMOD_OK) return false;
+
     _result = FMOD_System_PlaySound(_system,FMOD_CHANNEL_FREE, _sound, true, &_channel);
+    if (_result != FMOD_OK) return false;
+
     _result = FMOD_Channel_SetFrequency(_channel,_frequency * _speedFactor);
-    FMOD_Channel_SetCallback(_channel, endCallback);
+    if (_result != FMOD_OK) return false;
 
-
-
+    _result = FMOD_Channel_SetCallback(_channel, endCallback);
+    if (_result != FMOD_OK) return false;
 
 
     pcm16  *pointer[2] = {0, 0};
@@ -90,12 +100,15 @@ bool UAudioManager::setSource(QString source)
     qDebug()<<"format:"<<format;
     qDebug()<<"PCM16? "<<(format == FMOD_SOUND_FORMAT_PCM16);
 
-    FMOD_Sound_GetLength(_sound, &totalLength, FMOD_TIMEUNIT_PCMBYTES);
+    _result = FMOD_Sound_GetLength(_sound, &totalLength, FMOD_TIMEUNIT_PCMBYTES);
+    if (_result != FMOD_OK) return false;
+
     FMOD_Sound_GetLength(_sound, &totalMscLength, FMOD_TIMEUNIT_MS);
     qDebug()<<"totalLength? "<<totalLength<<" bytes "<<totalMscLength<<" Ms";
 
     // lock the buffer
-    FMOD_Sound_Lock(_sound, 0, totalLength, (void**)&pointer[0], (void**)&pointer[1], &length[0], &length[1]);
+    _result = FMOD_Sound_Lock(_sound, 0, totalLength, (void**)&pointer[0], (void**)&pointer[1], &length[0], &length[1]);
+    if (_result != FMOD_OK) return false;
 
     int sizeOfBin = 100, nSamples = 0;
     pcm16 channelMax[2];
@@ -196,11 +209,10 @@ quint64 UAudioManager::currentTime()
     unsigned long pre, delta;
 
     pre = now();
-    FMOD_Channel_GetPosition(
-      _channel,
-     &time,
-      FMOD_TIMEUNIT_MS
-    );
+    if (FMOD_Channel_GetPosition(_channel, &time, FMOD_TIMEUNIT_MS) != FMOD_OK)
+    {
+        time = _lastPosition;
+    }
     if (time > _lastPosition)
     {
         delta = time - _lastPosition;

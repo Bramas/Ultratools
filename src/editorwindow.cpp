@@ -365,6 +365,7 @@ void UEditorWindow::openFile(QString fileName)
     {
         if(!UAudioManager::Instance.setSource(fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3))
         {
+            UAudioManager::Instance.clear();
             QMessageBox::warning(this,tr("Attention"),tr("Il y a eu un problème lors de la lecture du fichier son")+" : "+fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3);
         }
     }
@@ -808,7 +809,12 @@ void UEditorWindow::newSong(void)
         return;
     }
 
-    UAudioManager::Instance.setSource(_currentFile->getMp3Location());
+    if (!UAudioManager::Instance.setSource(_currentFile->getMp3Location()))
+    {
+        UAudioManager::Instance.clear();
+        QMessageBox::warning(this,tr("Attention"),tr("Il y a eu un problème lors de la lecture du fichier son")+" : "+_currentFile->getMp3Location());
+        return;
+    }
     adaptNewFile();
 
       QMessageBox::information(this,tr("Prochaine étape"),
