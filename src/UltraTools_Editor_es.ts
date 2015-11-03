@@ -650,10 +650,10 @@
     </message>
     <message>
         <location filename="editorwindow.cpp" line="773"/>
-        <source>Maintenant Votre musique va se lancez et vous devrez appuyer la barre d&apos;espace a chaque nouvelle note. Nous vous conseillons de regarder un exemple sur le site http://www.ultratools.org pour bien comprendre comment cela fonctionne.
+        <source>Maintenant Votre musique va se lancez et vous devrez appuyer la touche Entrée a chaque nouvelle note. Nous vous conseillons de regarder un exemple sur le site http://www.ultratools.org pour bien comprendre comment cela fonctionne.
 
 
-Utilisez votre feeling et appuyer sur la bar d&apos;espace un peu comme si vous chantiez. Si vous avez l&apos;impression d&apos;avoir ratez une partie ne vous arretez pas et essayer de rester calé, cela vous fera gagner beaucoup de temps lors de l&apos;édition.
+Utilisez votre feeling et appuyer sur la touche Entrée un peu comme si vous chantiez. Si vous avez l&apos;impression d&apos;avoir ratez une partie ne vous arretez pas et essayer de rester calé, cela vous fera gagner beaucoup de temps lors de l&apos;édition.
  c&apos;est partie.</source>
         <translation type="unfinished"></translation>
     </message>

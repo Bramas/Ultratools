@@ -819,10 +819,10 @@ void UEditorWindow::newSong(void)
 
       QMessageBox::information(this,tr("Prochaine étape"),
 
-tr("Maintenant Votre musique va se lancez et vous devrez appuyer la barre "
-   "d'espace a chaque nouvelle note. Nous vous conseillons de regarder un exemple"
+tr("Maintenant Votre musique va se lancez et vous devrez appuyer la touche "
+   "Entrée a chaque nouvelle note. Nous vous conseillons de regarder un exemple"
    " sur le site http://www.ultratools.org pour bien comprendre comment cela "
-   "fonctionne.\n\n\nUtilisez votre feeling et appuyer sur la bar d'espace un peu "
+   "fonctionne.\n\n\nUtilisez votre feeling et appuyer sur la touche Entrée un peu "
    "comme si vous chantiez. Si vous avez l'impression d'avoir ratez une partie ne "
    "vous arretez pas et essayer de rester calé, cela vous fera gagner beaucoup de "
    "temps lors de l'édition.\n c'est partie."));
