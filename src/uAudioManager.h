@@ -80,7 +80,7 @@ private:
     UAudioManager();
     WidgetSongData * _widgetSongData;
     unsigned int _lastPosition;
-    unsigned long _granularity;
+    unsigned int _granularity;
     qint64 _delta;
     double _speedFactor;
     float _frequency;

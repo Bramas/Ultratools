@@ -215,9 +215,9 @@ quint64 UAudioManager::currentTime()
     }
     if (time > _lastPosition)
     {
-        delta = time - _lastPosition;
-        if (_granularity > delta || !_granularity)
-            _granularity = delta;
+        unsigned int fmoddelta = time - _lastPosition;
+        if (_granularity > fmoddelta || !_granularity)
+            _granularity = fmoddelta;
     }
     _lastPosition = time;
     pre *= _speedFactor;
