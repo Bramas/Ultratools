@@ -37,8 +37,10 @@ Recorder::Recorder(ShowSentenceWidget * showSentenceWidget)
 
 int Recorder::getBeat(ulong time)
 {
-    if(UAudioManager::Instance.timestampToPosition(time))
+    if(UAudioManager::Instance.timestampToPosition(time)) {
+        time -= _showSentenceWidget->getLyrics()->getGap();
         return std::lround(_showSentenceWidget->getLyrics()->timeToBeat(time));
+    }
     return _showSentenceWidget->currentBeat();
 }
 
