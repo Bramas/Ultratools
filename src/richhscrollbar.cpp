@@ -89,6 +89,7 @@ void RichHScrollBar::paintEvent(QPaintEvent *event){
 
 void RichHScrollBar::mousePressEvent(QMouseEvent *event)
 {
+    mouseMoveEvent(event);
     _mousePressed = true;
     _mousePressPoint = event->pos();
     _mousePressSliderValue = this->value();
