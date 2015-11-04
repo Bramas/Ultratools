@@ -81,7 +81,7 @@ private:
     WidgetSongData * _widgetSongData;
     unsigned int _lastPosition;
     unsigned long _granularity;
-    unsigned long _delta;
+    qint64 _delta;
     double _speedFactor;
     float _frequency;
 };

@@ -197,7 +197,7 @@ void UAudioManager::pause()
 
 bool UAudioManager::timestampToPosition(ulong &time)
 {
-    if(!_tickTimer->isActive() || time < _delta)
+    if(!_tickTimer->isActive() || (qint64)time < _delta)
         return false;
     time = (ulong)(time * _speedFactor) - _delta;
     return true;
@@ -206,7 +206,7 @@ bool UAudioManager::timestampToPosition(ulong &time)
 quint64 UAudioManager::currentTime()
 {
     unsigned int time;
-    unsigned long pre, delta;
+    qint64 pre, delta;
 
     pre = now();
     if (FMOD_Channel_GetPosition(_channel, &time, FMOD_TIMEUNIT_MS) != FMOD_OK)
