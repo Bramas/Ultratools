@@ -380,13 +380,13 @@ void UEditorWindow::adaptNewFile()
         quint32 l = UAudioManager::Instance.length();
         ui->spinBoxMinute->setValue(l/60000);
         ui->spinBoxSecond->setValue((l/1000) % 60000);
-        _hScroll->setMaximum(_currentFile->lyrics->timeToBeat(l));
+        _hScroll->setTotalMaximum(_currentFile->lyrics->timeToBeat(l));
     }
     else
     {
         ui->spinBoxMinute->setValue(4);
         ui->spinBoxSecond->setValue(0);
-        _hScroll->setMaximum(_currentFile->lyrics->timeToBeat(4*60*1000));
+        _hScroll->setTotalMaximum(_currentFile->lyrics->timeToBeat(4*60*1000));
     }
 
     if(_currentFile->lyrics->words().isEmpty())
@@ -592,7 +592,7 @@ void UEditorWindow::setupUi()
 
 void UEditorWindow::onSongLengthChanged(int v)
 {
-    _hScroll->setMaximum(_currentFile->lyrics->timeToBeat(
+    _hScroll->setTotalMaximum(_currentFile->lyrics->timeToBeat(
         (ui->spinBoxMinute->value()*60 + ui->spinBoxSecond->value()) * 1000));
 }
 void UEditorWindow::changeSeek(quint64 time)
