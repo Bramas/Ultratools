@@ -21,7 +21,7 @@
 #include <QPolygonF>
 #include <QDebug>
 #include <QElapsedTimer>
-#include <math.h>
+#include <cmath>
 
 WidgetSongData::WidgetSongData(QWidget *parent) :
     QWidget(parent)

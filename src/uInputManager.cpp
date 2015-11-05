@@ -15,32 +15,46 @@
 
 
 
+#include "timebase.h"
 #include "uInputManager.h"
 #include <QKeyEvent>
 #include <QDebug>
 
 
 UInputManager UInputManager::Instance;
+static unsigned long guiDelta = 0;
+
+static void updateGuiDelta(QInputEvent *event)
+{
+    unsigned long time = now();
+    unsigned long delta = time - event->timestamp();
+
+    if (!guiDelta || guiDelta > delta || delta - guiDelta > 10000)
+        guiDelta = delta;
+}
 
 
 void UInputManager::keyReleased(QKeyEvent *event)
 {
+    updateGuiDelta(event);
 
     if(event->isAutoRepeat()) return;
 
     //QMessageBox::warning(NULL,"","lache");
     _keyPressed.removeOne(event->key());
-    emit keyReleaseEvent(event);
+    emit keyReleaseEvent(event, guiDelta + event->timestamp());
 
     if(event->key()==Qt::Key_Space) emit spaceReleaseEvent();
 };
 
 void UInputManager::keyPressed(QKeyEvent *event)
 {
+    updateGuiDelta(event);
+
     if(event->isAutoRepeat()) return;
 
        _keyPressed.push_front(event->key());
-       emit keyPressEvent(event);
+       emit keyPressEvent(event, guiDelta + event->timestamp());
 
        if(event->key()==Qt::Key_Space) emit spacePressEvent();
 };

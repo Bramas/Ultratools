@@ -26,7 +26,7 @@
 #include "uWidgetSongData.h"
 #include "uShowSentenceWydget.h"
 #include "richhscrollbar.h"
-#include <math.h>
+#include <cmath>
 #include <QUrl>
 #include <QMimeData>
 #include <QMessageBox>
@@ -57,8 +57,11 @@ _startTime=0;
     _isPlaying=false;
 setAcceptDrops(true);
 USetting::Instance.init();
+
+#ifdef QT_MODULE_NETWORK
 UCheckUpdate * check = new UCheckUpdate(QUrl(URL_VERSION));
 connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
+#endif
 
 
     setupAudio();
@@ -362,6 +365,7 @@ void UEditorWindow::openFile(QString fileName)
     {
         if(!UAudioManager::Instance.setSource(fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3))
         {
+            UAudioManager::Instance.clear();
             QMessageBox::warning(this,tr("Attention"),tr("Il y a eu un problème lors de la lecture du fichier son")+" : "+fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3);
         }
     }
@@ -376,17 +380,13 @@ void UEditorWindow::adaptNewFile()
         quint32 l = UAudioManager::Instance.length();
         ui->spinBoxMinute->setValue(l/60000);
         ui->spinBoxSecond->setValue((l/1000) % 60000);
-        ui->spinBoxMinute->setEnabled(false);
-        ui->spinBoxSecond->setEnabled(false);
-        _hScroll->setMaximum(_currentFile->lyrics->timeToBeat(l));
+        _hScroll->setTotalMaximum(_currentFile->lyrics->timeToBeat(l));
     }
     else
     {
         ui->spinBoxMinute->setValue(4);
         ui->spinBoxSecond->setValue(0);
-        ui->spinBoxMinute->setEnabled(true);
-        ui->spinBoxSecond->setEnabled(true);
-        _hScroll->setMaximum(_currentFile->lyrics->timeToBeat(4*60*1000));
+        _hScroll->setTotalMaximum(_currentFile->lyrics->timeToBeat(4*60*1000));
     }
 
     if(_currentFile->lyrics->words().isEmpty())
@@ -471,6 +471,13 @@ _wydget_lyrics->onScroll();
 
 }
 
+void UEditorWindow::setSpeed(int n)
+{
+    n -= 24;
+    UNoteManager::Instance.changePitch(n);
+    UAudioManager::Instance.changeSpeed(pow(2, n / 12.0));
+}
+
 void UEditorWindow::bpmChanged(int n)
 {
     _wydget_timeline->setBpm(n);
@@ -551,6 +558,9 @@ void UEditorWindow::setupUi()
         ui->Slider_NoteVolume->setRange(0,100);
         ui->Slider_NoteVolume->setValue(100);
         connect( ui->Slider_NoteVolume, SIGNAL(sliderMoved(int)), &UNoteManager::Instance, SLOT(setVolume(int)));
+        ui->Slider_NoteVolume->setRange(0,48);
+        ui->Slider_NoteVolume->setValue(24);
+        connect( ui->Slider_Speed, SIGNAL(valueChanged(int)), this, SLOT(setSpeed(int)));
 
 
 
@@ -582,7 +592,7 @@ void UEditorWindow::setupUi()
 
 void UEditorWindow::onSongLengthChanged(int v)
 {
-    _hScroll->setMaximum(_currentFile->lyrics->timeToBeat(
+    _hScroll->setTotalMaximum(_currentFile->lyrics->timeToBeat(
         (ui->spinBoxMinute->value()*60 + ui->spinBoxSecond->value()) * 1000));
 }
 void UEditorWindow::changeSeek(quint64 time)
@@ -799,13 +809,20 @@ void UEditorWindow::newSong(void)
         return;
     }
 
-    UAudioManager::Instance.setSource(_currentFile->getMp3Location());
+    if (!UAudioManager::Instance.setSource(_currentFile->getMp3Location()))
+    {
+        UAudioManager::Instance.clear();
+        QMessageBox::warning(this,tr("Attention"),tr("Il y a eu un problème lors de la lecture du fichier son")+" : "+_currentFile->getMp3Location());
+        return;
+    }
+    adaptNewFile();
+
       QMessageBox::information(this,tr("Prochaine étape"),
 
-tr("Maintenant Votre musique va se lancez et vous devrez appuyer la barre "
-   "d'espace a chaque nouvelle note. Nous vous conseillons de regarder un exemple"
+tr("Maintenant Votre musique va se lancez et vous devrez appuyer la touche "
+   "Entrée a chaque nouvelle note. Nous vous conseillons de regarder un exemple"
    " sur le site http://www.ultratools.org pour bien comprendre comment cela "
-   "fonctionne.\n\n\nUtilisez votre feeling et appuyer sur la bar d'espace un peu "
+   "fonctionne.\n\n\nUtilisez votre feeling et appuyer sur la touche Entrée un peu "
    "comme si vous chantiez. Si vous avez l'impression d'avoir ratez une partie ne "
    "vous arretez pas et essayer de rester calé, cela vous fera gagner beaucoup de "
    "temps lors de l'édition.\n c'est partie."));
@@ -902,8 +919,10 @@ void UEditorWindow::onConnected()
 void UEditorWindow::displayFeedback()
 {
    // QMessageBox::information(NULL,"","lol");
+#ifdef QT_MODULE_NETWORK
     UDialogFeedback f(NULL);
     f.exec();
+#endif
 }
 void UEditorWindow::openTiming(void)
 {
@@ -913,6 +932,8 @@ void UEditorWindow::openTiming(void)
 }
 void UEditorWindow::onFileModified(bool k)
 {
+    UNoteManager::Instance.setMaxPitch(_currentFile->lyrics->getPitchMax());
+
        if(k)
             setWindowTitle(USetting::Instance.getWindowTitle(this->windowTitle()," - "+_currentFile->getFileName().section('/',-1,-1)+"*"));
         else

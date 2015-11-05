@@ -19,7 +19,7 @@
 #include <QMoveEvent>
 #include <QMessageBox>
 #include <QPainter>
-#include <math.h>
+#include <cmath>
 #include <QDebug>
 #include <QScrollBar>
 #include <QMenu>
@@ -96,7 +96,7 @@ _previousDisplayed=2;
     _hSizeCursor=_hSplitHCursor=_sizeAllCursor=_timeLocked=false;
 
 
-        connect(&UInputManager::Instance, SIGNAL(keyPressEvent(QKeyEvent*)), this, SLOT(onKeyPressEvent(QKeyEvent*)));
+        connect(&UInputManager::Instance, SIGNAL(keyPressEvent(QKeyEvent*, ulong)), this, SLOT(onKeyPressEvent(QKeyEvent*)));
 
 }
 ShowSentenceWidget::~ShowSentenceWidget()

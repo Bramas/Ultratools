@@ -45,6 +45,7 @@ public slots:
     void seek(quint64 startTime);
     void timerOut();
     void changeVolume(int);
+    void changeSpeed(double);
     void emitEndOfSong() { emit endOfSong(); }
 
 public:
@@ -52,6 +53,7 @@ public:
     void clear();
     bool setSource(QString);
     quint64 currentTime();
+    bool timestampToPosition(ulong &);
     void setWidgetSongData(WidgetSongData * widgetSongData) { _widgetSongData = widgetSongData; }
     void lol();
     FMOD_SYSTEM * getSystem() { return _system; }
@@ -77,6 +79,11 @@ private:
 
     UAudioManager();
     WidgetSongData * _widgetSongData;
+    unsigned int _lastPosition;
+    unsigned int _granularity;
+    qint64 _delta;
+    double _speedFactor;
+    float _frequency;
 };
 
 #endif // UAUDIOMANAGER_H

@@ -26,8 +26,8 @@ class UInputManager : public QObject
 
 signals:
 
-    void  keyPressEvent(QKeyEvent *);
-    void  keyReleaseEvent(QKeyEvent *);
+    void  keyPressEvent(QKeyEvent *, ulong);
+    void  keyReleaseEvent(QKeyEvent *, ulong);
 
 
     void  spacePressEvent(void);

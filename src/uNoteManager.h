@@ -30,6 +30,7 @@ public slots:
     void play(void);
     void pause(void);
     void setVolume(int v);
+    void changePitch(int);
 
 public:
     void setMaxPitch(int in) { _maxPitch = in; }
@@ -52,6 +53,7 @@ protected:
     bool checkPitch(int p);
     bool _isPlaying;
     int _maxPitch;
+    int _pitchOffset;
     int pitchToNote(int note);
     Lyrics * _lyrics;
 

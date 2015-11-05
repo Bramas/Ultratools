@@ -52,8 +52,7 @@ UFile::UFile(QMainWindow * parent)
 
     lyrics->setModified(false);
     _modified=false;
-
-
+    connect(lyrics, SIGNAL(hasBeenModified()), this, SLOT(modified()));
 }
 
 UFile::UFile(QMainWindow * parent, QString fileName)
@@ -114,7 +113,10 @@ if(QFile::exists(getBAK()))
 
         lyrics->parseCode(sourceCode);
 
-        _hMax = lyrics->words().last().getTime2() + 10;
+        if(lyrics->words().isEmpty())
+            _hMax = 0;
+        else
+            _hMax = lyrics->words().last().getTime2() + 10;
         extractHead();
         lyrics->setGap(_headGap);
         lyrics->setBpm(_headBpm);
@@ -122,7 +124,7 @@ if(QFile::exists(getBAK()))
 
         lyrics->setModified(false);
         _modified = false;
-
+        connect(lyrics, SIGNAL(hasBeenModified()), this, SLOT(modified()));
 }
 
 bool UFile::saveInFile(QString fileName, bool autoSave)

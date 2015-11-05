@@ -1,2 +1,9 @@
 UltraTools Editor.pro.user
 UltraTools Editor.pro.user.eb8bffb
+*.o
+*.qm
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+ultratools-editor
+Makefile

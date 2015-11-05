@@ -42,7 +42,7 @@ void RichHScrollBar::paintEvent(QPaintEvent *event){
         painter.setPen(QPen(QColor(200,200,200)));
         painter.setBrush(QBrush(QColor(200,200,200)));
     }
-    painter.drawRect(_left-5, 0, 5, 50);
+    painter.drawRect(_left - HBorder, 0, HBorder, 50);
     painter.setPen(QPen(QColor(100,100,100)));
     painter.setBrush(QBrush(QColor(100,100,100)));
     painter.drawRect(_left-1, 0, 1, 50);
@@ -56,7 +56,7 @@ void RichHScrollBar::paintEvent(QPaintEvent *event){
         painter.setPen(QPen(QColor(200,200,200)));
         painter.setBrush(QBrush(QColor(200,200,200)));
     }
-    painter.drawRect(_right, 0, 5, 50);
+    painter.drawRect(_right, 0, HBorder, 50);
     painter.setPen(QPen(QColor(100,100,100)));
     painter.setBrush(QBrush(QColor(100,100,100)));
     painter.drawRect(_right, 0, 1, 50);
@@ -71,7 +71,18 @@ void RichHScrollBar::paintEvent(QPaintEvent *event){
     if(!_lyrics)
         return;
 
-    qreal xGap = _lyrics->timeToBeat(_lyrics->getGap()) * width() / (qreal)maximum();
+    qreal xGap = _lyrics->timeToBeat(_lyrics->getGap());
+    int yfactor = qMax(1, (height() - 2 * VBorder) / 12);
+    qreal xfactor;
+
+    if (useableWidth() > 0 && total() > 0)
+    {
+        xfactor = useableWidth() / (qreal)total();
+    }
+    else
+    {
+        xfactor = 0;
+    }
 
     painter.setPen(QPen(QColor(0,173,232,170)));
     painter.setBrush(QBrush(QColor(0,173,232,170)));
@@ -80,15 +91,17 @@ void RichHScrollBar::paintEvent(QPaintEvent *event){
         if(w.isSeparator())
             continue; //   ignore separators
 
-        qreal x = 5 + xGap + w.getTime() * (width() - 10) / (qreal)maximum();
-        qreal y = (w.getPitch() % 12) * 2 + 5;
-        qreal length = w.getLength() * (width() - 10) / (qreal)maximum();
-        painter.drawRect(x, y, length, 2);
+        qreal x = HBorder + ((xGap + w.getTime()) - minimum()) * xfactor;
+        int p = w.getPitch() % 12;
+        qreal y = (11 - (p < 0 ? p + 12 : p)) * yfactor + VBorder;
+        qreal length = w.getLength() * xfactor;
+        painter.drawRect(x, y, length, yfactor);
     }
 }
 
 void RichHScrollBar::mousePressEvent(QMouseEvent *event)
 {
+    mouseMoveEvent(event);
     _mousePressed = true;
     _mousePressPoint = event->pos();
     _mousePressSliderValue = this->value();
@@ -107,21 +120,34 @@ void RichHScrollBar::mouseMoveEvent(QMouseEvent *event)
     if(_mousePressed)
     {
         QPoint diff = event->pos() - _mousePressPoint;
-        qreal valueDiff = diff.x()*maximum()/width();
+        qreal valueDiff = 0;
         int v;
+
+        if(useableWidth() > 0)
+        {
+            valueDiff = diff.x() * total() / useableWidth();
+        }
         switch(_overType)
         {
         case OverCenter:
             v = _mousePressSliderValue + valueDiff;
-            v = qMin(v, maximum()-pageStep());
-            v = qMax(v, 0);
-            this->setValue(v);
+            setValue(v);
             this->setCursor(Qt::ClosedHandCursor);
             break;
         case OverScaleCenter:
         {
-            int clickValue = _mousePressPoint.x()*maximum()/width();
             qreal diff = event->y() - _mousePressPoint.y();
+            qreal weight;
+
+            if (useableWidth() > 0 && _mousePressPageStep > 0)
+            {
+                weight = ((qreal)(_mousePressPoint.x() - HBorder) * total() + minimum()) / useableWidth();
+                weight = (weight - _mousePressSliderValue) / _mousePressPageStep;
+            }
+            else
+            {
+                weight = 0.5;
+            }
 
             if(diff > 0) // zoomOut
             {
@@ -135,23 +161,17 @@ void RichHScrollBar::mouseMoveEvent(QMouseEvent *event)
             {
                 diff = 15 - _mousePressPageStep;
             }
-            setValue(_mousePressSliderValue - diff * (clickValue - _mousePressSliderValue) / _mousePressPageStep);
-            setPageStep(_mousePressPageStep + diff);
+            setViewport(_mousePressSliderValue - diff * weight, _mousePressPageStep + diff);
             break;
         }
         case OverRight:
-            v = _mousePressPageStep + valueDiff;
-            v = qMin(v, maximum()-value());
-            v = qMax(v, 20);
-            this->setPageStep(v);
+            changePageStep(_mousePressPageStep + valueDiff);
             this->setCursor(Qt::SizeHorCursor);
             break;
         case OverLeft:
             v = _mousePressSliderValue + valueDiff;
-            v = qMin(v, _mousePressSliderValue + _mousePressPageStep - 20);
-            v = qMax(v, 0);
-            this->setValue(v);
-            this->setPageStep(_mousePressSliderValue - v + _mousePressPageStep);
+            v = qMin(v, _mousePressSliderValue + _mousePressPageStep - MinVisible);
+            setViewport(v, _mousePressSliderValue - v + _mousePressPageStep);
             this->setCursor(Qt::SizeHorCursor);
             break;
         }
@@ -187,35 +207,58 @@ void RichHScrollBar::mouseMoveEvent(QMouseEvent *event)
 
 void RichHScrollBar::updateLeftRight()
 {
-    if(value() > maximum() - 10)
-        setValue(maximum() - 10);
-    if(value() + pageStep() > maximum())
-        setPageStep(maximum() - value());
+    int w = total();
 
-    _left = 5 + this->value()*(width() - 10)/maximum();
-    _right = _left + this->pageStep()*(width() - 10)/maximum();
+    if(w > 0)
+    {
+        _left = HBorder + (value() - minimum()) * useableWidth() / w;
+        _right = HBorder + (value() - minimum() + pageStep()) * useableWidth() / w;
+    }
+    else
+    {
+        _left = HBorder;
+        _right = width() - HBorder;
+    }
 }
 
-void RichHScrollBar::setMaximum(int m)
+void RichHScrollBar::setTotalMaximum(int m)
 {
-    m = qMax(10, m);
-    QAbstractSlider::setMaximum(m);
-    updateLeftRight();
-    update();
+    int w = m - minimum();
+
+    if(pageStep() > w)
+    {
+        changePageStep(w);
+        m = minimum() + pageStep();
+    }
+    setMaximum(m - pageStep());
 }
 
-void RichHScrollBar::setValue(int v)
+void RichHScrollBar::setViewport(int v, int p)
 {
-    v = qMax(0, v);
-    QAbstractSlider::setValue(v);
-    updateLeftRight();
-    update();
+    if (v < value())
+        setValue(v);
+    changePageStep(p);
+    if (v > value())
+        setValue(v);
 }
-void RichHScrollBar::setPageStep(int p)
+
+void RichHScrollBar::changePageStep(int p)
 {
-    p = p < 10 ? 10 : p;
-    QAbstractSlider::setPageStep(p);
+    p = qMax(p, MinVisible);
+    p = qMin(p, maximum() - value() + pageStep());
+    if(p != pageStep())
+    {
+        setMaximum(maximum() + pageStep() - p);
+        setPageStep(p);
+    }
+}
+
+void RichHScrollBar::sliderChange(SliderChange change)
+{
     updateLeftRight();
-    emit pageStepChanged(pageStep());
+    if (change == QAbstractSlider::SliderStepsChange)
+    {
+        emit pageStepChanged(pageStep());
+    }
     update();
 }

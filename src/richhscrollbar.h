@@ -14,14 +14,14 @@ class RichHScrollBar : public QAbstractSlider
     Q_OBJECT
 public:
     explicit RichHScrollBar(QWidget *parent = 0);
-    void setMaximum(int m);
-    void setPageStep(int p);
+    void setTotalMaximum(int m);
+    void setViewport(int v, int p);
+    void changePageStep(int p);
     void setLyrics(Lyrics * l) { _lyrics = l; }
+    int total() const { return maximum() - minimum() + pageStep(); }
+    int useableWidth() const { return width() - 2 * HBorder; }
 signals:
     void pageStepChanged(int);
-
-public slots:
-    void setValue(int v);
 
 protected:
     void paintEvent(QPaintEvent * event);
@@ -30,6 +30,7 @@ protected:
     void mouseMoveEvent(QMouseEvent * event);
     void leaveEvent(QEvent * e) { _overType = OverNothing; update(); QAbstractSlider::leaveEvent(e); }
     void enterEvent(QEvent * e) { _overType = OverNothing; update(); QAbstractSlider::enterEvent(e); }
+    void sliderChange(SliderChange change);
 
 private:
     bool _mousePressed;
@@ -42,6 +43,10 @@ private:
     Lyrics * _lyrics;
     int _overType;
     enum {OverNothing, OverLeft, OverRight, OverCenter, OverScaleCenter};
+
+    const int HBorder = 5;
+    const int VBorder = 5;
+    const int MinVisible = 10;
 };
 
 #endif // RICHHSCROLLBAR_H

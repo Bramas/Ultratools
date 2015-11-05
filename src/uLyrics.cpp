@@ -27,6 +27,7 @@ Lyrics::Lyrics(QWidget * parent)
     this->parent=parent;
     pitchMax=0;
     pitchMin=255;
+    _recalcMinMax=false;
     _gap=0;
     _editGroup = 1;
 
@@ -69,9 +70,7 @@ void Lyrics::parseLine(QString &line)
         QString text = in.readLine();
         word.setText(text);
     }
-    _words.insert(word.getTime(), word);
-    if(word.getPitch() < pitchMin) pitchMin=word.getPitch();
-    if(word.getPitch() > pitchMax) pitchMax=word.getPitch();
+    reallyAddWord(word);
     this->setModified(false);
 }
 
@@ -147,6 +146,42 @@ void Lyrics::addWord(const Word &w, QString actionText)
     emit hasBeenModified();
 }
 
+void Lyrics::emitModified()
+{
+    if (_recalcMinMax)
+    {
+        _recalcMinMax = false;
+        if (!_words.isEmpty())
+        {
+            pitchMin = pitchMax = _words.first().getPitch();
+            foreach (const Word &w, _words)
+            {
+                if (pitchMin > w.getPitch())
+                    pitchMin = w.getPitch();
+                if (pitchMin > w.getPitch())
+                    pitchMin = w.getPitch();
+            }
+        }
+    } 
+    emit hasBeenModified();
+}
+
+void Lyrics::reallyRemoveWord(const Word &w)
+{
+    if (w.getPitch() == pitchMin || w.getPitch() == pitchMax)
+        _recalcMinMax = true;
+    _words.remove(w.getTime(), w);
+}
+
+void Lyrics::reallyAddWord(const Word &w)
+{
+    if(_words.isEmpty() || w.getPitch() < pitchMin)
+        pitchMin = w.getPitch();
+    if(_words.isEmpty() || w.getPitch() > pitchMax)
+        pitchMax = w.getPitch();
+    auto it = _words.insert(w.getTime(), w);
+    it.value().setParent(this);
+}
 
 void Lyrics::doublePresicion()
 {
