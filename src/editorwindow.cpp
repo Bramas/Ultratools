@@ -94,20 +94,11 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
         connect(ui->actionEditHeaders,SIGNAL(triggered()),this,SLOT(editHeader()));
         connect(ui->actionApplyOffset,SIGNAL(triggered()),this,SLOT(openTiming()));
         connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
-    connect(playAction, SIGNAL(triggered()), this, SLOT(tooglePlay()));
-    connect(pauseAction, SIGNAL(triggered()), this, SLOT(tooglePlay()));
-    connect(recordAction, SIGNAL(triggered()), this, SLOT(toggleRecord()));
-    connect(showSentenceWidget,SIGNAL(haveToStop()), this, SLOT(tooglePlay()));
-        /*connect(playAction, SIGNAL(triggered()), mediaObject, SLOT(play()));
-        connect(playAction, SIGNAL(triggered()), &UNoteManager::Instance, SLOT(play()));
-        connect(playAction, SIGNAL(triggered()), showSentenceWidget, SLOT(play()));
-        connect(pauseAction, SIGNAL(triggered()), mediaObject, SLOT(pause()) );
-        connect(pauseAction, SIGNAL(triggered()), &UNoteManager::Instance, SLOT(pause()) );
-        connect(pauseAction, SIGNAL(triggered()), showSentenceWidget, SLOT(stop()) );
+        connect(playAction, SIGNAL(triggered()), this, SLOT(tooglePlay()));
+        connect(pauseAction, SIGNAL(triggered()), this, SLOT(tooglePlay()));
+        connect(recordAction, SIGNAL(triggered()), this, SLOT(toggleRecord()));
+        connect(showSentenceWidget,SIGNAL(haveToStop()), this, SLOT(tooglePlay()));
 
-        connect(showSentenceWidget,SIGNAL(haveToStop()),mediaObject,SLOT(pause()));
-        connect(showSentenceWidget,SIGNAL(haveToStop()),&UNoteManager::Instance,SLOT(pause()));
-*/
         connect(this->ui->offsetSpinBox, SIGNAL(valueChanged(int)), showSentenceWidget, SLOT(setPreviousDisplayed(int)));
         this->ui->offsetSpinBox->setValue(2);
         connect(ui->actionSetNormalNote,SIGNAL(triggered()),showSentenceWidget, SLOT(setNormal()));
@@ -554,10 +545,10 @@ void UEditorWindow::setupUi()
 
         ui->Slider_MusiqueVolume->setRange(0,100);
         ui->Slider_MusiqueVolume->setValue(100);
-        connect( ui->Slider_MusiqueVolume, SIGNAL(sliderMoved(int)), &UAudioManager::Instance, SLOT(changeVolume(int)));
+        connect( ui->Slider_MusiqueVolume, SIGNAL(valueChanged(int)), &UAudioManager::Instance, SLOT(changeVolume(int)));
         ui->Slider_NoteVolume->setRange(0,100);
         ui->Slider_NoteVolume->setValue(100);
-        connect( ui->Slider_NoteVolume, SIGNAL(sliderMoved(int)), &UNoteManager::Instance, SLOT(setVolume(int)));
+        connect( ui->Slider_NoteVolume, SIGNAL(valueChanged(int)), &UNoteManager::Instance, SLOT(setVolume(int)));
         ui->Slider_NoteVolume->setRange(0,48);
         ui->Slider_NoteVolume->setValue(24);
         connect( ui->Slider_Speed, SIGNAL(valueChanged(int)), this, SLOT(setSpeed(int)));
