@@ -21,12 +21,12 @@ install qt:
     sudo apt-get install qtbase5-dev qttools5-dev-tools
 
 install fmodex:
+download the last version of fmodex, then:
 
-    wget http://www.fmod.org/download/fmodex/api/Linux/fmodapi44452linux.tar.gz
-    tar xvf fmodapi44452linux.tar.gz
-    sudo cp -r fmodapi44452linux/api/lib/* /usr/local/lib/.
+    tar xvf fmodapi<VERSION_NUMBER>linux.tar.gz
+    sudo cp -r fmodapi<VERSION_NUMBER>linux/api/lib/* /usr/local/lib/.
     sudo mkdir /usr/local/include/fmod/
-    sudo cp -r fmodapi44452linux/api/inc/* /usr/local/include/fmod/.
+    sudo cp -r fmodapi<VERSION_NUMBER>linux/api/inc/* /usr/local/include/fmod/.
 
 
 ## On Mac Os X
