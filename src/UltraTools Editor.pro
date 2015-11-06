@@ -13,6 +13,7 @@ DEFINES += "VERSION_HEX=0x0106"
 
 SOURCES += main.cpp \
     editorwindow.cpp \
+    timebase.cpp \
     uWord.cpp \
     uLyrics.cpp \
     uShowSentenceWydget.cpp \
@@ -27,10 +28,8 @@ SOURCES += main.cpp \
     uSetting.cpp \
     uNewSongForm_Lyrics.cpp \
     uSettingDialog.cpp \
-    uCheckUpdate.cpp \
     uAudioManager.cpp \
     uDialogHelp.cpp \
-    uDialogFeedback.cpp \
     uRecorder.cpp \
     uDialog_timing.cpp \
     uDialogAbout.cpp \
@@ -39,6 +38,7 @@ SOURCES += main.cpp \
     wordselection.cpp \
     richhscrollbar.cpp
 HEADERS += editorwindow.h \
+    timebase.h \
     uWord.h \
     uLyrics.h \
     uShowSentenceWydget.h \
@@ -53,10 +53,8 @@ HEADERS += editorwindow.h \
     uSetting.h \
     uNewSongForm_Lyrics.h \
     uSettingDialog.h \
-    uCheckUpdate.h \
     uAudioManager.h \
     uDialogHelp.h \
-    uDialogFeedback.h \
     uRecorder.h \
     uDialog_timing.h \
     uDialogAbout.h \
@@ -70,10 +68,16 @@ FORMS += editorwindow.ui \
     uNewSongForm_Lyrics.ui \
     uSettingDialog.ui \
     uDialogHelp.ui \
-    uDialogFeedback.ui \
     uDialog_timing.ui \
     uDialogAbout.ui
 
+contains(QT, network) {
+    SOURCES += uCheckUpdate.cpp \
+        uDialogFeedback.cpp
+    HEADERS += uCheckUpdate.h \
+        uDialogFeedback.h
+    FORMS += uDialogFeedback.ui
+}
 
 RESOURCES = data.qrc \
     Lang.qrc
@@ -84,11 +88,11 @@ linux{
     TARGET = ultratools-editor
 
     linux-g++-64 {
-        release:LIBS += -lfmodex64
-        debug:LIBS += -lfmodexL64
+        CONFIG(release, debug|release):LIBS += -lfmodex64
+        CONFIG(debug, debug|release):LIBS += -lfmodexL64
     } else {
-        release:LIBS += -lfmodex
-        debug:LIBS += -lfmodexL
+        CONFIG(release, debug|release):LIBS += -lfmodex
+        CONFIG(debug, debug|release):LIBS += -lfmodexL
     }
 
     OS_STRING = \\\"'Linux'\\\"
@@ -137,6 +141,14 @@ win32{
     OS_STRING = \\\"'Windows'\\\"
 }
 DEFINES += "OS_STRING=$${OS_STRING}"
+
+load(configure)
+qtCompileTest(portmidi) {
+    LIBS += -lportmidi
+    DEFINES += USE_MIDI
+    SOURCES += uMidiManager.cpp
+    HEADERS += uMidiManager.h
+}
 
 DISTFILES += \
     qt_licence.txt

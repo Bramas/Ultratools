@@ -31,15 +31,19 @@ public:
     Recorder(ShowSentenceWidget * showSentenceWidget);
     bool isRecording() { return _isRecording; }
 public slots:
-    void onKeyPressEvent(QKeyEvent * event);
-    void onKeyReleaseEvent(QKeyEvent * event);
+    void onKeyPressEvent(QKeyEvent * event, ulong time);
+    void onKeyReleaseEvent(QKeyEvent * event, ulong time);
+    void startNote(ulong time, int pitch);
+    void stopNote(ulong time, int pitch);
     void start();
     void stop();
+
+protected:
+    int getBeat(ulong);
 
 private:
 
     Word _currentWord;
-    int _beat;
     ShowSentenceWidget * _showSentenceWidget;
     quint64 _currentTime;
     bool _isRecording;

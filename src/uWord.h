@@ -163,10 +163,7 @@ public:
 
 inline uint qHash(const Word &key, uint seed)
 {
-    if(key.isNull())
-    {
-        return 0;
-    }
+    Q_ASSERT(!key.isNull());
     return (qHash(key.getTime(), seed) ^ 13) + (qHash(key.getLength(), seed) ^ 27) + qHash(key.getText(), seed);
 }
 

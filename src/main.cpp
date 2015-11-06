@@ -20,6 +20,8 @@
 #include <QMessageBox>
 
 #include "editorwindow.h"
+#include "timebase.h"
+#include "uMidiManager.h"
 #include <QInputDialog>
 #include <QDir>
 #include <QFileInfo>
@@ -94,6 +96,10 @@ int main(int argc, char *argv[])
     a.setApplicationName("Editor");
     qDebug()<<"Ultratools Editor " VERSION;
 
+    initializeTimebase();
+#ifdef USE_MIDI
+    UMidiManager::getInstance();
+#endif
     manageLang(a);
 
     UEditorWindow w;

@@ -67,7 +67,7 @@ void UNewSongForm_Browse::changeEvent(QEvent *e)
 
 void UNewSongForm_Browse::browse(void)
 {
-    _baseLocation = QFileDialog::getExistingDirectory(this,"Dossier de création",USetting::Instance.getSongsLocation());
+    _baseLocation = QFileDialog::getExistingDirectory(this,tr("Dossier de création"),USetting::Instance.getSongsLocation());
     ui->lineEdit_folder->setText(_baseLocation);
     _edited = false;
 
@@ -75,7 +75,8 @@ void UNewSongForm_Browse::browse(void)
 }
 void UNewSongForm_Browse::browseMp3(void)
 {
-    QString mp3Location = QFileDialog::getOpenFileName(this,tr("Le fichier mp3"),USetting::Instance.getSongsLocation(),"Musique ( *.mp3 )");
+    QString mp3Location = QFileDialog::getOpenFileName(this,tr("Le fichier mp3"),USetting::Instance.getSongsLocation(),
+                                                       tr("MP3") + " ( *.mp3 );;" + tr("Toutes fiches") + " ( *.* )");
     ui->lineEdit_mp3->setText(mp3Location);
 
 }
@@ -111,13 +112,14 @@ void UNewSongForm_Browse::goNext()
     _file->_headArtist = ui->lineEdit_artist->text();
     _file->_headTitle = ui->lineEdit_title->text();
 
-    _file->_headMp3 = ui->lineEdit_folder->text().section('/',-1,-1) + ".mp3";
+    QString ext = ui->lineEdit_mp3->text().section('.',-1,-1);
+    _file->_headMp3 = ui->lineEdit_folder->text().section('/',-1,-1) + "." + (ext.isEmpty() ? "mp3" : ext);
     _file->setFileName(ui->lineEdit_folder->text()+"/"+ui->lineEdit_folder->text().section('/',-1,-1) + ".txt");
 
     QDir dir;
     dir.mkpath(ui->lineEdit_folder->text()+"/");
 
-    QFile::copy(ui->lineEdit_mp3->text(),(ui->lineEdit_folder->text()+"/"+ui->lineEdit_folder->text().section('/',-1,-1) + ".mp3"));
+    QFile::copy(ui->lineEdit_mp3->text(),(ui->lineEdit_folder->text()+"/"+_file->_headMp3));
 
 
     _file->saveInFile();

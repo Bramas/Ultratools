@@ -17,17 +17,19 @@
 
 
 
+#include "timebase.h"
 #include "uAudioManager.h"
 #include "uWidgetSongData.h"
 #include <QTimer>
 #include <QMessageBox>
 #include <QDebug>
 #include <limits>
+#include <algorithm>
 
 
 UAudioManager UAudioManager::Instance;
 
-UAudioManager::UAudioManager() : _sound(NULL), _channel(NULL), _widgetSongData(0)
+UAudioManager::UAudioManager() : _sound(NULL), _channel(NULL), _widgetSongData(0), _lastPosition(0), _granularity(0), _delta(0), _speedFactor(1)
 {
     _initialised=false;
 
@@ -52,9 +54,15 @@ typedef signed short pcm16;
 void UAudioManager::clear()
 {
     this->pause();
+    if (_channel)
+    {
+        FMOD_Channel_Stop(_channel);
+        _channel = NULL;
+    }
     if(_sound)
     {
         FMOD_Sound_Release(_sound);
+        _sound = NULL;
     }
     _widgetSongData->clearData();
     _source = "";
@@ -65,64 +73,66 @@ bool UAudioManager::setSource(QString source)
     clear();
 
     _source=source;
-    _result = FMOD_System_CreateSound(_system,_source.toStdString().c_str(), FMOD_LOOP_NORMAL | FMOD_2D | FMOD_SOFTWARE , 0, &_sound);		// FMOD_DEFAULT uses the defaults.  These are the same as FMOD_LOOP_OFF | FMOD_2D | FMOD_HARDWARE.
-    //ERRCHECK(result);
+    _result = FMOD_System_CreateSound(_system,_source.toStdString().c_str(), FMOD_LOOP_NORMAL | FMOD_2D | FMOD_SOFTWARE | FMOD_CREATESAMPLE, 0, &_sound);		// FMOD_DEFAULT uses the defaults.  These are the same as FMOD_LOOP_OFF | FMOD_2D | FMOD_HARDWARE.
+    if (_result != FMOD_OK) return false;
+
+    _result = FMOD_Sound_GetDefaults(_sound, &_frequency, NULL, NULL, NULL);
+    if (_result != FMOD_OK) return false;
 
     _result = FMOD_System_PlaySound(_system,FMOD_CHANNEL_FREE, _sound, true, &_channel);
-    FMOD_Channel_SetCallback(_channel, endCallback);
+    if (_result != FMOD_OK) return false;
+
+    _result = FMOD_Channel_SetFrequency(_channel,_frequency * _speedFactor);
+    if (_result != FMOD_OK) return false;
+
+    _result = FMOD_Channel_SetCallback(_channel, endCallback);
+    if (_result != FMOD_OK) return false;
 
 
-    FMOD_SOUND * sound;
-    FMOD_System_CreateSound(_system,_source.toStdString().c_str(), FMOD_LOOP_NORMAL | FMOD_2D | FMOD_SOFTWARE | FMOD_CREATESAMPLE, 0, &sound);
-
-
-
-    pcm16  *pointer1 = 0;
-    pcm16  *pointer2 = 0;
-    unsigned int length1;
-    unsigned int length2;
+    pcm16  *pointer[2] = {0, 0};
+    unsigned int length[2];
     unsigned int totalLength;
     unsigned int totalMscLength;
 
 
     FMOD_SOUND_FORMAT format = FMOD_SOUND_FORMAT_NONE;
-    FMOD_Sound_GetFormat(sound, 0, &format, 0, 0);
+    FMOD_Sound_GetFormat(_sound, 0, &format, 0, 0);
     qDebug()<<"format:"<<format;
     qDebug()<<"PCM16? "<<(format == FMOD_SOUND_FORMAT_PCM16);
 
-    FMOD_Sound_GetLength(sound, &totalLength, FMOD_TIMEUNIT_PCMBYTES);
-    FMOD_Sound_GetLength(sound, &totalMscLength, FMOD_TIMEUNIT_MS);
+    _result = FMOD_Sound_GetLength(_sound, &totalLength, FMOD_TIMEUNIT_PCMBYTES);
+    if (_result != FMOD_OK) return false;
+
+    FMOD_Sound_GetLength(_sound, &totalMscLength, FMOD_TIMEUNIT_MS);
     qDebug()<<"totalLength? "<<totalLength<<" bytes "<<totalMscLength<<" Ms";
 
     // lock the buffer
-    FMOD_Sound_Lock(sound, 0, totalLength, (void**)&pointer1, (void**)&pointer2, &length1, &length2);
+    _result = FMOD_Sound_Lock(_sound, 0, totalLength, (void**)&pointer[0], (void**)&pointer[1], &length[0], &length[1]);
+    if (_result != FMOD_OK) return false;
 
-    totalLength/=2;
-    int sizeOfBin = 100;
+    int sizeOfBin = 100, nSamples = 0;
+    pcm16 channelMax[2];
     _widgetSongData->clearData();
-    for(unsigned int i = 0; i < totalLength; i += 2*sizeOfBin)
-    {
 
-        pcm16 leftMax = *pointer1;
-        ++pointer1;
-        pcm16 rightMax = *pointer1;
-        ++pointer1;
-        for(int m = 0; m < sizeOfBin-1; ++m)
+    for(int part = 0; part < 2; part++)
+    {
+        pcm16 *end = pointer[part] + length[part] / sizeof(pcm16);
+        for(pcm16 *p = pointer[part]; p < end; p++)
         {
-            if(leftMax < *pointer1)
+            if(nSamples >> 1)
+                channelMax[nSamples & 1] = std::max(channelMax[nSamples & 1], *p);
+            else
+                channelMax[nSamples & 1] = *p;
+            if(++nSamples == sizeOfBin << 1)
             {
-                leftMax = *pointer1;
+                nSamples = 0;
+                _widgetSongData->addData((qreal)channelMax[0]/(qreal)SHRT_MAX, (qreal)channelMax[1]/(qreal)SHRT_MAX);
             }
-            ++pointer1;
-            if(rightMax < *pointer1)
-            {
-                rightMax = *pointer1;
-            }
-            ++pointer1;
         }
-        _widgetSongData->addData((qreal)leftMax/(qreal)SHRT_MAX, (qreal)rightMax/(qreal)SHRT_MAX);
     }
-    FMOD_Sound_Unlock(sound, pointer1, pointer2, length1, length2);
+    if(nSamples)
+        _widgetSongData->addData((qreal)channelMax[0]/(qreal)SHRT_MAX, (qreal)channelMax[1]/(qreal)SHRT_MAX);
+    FMOD_Sound_Unlock(_sound, pointer[0], pointer[1], length[0], length[1]);
     _widgetSongData->show();
 
     return true;
@@ -131,24 +141,6 @@ bool UAudioManager::setSource(QString source)
 void UAudioManager::timerOut()
 {
     FMOD_System_Update(_system);
-
-    int sampleSize = 64;
-    float *specLeft, *specRight;
-
-    specLeft = new float[sampleSize];
-    specRight = new float[sampleSize];
-
-    // Get spectrum for left and right stereo channels
-    FMOD_Channel_GetSpectrum(_channel, specLeft, sampleSize, 0, FMOD_DSP_FFT_WINDOW_RECT);
-    FMOD_Channel_GetSpectrum(_channel, specRight, sampleSize, 1, FMOD_DSP_FFT_WINDOW_RECT);
-
-    float *spec;
-    spec = new float[sampleSize];
-    for (int i = 0; i < sampleSize; i++)
-        spec[i] = (specLeft[i] + specRight[i]) / 2.0;
-
-    //qDebug()<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10)<<(int)(spec[i++]*10);
-
 
     emit tick(currentTime());
 
@@ -185,6 +177,13 @@ quint32 UAudioManager::length()
     return l;
 }
 
+void UAudioManager::changeSpeed(double factor)
+{
+    _granularity = 0;
+    _speedFactor = factor;
+    FMOD_Channel_SetFrequency(_channel,_frequency * factor);
+}
+
 void UAudioManager::play()
 {
     FMOD_Channel_SetPaused(_channel,false);
@@ -196,16 +195,37 @@ void UAudioManager::pause()
     _tickTimer->stop();
 }
 
+bool UAudioManager::timestampToPosition(ulong &time)
+{
+    if(!_tickTimer->isActive() || (qint64)time < _delta)
+        return false;
+    time = (ulong)(time * _speedFactor) - _delta;
+    return true;
+}
+
 quint64 UAudioManager::currentTime()
 {
     unsigned int time;
-    FMOD_Channel_GetPosition(
-      _channel,
-     &time,
-      FMOD_TIMEUNIT_MS
-    );
+    qint64 pre, delta;
 
-    return (quint64)time;
+    pre = now();
+    if (FMOD_Channel_GetPosition(_channel, &time, FMOD_TIMEUNIT_MS) != FMOD_OK)
+    {
+        time = _lastPosition;
+    }
+    if (time > _lastPosition)
+    {
+        unsigned int fmoddelta = time - _lastPosition;
+        if (_granularity > fmoddelta || !_granularity)
+            _granularity = fmoddelta;
+    }
+    _lastPosition = time;
+    pre *= _speedFactor;
+    delta = pre - time;
+    if (_delta > delta || _delta + _granularity + 2 < delta)
+        _delta = delta;
+
+    return (quint64)(pre - _delta);
 }
 
 void UAudioManager::init()

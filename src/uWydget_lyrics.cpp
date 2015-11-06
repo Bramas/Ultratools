@@ -44,7 +44,7 @@ _isEditing = false;
 
 this->document()->setUndoRedoEnabled(false);
 
-connect(&UInputManager::Instance, SIGNAL(keyPressEvent(QKeyEvent*)),this, SLOT(onKeyPress(QKeyEvent*)));
+connect(&UInputManager::Instance, SIGNAL(keyPressEvent(QKeyEvent*, ulong)),this, SLOT(onKeyPress(QKeyEvent*)));
 }
 
 void UWydget_Lyrics::setWidgetWords(ShowSentenceWidget* wydgetWords)
