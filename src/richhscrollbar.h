@@ -44,9 +44,9 @@ private:
     int _overType;
     enum {OverNothing, OverLeft, OverRight, OverCenter, OverScaleCenter};
 
-    const int HBorder = 5;
-    const int VBorder = 5;
-    const int MinVisible = 10;
+    static const int HBorder;
+    static const int VBorder;
+    static const int MinVisible;
 };
 
 #endif // RICHHSCROLLBAR_H

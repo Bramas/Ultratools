@@ -10,6 +10,10 @@
 #include <QMouseEvent>
 #include <QDebug>
 
+const int RichHScrollBar::HBorder = 5;
+const int RichHScrollBar::VBorder = 5;
+const int RichHScrollBar::MinVisible = 10;
+
 RichHScrollBar::RichHScrollBar(QWidget *parent) : QAbstractSlider(parent), _lyrics(0)
 {
     this->setOrientation(Qt::Horizontal);
