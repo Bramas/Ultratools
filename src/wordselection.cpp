@@ -193,7 +193,7 @@ QPoint WordSelection::translate(int addTime, int addPitch)
         _selectedWords.insert(newWord, newWord.getTime());
 
         UNoteManager::Instance.pause();
-        UNoteManager::Instance.play_with_timeout(w);
+        UNoteManager::Instance.play_with_timeout(newWord);
     }
     return QPoint(addTime, addPitch);
 }
