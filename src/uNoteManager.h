@@ -37,11 +37,13 @@ public slots:
     void pause(void);
     void setVolume(int v);
     void changePitch(int);
+    void stop_note_playback();
 
 public:
     void setMaxPitch(int in) { _maxPitch = in; }
 
     void play(const Word & w);
+    void play_with_timeout(const Word & w);
 
     bool isPlaying() { return _isPlaying; }
 
@@ -58,6 +60,7 @@ protected:
     QString violonFile(int i);
     bool checkPitch(int p);
     bool _isPlaying;
+    QTimer * _timer;
     int _maxPitch;
     int _pitchOffset;
     int pitchToNote(int note);

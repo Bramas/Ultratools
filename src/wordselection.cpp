@@ -156,13 +156,20 @@ int fTime = this->first().getTime()
     _selectedWords.clear();
 
 }
+
 QPoint WordSelection::translate(int addTime, int addPitch)
 {
     if(_selectedWords.size() == 0)
     {
         return QPoint(0,0);
     }
+
     addTime = std::max(addTime, -_selectedWords.firstKey().getTime());
+    if(addTime == 0 && addPitch == 0)
+    {
+        return QPoint(0,0);
+    }
+
     foreach(const Word & w, takeSelectedWords().keys())
     {
         _lyrics->removeWord(w);
@@ -171,9 +178,14 @@ QPoint WordSelection::translate(int addTime, int addPitch)
         newWord.setTime(w.getTime() + addTime);
         _lyrics->addWord(newWord, QObject::tr("le déplacement de la selection"));
         _selectedWords.insert(newWord, newWord.getTime());
+
+        UNoteManager::Instance.pause();
+        UNoteManager::Instance.play_with_timeout(w);
     }
     return QPoint(addTime, addPitch);
 }
+
+
 int WordSelection::expandRight(int add)
 {
     if(_selectedWords.size() != 1)
