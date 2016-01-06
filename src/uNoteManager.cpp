@@ -183,6 +183,8 @@ void UNoteManager::setVolume(int v)
     float f=v;
     f/=100;
     FMOD_ChannelGroup_SetVolume(_notesGroup, f);
+
+    USetting::Instance.setNoteVolume(v);
 }
 
 void UNoteManager::changePitch(int offset)

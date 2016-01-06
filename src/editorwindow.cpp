@@ -32,6 +32,7 @@
 #include "uWidgetSongData.h"
 #include "uShowSentenceWydget.h"
 #include "richhscrollbar.h"
+#include "uSetting.h"
 #include <cmath>
 #include <QUrl>
 #include <QMimeData>
@@ -216,6 +217,7 @@ void UEditorWindow::readLastFile()
     }
     ui->menuFile->removeAction(ui->actionRecentFiles);
 }
+
 void UEditorWindow::openLastFile()
 {
     QAction * from = qobject_cast<QAction*>(sender());
@@ -235,6 +237,18 @@ void UEditorWindow::gapModified(double d)
     _currentFile->setGap(d);
     showSentenceWidget->updateGap();
 }
+
+
+int UEditorWindow::getMusiqueVolume()
+{
+    return ui->Slider_MusiqueVolume->value();
+}
+
+int UEditorWindow::getNoteVolume()
+{
+    return ui->Slider_NoteVolume->value();
+}
+
 
 void UEditorWindow::newFile()
 {
@@ -550,16 +564,14 @@ void UEditorWindow::setupUi()
 
 
         ui->Slider_MusiqueVolume->setRange(0,100);
-        ui->Slider_MusiqueVolume->setValue(100);
+        ui->Slider_MusiqueVolume->setValue(USetting::Instance.getMusiqueVolume());
         connect( ui->Slider_MusiqueVolume, SIGNAL(valueChanged(int)), &UAudioManager::Instance, SLOT(changeVolume(int)));
-        ui->Slider_NoteVolume->setRange(0,100);
-        ui->Slider_NoteVolume->setValue(100);
-        connect( ui->Slider_NoteVolume, SIGNAL(valueChanged(int)), &UNoteManager::Instance, SLOT(setVolume(int)));
+
         ui->Slider_NoteVolume->setRange(0,48);
-        ui->Slider_NoteVolume->setValue(24);
+        ui->Slider_NoteVolume->setValue(USetting::Instance.getNoteVolume());
+        connect( ui->Slider_NoteVolume, SIGNAL(valueChanged(int)), &UNoteManager::Instance, SLOT(setVolume(int)));
+
         connect( ui->Slider_Speed, SIGNAL(valueChanged(int)), this, SLOT(setSpeed(int)));
-
-
 
         QToolBar *bar = new QToolBar;
 

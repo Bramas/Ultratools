@@ -112,6 +112,9 @@ public:
     QAbstractSlider *horizontalScrollBar();
     UFile * getFile() { return _currentFile; }
 
+    int getMusiqueVolume();
+    int getNoteVolume();
+
 private:
     void fileConnect(void);
     void fileDisconnect(void);
