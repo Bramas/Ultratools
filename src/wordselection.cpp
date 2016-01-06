@@ -21,6 +21,7 @@
 
 #include "wordselection.h"
 #include "uLyrics.h"
+#include "uNoteManager.h"
 
 #include <QDebug>
 
@@ -93,6 +94,18 @@ QMap<Word, int> WordSelection::takeSelectedWords()
 {
     QMap<Word, int> oldWords = _selectedWords;
     _selectedWords.clear();
+    return oldWords;
+}
+
+/**
+ * Returns the selected words. Doesn't clears the selection like its done in takeSelectedWords()
+ *
+ * @brief WordSelection::getSelectedWords
+ * @return
+ */
+QMap<Word, int> WordSelection::getSelectedWords()
+{
+    QMap<Word, int> oldWords = _selectedWords;
     return oldWords;
 }
 

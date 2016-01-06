@@ -57,6 +57,8 @@ public:
     int expandLeft(int add);
     int expandRight(int add);
 
+    QMap<Word, int> getSelectedWords();
+
 private:
 
     void insertAndSelect(const Word & w);
