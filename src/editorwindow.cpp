@@ -187,6 +187,10 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
 
 UEditorWindow::~UEditorWindow()
 {
+    // Remove temporary mp3 file
+    QString mp3_filename_temp = QDir::tempPath() + QDir::separator() + TEMP_AUDIO_FILENAME;
+    QFile::remove(mp3_filename_temp);
+
     delete ui;
 }
 void UEditorWindow::editHeader(void)
@@ -374,10 +378,21 @@ void UEditorWindow::openFile(QString fileName)
     }
     else
     {
-        if(!UAudioManager::Instance.setSource(fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3))
+        /*
+         * Workaround for FMODex with UTF-8 filenames:
+         * Create a temporaly mp3 file with a ascii filename
+         */
+        QString song_path = fileName.replace('\\','/').section('/',0,-2)+"/";
+        QString mp3_filename = song_path+_currentFile->_headMp3;
+        QString mp3_filename_temp = QDir::tempPath() + QDir::separator() + TEMP_AUDIO_FILENAME;
+
+        QFile::remove(mp3_filename_temp);
+        QFile::copy(mp3_filename, mp3_filename_temp);
+
+        if(!UAudioManager::Instance.setSource(mp3_filename_temp))
         {
             UAudioManager::Instance.clear();
-            QMessageBox::warning(this,tr("Attention"),tr("Il y a eu un problème lors de la lecture du fichier son")+" : "+fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3);
+            QMessageBox::warning(this,tr("Attention"),tr("Il y a eu un problème lors de la lecture du fichier son")+" : " + mp3_filename_temp + "(" + mp3_filename + ")");
         }
     }
     adaptNewFile();
