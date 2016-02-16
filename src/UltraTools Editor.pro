@@ -151,4 +151,5 @@ qtCompileTest(portmidi) {
 }
 
 DISTFILES += \
-    qt_licence.txt
+    qt_licence.txt \
+    ../.travis.yml
