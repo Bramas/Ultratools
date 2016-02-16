@@ -128,7 +128,7 @@ mac{
     ICON = ultratools.icns
     CONFIG += ppc \
         x86
-    LIBS += -L/usr/local/lib -lfmodex
+    LIBS += -l/usr/local/lib/fmodex
     INCLUDEPATH += /usr/local/include/fmod
     OS_STRING = \\\"'Mac'\\\"
 }
