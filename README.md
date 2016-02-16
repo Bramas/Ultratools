@@ -16,19 +16,27 @@ Require Qt >= 5.2.0
 
 On Ubuntu >= 14.04
 
-install qt:
+1) Install qt:
 
     sudo apt-get install qtbase5-dev qttools5-dev-tools
 
-install fmodex:
-download the last version of fmodex, then:
-
-    tar xvf fmodapi<VERSION_NUMBER>linux.tar.gz
-    sudo cp -r fmodapi<VERSION_NUMBER>linux/api/lib/* /usr/local/lib/.
-    sudo mkdir /usr/local/include/fmod/
-    sudo cp -r fmodapi<VERSION_NUMBER>linux/api/inc/* /usr/local/include/fmod/.
-
-
+2) Download FMOD EX api here:
+[http://www.fmod.org/download-previous-products/](http://www.fmod.org/download-previous-products/)
+and install it:
+```
+tar xvf fmodapilinux.tar.gz
+sudo cp -r fmodapilinux/api/lib/* /usr/local/lib/.
+sudo mkdir /usr/local/include/fmod/
+sudo cp -r fmodapilinux/api/inc/* /usr/local/include/fmod/.
+```
+3) Download Ultratools Editor and Build it
+```
+git clone https://github.com/Bramas/Ultratools.git
+cd Ultratools/src
+qmake "UltraTools Editor.pro"
+make
+sudo make install
+```
 ## On Mac Os X
 
 Require Qt >= 5.4.0
