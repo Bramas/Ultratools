@@ -197,11 +197,16 @@ void Lyrics::doublePresicion()
         return;
     }
 
+    QMultiMap<int, Word> newWords;
+
     for(Word & w: _words)
     {
         w.setTime(w.getTime()*2);
         w.setLength(w.getLength()*2);
+        newWords.insert(w.getTime(), w);
     }
+
+    _words.swap(newWords);
 
     emit hasBeenModified(); //FIXME (use undocommand)
 }
