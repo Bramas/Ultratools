@@ -10,7 +10,7 @@ DirExistsWarning=no
 ;DisableDirPage=yes
 UsePreviousAppDir=yes
 AppName=Ultratools Editor          
-AppVersion=1.6
+AppVersion=1.7
 DefaultDirName={pf}\Ultratools
 ; Since no icons will be created in "{group}", we don't need the wizard
 ; to ask for a Start Menu folder name:
@@ -20,7 +20,7 @@ OutputDir=..
 SetupIconFile=../src/icone/logo2.ico
 ChangesAssociations=yes
                        
-#define BuilLocation "..\..\build\UltraTools Editor-Desktop_Qt_5_4_1_MinGW_32bit-Release\release"
+#define BuilLocation "..\..\builds\UltratoolsEditor\build-UltraTools Editor-Desktop_Qt_5_4_1_MinGW_32bit-Release\release"
 #define FmodEXLocation "C:\FMODEx\api"
 #define QtLocation "C:\Qt\5.4\mingw491_32"
 [Run]

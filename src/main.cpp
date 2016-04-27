@@ -71,7 +71,6 @@ void manageLang(QApplication& app){
 
 int main(int argc, char *argv[])
 {
-
 #ifdef __APPLE__
      QDir dir(QFileInfo(argv[0]).path());  // e.g. appdir/Contents/MacOS
      dir.cdUp();

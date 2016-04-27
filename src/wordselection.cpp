@@ -66,7 +66,7 @@ int WordSelection::lastIndex()
         }
         ++i;
     }
-
+    return -1;
 }
 
 void WordSelection::add(const Word & word)
