@@ -32,6 +32,7 @@
 #include "uWidgetSongData.h"
 #include "uShowSentenceWydget.h"
 #include "richhscrollbar.h"
+#include "uSetting.h"
 #include <cmath>
 #include <QUrl>
 #include <QMimeData>
@@ -186,6 +187,10 @@ connect(check,SIGNAL(connected()),this,SLOT(onConnected()));
 
 UEditorWindow::~UEditorWindow()
 {
+    // Remove temporary mp3 file
+    QString mp3_filename_temp = QDir::tempPath() + QDir::separator() + TEMP_AUDIO_FILENAME;
+    QFile::remove(mp3_filename_temp);
+
     delete ui;
 }
 void UEditorWindow::editHeader(void)
@@ -216,6 +221,7 @@ void UEditorWindow::readLastFile()
     }
     ui->menuFile->removeAction(ui->actionRecentFiles);
 }
+
 void UEditorWindow::openLastFile()
 {
     QAction * from = qobject_cast<QAction*>(sender());
@@ -235,6 +241,18 @@ void UEditorWindow::gapModified(double d)
     _currentFile->setGap(d);
     showSentenceWidget->updateGap();
 }
+
+
+int UEditorWindow::getMusiqueVolume()
+{
+    return ui->Slider_MusiqueVolume->value();
+}
+
+int UEditorWindow::getNoteVolume()
+{
+    return ui->Slider_NoteVolume->value();
+}
+
 
 void UEditorWindow::newFile()
 {
@@ -360,10 +378,21 @@ void UEditorWindow::openFile(QString fileName)
     }
     else
     {
-        if(!UAudioManager::Instance.setSource(fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3))
+        /*
+         * Workaround for FMODex with UTF-8 filenames:
+         * Create a temporaly mp3 file with a ascii filename
+         */
+        QString song_path = fileName.replace('\\','/').section('/',0,-2)+"/";
+        QString mp3_filename = song_path+_currentFile->_headMp3;
+        QString mp3_filename_temp = QDir::tempPath() + QDir::separator() + TEMP_AUDIO_FILENAME;
+
+        QFile::remove(mp3_filename_temp);
+        QFile::copy(mp3_filename, mp3_filename_temp);
+
+        if(!UAudioManager::Instance.setSource(mp3_filename_temp))
         {
             UAudioManager::Instance.clear();
-            QMessageBox::warning(this,tr("Attention"),tr("Il y a eu un problème lors de la lecture du fichier son")+" : "+fileName.replace('\\','/').section('/',0,-2)+"/"+_currentFile->_headMp3);
+            QMessageBox::warning(this,tr("Attention"),tr("Il y a eu un problème lors de la lecture du fichier son")+" : " + mp3_filename_temp + "(" + mp3_filename + ")");
         }
     }
     adaptNewFile();
@@ -550,16 +579,14 @@ void UEditorWindow::setupUi()
 
 
         ui->Slider_MusiqueVolume->setRange(0,100);
-        ui->Slider_MusiqueVolume->setValue(100);
+        ui->Slider_MusiqueVolume->setValue(USetting::Instance.getMusiqueVolume());
         connect( ui->Slider_MusiqueVolume, SIGNAL(valueChanged(int)), &UAudioManager::Instance, SLOT(changeVolume(int)));
-        ui->Slider_NoteVolume->setRange(0,100);
-        ui->Slider_NoteVolume->setValue(100);
-        connect( ui->Slider_NoteVolume, SIGNAL(valueChanged(int)), &UNoteManager::Instance, SLOT(setVolume(int)));
+
         ui->Slider_NoteVolume->setRange(0,48);
-        ui->Slider_NoteVolume->setValue(24);
+        ui->Slider_NoteVolume->setValue(USetting::Instance.getNoteVolume());
+        connect( ui->Slider_NoteVolume, SIGNAL(valueChanged(int)), &UNoteManager::Instance, SLOT(setVolume(int)));
+
         connect( ui->Slider_Speed, SIGNAL(valueChanged(int)), this, SLOT(setSpeed(int)));
-
-
 
         QToolBar *bar = new QToolBar;
 

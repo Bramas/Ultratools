@@ -101,8 +101,9 @@ _previousDisplayed=2;
      _timePress=QTime::currentTime();
     _hSizeCursor=_hSplitHCursor=_sizeAllCursor=_timeLocked=false;
 
-
-        connect(&UInputManager::Instance, SIGNAL(keyPressEvent(QKeyEvent*, ulong)), this, SLOT(onKeyPressEvent(QKeyEvent*)));
+    _control_key_down = false;
+    connect(&UInputManager::Instance, SIGNAL(keyPressEvent(QKeyEvent*, ulong)), this, SLOT(onKeyPressEvent(QKeyEvent*)));
+    connect(&UInputManager::Instance, SIGNAL(keyReleaseEvent(QKeyEvent*, ulong)), this, SLOT(onKeyReleaseEvent(QKeyEvent*)));
 
 }
 ShowSentenceWidget::~ShowSentenceWidget()
@@ -286,8 +287,40 @@ void ShowSentenceWidget::emitSeek()
     emit click(msc);
 }
 
+void ShowSentenceWidget::onKeyReleaseEvent(QKeyEvent * event)
+{
+    if(event->key() == Qt::Key_Control)
+    {
+        _control_key_down = false;
+    }
+}
+
 void ShowSentenceWidget::onKeyPressEvent(QKeyEvent * event)
 {
+    if(event->key() == Qt::Key_Control)
+    {
+        _control_key_down = true;
+    }
+
+    // Paste words from clipboard
+    if(event->key() == Qt::Key_V && _control_key_down && _clipboardWords.size() > 0)
+    {
+        qDebug() << "Paste Words";
+
+        int firstWordDiff = _clipboardWords.firstKey().getTime();
+        int pasteBeatAbs = currentBeat() < 0 ? 0 : currentBeat() + 1;
+        foreach(const Word &w, _clipboardWords.keys())
+        {
+            if(!w.isSeparator())
+            {
+                Word newWord = w;
+                newWord.setTime(w.getTime() + pasteBeatAbs - firstWordDiff);
+                if (!lyrics->contains(newWord))
+                    lyrics->addWord(newWord);
+            }
+        }
+    }
+
     if(_selected.isEmpty())
     {
         return;
@@ -307,6 +340,12 @@ void ShowSentenceWidget::onKeyPressEvent(QKeyEvent * event)
     else if(event->key() == Qt::Key_Right)
     {
         _selected.translate(1,0);
+    }
+    else if(event->key() == Qt::Key_C && _control_key_down)
+    {
+        // Copy selected words to clipboard
+        _clipboardWords = _selected.getSelectedWords();
+        qDebug() << "Copy selected words: " << _clipboardWords.size();
     }
     update();
 }

@@ -111,6 +111,7 @@ if(QFile::exists(getBAK()))
          }
 
         QTextStream in(&file);
+        in.setCodec("UTF-8");
         while (!in.atEnd())
         {
             QString line = in.readLine() + "\n";
@@ -165,6 +166,7 @@ bool UFile::saveInFile(QString fileName, bool autoSave)
      }
 
     QTextStream out(&file);
+    out.setCodec("UTF-8");
 
     out<<"#TITLE:"<<_headTitle<< "\n";
     out<<"#ARTIST:"<<_headArtist<< "\n";
@@ -211,8 +213,6 @@ file.close();
 
 if(!autoSave)
 {
-    _modified = false;
-
     _modified = false;
     lyrics->setModified(false);
     emit hasBeenModified(false);

@@ -53,6 +53,7 @@ signals:
      void octaveChanged(int);
 
 public slots:
+     void onKeyReleaseEvent(QKeyEvent*);
      void onKeyPressEvent(QKeyEvent*);
      void setGold(void);
      void setFree(void);
@@ -113,6 +114,7 @@ public:
 
 protected:
 
+    bool _control_key_down;
 
     quint8 _nextClick;
 
@@ -138,6 +140,8 @@ protected:
     double vScroll;
 
     WordSelection _selected;
+    QMap<Word, int> _clipboardWords;
+
     Word _overed;
     quint8 _overType, _overTypeOnMousePressed;
 

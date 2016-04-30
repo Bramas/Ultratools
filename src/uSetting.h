@@ -58,6 +58,10 @@ public:
 
     void init(void);
 
+    int getMusiqueVolume();
+    int setMusiqueVolume(int val);
+    int getNoteVolume();
+    int setNoteVolume(int val);
 
 private:
 

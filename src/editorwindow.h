@@ -107,10 +107,14 @@ public:
     UEditorWindow(QWidget *parent=0);
     ~UEditorWindow();
 
+    const QString TEMP_AUDIO_FILENAME = "UltraToolsEditor_working_audio.mp3";
 
     QScrollBar * verticalScrollBar();
     QAbstractSlider *horizontalScrollBar();
     UFile * getFile() { return _currentFile; }
+
+    int getMusiqueVolume();
+    int getNoteVolume();
 
 private:
     void fileConnect(void);

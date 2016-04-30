@@ -108,6 +108,25 @@ void USetting::addOpenFile(QString filename)
     _settings->setValue("lastOpenFiles", l);
 }
 
+int USetting::getMusiqueVolume()
+{
+    return _settings->value("MusiqueVolume",100).toInt();
+}
+
+int USetting::setMusiqueVolume(int val)
+{
+    _settings->setValue("MusiqueVolume",val);
+}
+
+int USetting::getNoteVolume()
+{
+    return _settings->value("NoteVolume",24).toInt();
+}
+
+int USetting::setNoteVolume(int val)
+{
+    _settings->setValue("NoteVolume",val);
+}
 
 
 

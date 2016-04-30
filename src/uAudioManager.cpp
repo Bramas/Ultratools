@@ -26,6 +26,7 @@
 #include "timebase.h"
 #include "uAudioManager.h"
 #include "uWidgetSongData.h"
+#include "uSetting.h"
 #include <QTimer>
 #include <QMessageBox>
 #include <QDebug>
@@ -168,6 +169,7 @@ void UAudioManager::changeVolume(int i)
     f/=100;
     FMOD_Channel_SetVolume(_channel,f);
 
+    USetting::Instance.setMusiqueVolume(i);
 }
 
 quint32 UAudioManager::length()

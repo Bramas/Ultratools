@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QStandardPaths>
+#include <QTimer>
 #include "uWord.h"
 #include "uLyrics.h"
 #include "uNoteManager.h"
@@ -34,10 +35,12 @@ UNoteManager UNoteManager::Instance;
 UNoteManager::UNoteManager()
 {
     _lyrics = NULL;
-_maxPitch = 18;
-_pitchOffset = 0;
-_isPlaying= false;
+    _maxPitch = 18;
+    _pitchOffset = 0;
+    _isPlaying= false;
 
+    _timer = new QTimer(this);
+    connect(_timer, SIGNAL(timeout()), this, SLOT(stop_note_playback()));
 }
 
 QString UNoteManager::violonFile(int i)
@@ -138,6 +141,18 @@ void UNoteManager::play(const Word & w)
 
 }
 
+void UNoteManager::play_with_timeout(const Word & w)
+{
+    play(w);
+    _timer->start(100);
+}
+
+void UNoteManager::stop_note_playback()
+{
+    UNoteManager::Instance.pause();
+    _timer->stop();
+}
+
 int UNoteManager::pitchToNote(int note)
 {
     int noteOffset = _maxPitch + _pitchOffset;
@@ -168,6 +183,8 @@ void UNoteManager::setVolume(int v)
     float f=v;
     f/=100;
     FMOD_ChannelGroup_SetVolume(_notesGroup, f);
+
+    USetting::Instance.setNoteVolume(v);
 }
 
 void UNoteManager::changePitch(int offset)
